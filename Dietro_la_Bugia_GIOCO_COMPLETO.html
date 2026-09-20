@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dietro la Bugia</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0f1115;color:#f5f5f5}
+.app{max-width:760px;margin:auto;padding:18px}
+h1{font-size:38px;text-align:center;margin:12px 0 4px}
+.subtitle{text-align:center;color:#aaa;margin-bottom:22px}
+.card{background:#1b1e24;border:1px solid #30343d;border-radius:18px;padding:20px;margin:14px 0}
+h2{margin-top:0}
+h3{margin-bottom:8px}
+button{width:100%;padding:14px;margin:7px 0;border:0;border-radius:12px;background:#3478f6;color:white;font-size:16px;font-weight:bold;cursor:pointer}
+button.secondary{background:#30343d}
+button.danger{background:#a93434}
+.hidden{display:none}
+.tag{display:inline-block;padding:6px 10px;border-radius:20px;background:#30343d;color:#bbb;font-size:13px;margin:3px}
+.clue{border-left:4px solid #3478f6;padding:10px 12px;margin:9px 0;background:#171a1f;border-radius:6px}
+.good{color:#66d19e}.bad{color:#ff8888}.muted{color:#aaa}
+.small{font-size:14px;color:#aaa}
+hr{border:0;border-top:1px solid #30343d;margin:20px 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="home">
+    <h1>🕵️ Dietro la Bugia</h1>
+    <div class="subtitle">Un mistero alla volta.</div>
+
+    <div class="card">
+      <h2>📰 Casi moderni reali</h2>
+      <p><b>Delitto di Cogne — 2002</b></p>
+      <p class="small">Caso reale con esito giudiziario. Alcuni elementi del caso sono stati oggetto di discussione pubblica.</p>
+      <button onclick="showCase('cogne')">Apri caso</button>
+    </div>
+
+    <div class="card">
+      <h2>🏛️ Casi storici reali</h2>
+      <p><b>Delitto Farrow — 1905</b></p>
+      <p class="small">Caso storico legato anche all'uso delle impronte digitali.</p>
+      <button onclick="showCase('farrow')">Apri caso</button>
+    </div>
+
+    <div class="card">
+      <h2>🤖 Misteri inventati dall'AI</h2>
+      <p><b>AI-001 — L'ultima notte</b></p>
+      <p class="small">Caso interattivo originale. Il colpevole è già stabilito e non cambia durante la partita.</p>
+      <button onclick="showCase('ultima')">🎮 Gioca</button>
+    </div>
+
+    <div class="card">
+      <h2>🔒 Premium</h2>
+      <p>Contenuti speciali in arrivo.</p>
+      <p class="small">Jack lo Squartatore e altri casi potranno essere aggiunti in futuro.</p>
+    </div>
+  </div>
+
+  <div id="case" class="hidden"></div>
+</div>
+
+<script>
+const casi = {
+cogne:{
+ titolo:"Delitto di Cogne — 2002",
+ tipo:"📰 Caso moderno reale",
+ testo:"Caso reale italiano. La vicenda riguarda la morte di Samuele Lorenzi a Cogne e ha avuto un lungo iter giudiziario, concluso con la condanna definitiva di Annamaria Franzoni.",
+ nota:"Questa versione è una scheda introduttiva del prototipo: prima della pubblicazione definitiva andranno aggiunte fonti e una ricostruzione documentata completa.",
+ fatti:[
+ "La morte avvenne nel 2002 a Cogne.",
+ "Il caso ebbe un lungo procedimento giudiziario.",
+ "La condanna di Annamaria Franzoni è divenuta definitiva nel 2008."
+ ]},
+farrow:{
+ titolo:"Delitto Farrow — 1905",
+ tipo:"🏛️ Caso storico reale",
+ testo:"Caso storico londinese del 1905, noto anche per il ruolo delle impronte digitali nell'indagine.",
+ nota:"Scheda prototipo: la ricostruzione completa e le fonti saranno aggiunte prima della pubblicazione definitiva.",
+ fatti:[
+ "Thomas Farrow e Ann Farrow furono aggrediti nella loro abitazione.",
+ "Thomas morì a seguito dell'aggressione e Ann morì successivamente.",
+ "L'indagine utilizzò anche elementi di identificazione tramite impronte."
+ ]},
+ultima:{
+ titolo:"AI-001 — L'ultima notte",
+ tipo:"🤖 Mistero inventato",
+ testo:"Andrea Rinaldi, 42 anni, viene trovato morto nello studio della sua villa. Quattro persone hanno qualcosa da nascondere.",
+ sospetti:[
+  {id:"marco",nome:"Marco Ferri",ruolo:"Socio in affari",info:"Ha problemi finanziari e sostiene di essere rimasto nello studio al telefono dalle 22:45 alle 23:30."},
+  {id:"elena",nome:"Elena Rinaldi",ruolo:"Moglie",info:"Dice di essere rimasta in camera da letto dalle 22:30 e di non essere più entrata nello studio."},
+  {id:"davide",nome:"Davide Moretti",ruolo:"Dipendente",info:"Dice di aver lasciato la villa alle 22:40."},
+  {id:"sofia",nome:"Sofia Bianchi",ruolo:"Ex socia",info:"Dice di essere arrivata alle 23:20, quando Andrea era già morto."}
+ ],
+ indizi:[
+  ["Messaggio delle 23:05","Andrea riceve: “Dobbiamo parlare. Adesso.” La risposta è: “Vieni nello studio.”"],
+  ["Testimonianza di Davide","Alle 23:09 sente due persone discutere. Riconosce una voce come quella di Elena."],
+  ["Bottone","Sotto la scrivania viene trovato un piccolo bottone compatibile con il cardigan di Elena."],
+  ["Paperweight","Il pesante fermacarte metallico presenta tracce che collegano Elena alla scena."],
+  ["Sofia","Sofia ammette di aver visto Elena nel corridoio alle 23:23."]
+ ],
+ timeline:[
+  "22:10 — Sofia entra di nascosto e recupera una busta.",
+  "22:17 — Marco arriva e discute con Andrea.",
+  "22:31 — Elena entra nello studio.",
+  "22:52 — Elena e Andrea litigano; Elena dice poi di essere andata in camera.",
+  "23:05 — Elena manda il messaggio ad Andrea.",
+  "23:09 — Davide sente una discussione.",
+  "23:12 — Elena entra nello studio.",
+  "23:16 — Andrea viene colpito mortalmente con il fermacarte.",
+  "23:20 — Sofia torna ufficialmente.",
+  "23:23 — Sofia vede Elena nel corridoio.",
+  "23:38 — Elena finge di trovare Andrea.",
+  "23:40 — Viene chiamato l'allarme."
+ ],
+ colpevole:"elena"
+}
+};
+
+let raccolti=[];
+let interrogati=[];
+let fase="";
+
+function el(id){return document.getElementById(id)}
+
+function showHome(){
+ el("case").classList.add("hidden");
+ el("home").classList.remove("hidden");
+ window.scrollTo(0,0);
+}
+
+function showCase(id){
+ const c=casi[id];
+ el("home").classList.add("hidden");
+ el("case").classList.remove("hidden");
+ if(id!=="ultima"){
+   el("case").innerHTML=`
+   <div class="card">
+    <span class="tag">${c.tipo}</span>
+    <h2>${c.titolo}</h2>
+    <p>${c.testo}</p>
+    <hr><h3>Elementi noti</h3>
+    ${c.fatti.map(x=>`<div class="clue">${x}</div>`).join("")}
+    <p class="small">${c.nota}</p>
+    <button class="secondary" onclick="showHome()">← Torna ai casi</button>
+   </div>`;
+ }else{
+   startGame();
+ }
+ window.scrollTo(0,0);
+}
+
+function startGame(){
+ raccolti=[];interrogati=[];
+ el("case").innerHTML=`
+ <div class="card">
+  <span class="tag">🤖 Mistero inventato</span>
+  <h2>${casi.ultima.titolo}</h2>
+  <p>${casi.ultima.testo}</p>
+  <p class="small">Obiettivo: ricostruisci la notte, raccogli prove, interroga i sospetti e accusa una persona solo quando sei convinto.</p>
+ </div>
+ <div class="card">
+  <h3>👥 Sospetti</h3>
+  ${casi.ultima.sospetti.map(s=>`
+    <div class="clue"><b>${s.nome}</b> — ${s.ruolo}<br><span class="small">${s.info}</span></div>
+    <button class="secondary" onclick="interroga('${s.id}')">Interroga ${s.nome}</button>
+  `).join("")}
+ </div>
+ <div class="card">
+  <h3>🔎 Indizi</h3>
+  <p class="small">Gli indizi vengono sbloccati durante l'indagine.</p>
+  <div id="indizi"></div>
+ </div>
+ <div class="card">
+  <h3>🕐 Timeline</h3>
+  <button class="secondary" onclick="mostraTimeline()">Ricostruisci la timeline</button>
+  <div id="timeline"></div>
+ </div>
+ <div class="card">
+  <h3>⚖️ Accusa finale</h3>
+  <p class="small">Puoi accusare quando vuoi, ma raccogliere più elementi rende la deduzione più solida.</p>
+  ${casi.ultima.sospetti.map(s=>`<button class="danger" onclick="accusa('${s.id}')">Accusa ${s.nome}</button>`).join("")}
+ </div>
+ <button class="secondary" onclick="showHome()">← Torna ai casi</button>`;
+ aggiornaIndizi();
+}
+
+function interroga(id){
+ if(!interrogati.includes(id)) interrogati.push(id);
+ const risposte={
+ marco:"Conferma di essere stato al telefono, ma ammette di essersi allontanato per circa dodici minuti per cercare documenti nell'archivio.",
+ elena:"Ripete di essere rimasta in camera. Evita però di parlare del messaggio delle 23:05 e della discussione successiva.",
+ davide:"Dice di essere rimasto fuori più a lungo del previsto. Alle 23:09 ha sentito due persone discutere e riconosce una voce come quella di Elena.",
+ sofia:"Inizialmente nasconde di essere entrata prima delle 23:20. Poi ammette di aver visto Elena nel corridoio alle 23:23."
+ };
+ alert(risposte[id]);
+ aggiornaIndizi();
+}
+
+function aggiornaIndizi(){
+ const n=interrogati.length;
+ let max=Math.min(5,2+n);
+ const lista=casi.ultima.indizi.slice(0,max);
+ el("indizi").innerHTML=lista.map((x,i)=>`<div class="clue"><b>${x[0]}</b><br>${x[1]}</div>`).join("");
+}
+
+function mostraTimeline(){
+ el("timeline").innerHTML=casi.ultima.timeline.map(x=>`<div class="clue">${x}</div>`).join("");
+}
+
+function accusa(id){
+ if(id===casi.ultima.colpevole){
+  el("case").innerHTML=`
+   <div class="card">
+    <h2 class="good">🎉 Caso risolto!</h2>
+    <p>Hai accusato <b>Elena Rinaldi</b>.</p>
+    <p>La ricostruzione corretta è: Elena aveva mentito sul proprio alibi, aveva incontrato Andrea nello studio alle 23:12 e lo aveva colpito alle 23:16.</p>
+    <hr><h3>🔍 Gli errori decisivi</h3>
+    <div class="clue">Il messaggio delle 23:05.</div>
+    <div class="clue">La voce riconosciuta da Davide.</div>
+    <div class="clue">Il bottone del cardigan.</div>
+    <div class="clue">Le tracce sul fermacarte.</div>
+    <div class="clue">La presenza di Elena nel corridoio alle 23:23.</div>
+    <button onclick="startGame()">🔄 Gioca di nuovo</button>
+    <button class="secondary" onclick="showHome()">← Torna ai casi</button>
+   </div>`;
+ }else{
+  alert("Accusa non corretta. Il caso non è ancora risolto: continua a cercare contraddizioni e prove.");
+ }
+}
+</script>
+</body>
+</html>
