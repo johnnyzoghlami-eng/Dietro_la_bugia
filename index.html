@@ -32,7 +32,6 @@
   .diff-box { margin:15px 0; background:#191e28; padding:15px; border-radius:12px; border:1px solid #303746; text-align:center; }
   .diff-btn { width: 100%; padding: 12px; margin: 6px 0; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; font-weight:bold; cursor:pointer; text-align:left; box-sizing:border-box; }
   .diff-btn:hover { border-color:#7057e8; background:#382d73; }
-  .key-box { background:#161a23; border:1px solid #3f4b60; padding:12px; border-radius:10px; margin-bottom:15px; }
 </style>
 </head>
 <body>
@@ -41,15 +40,6 @@
   <section id="home" class="active">
     <h1 class="center">🕵️ Dietro la Bugia</h1>
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
-
-    <div class="key-box">
-      <label class="small"><b>🔑 Inserisci la tua API Key di Google AI Studio:</b></label>
-      <div class="row" style="margin-top:6px;">
-        <input type="password" id="api-key-input" placeholder="Incolla qui la chiave (es. AIzaSy...)">
-        <button onclick="saveApiKey()">Salva</button>
-      </div>
-      <div id="key-status" class="small" style="margin-top:4px; color:#4ef064;"></div>
-    </div>
 
     <div class="card">
       <h2>🤖 AI-001 — L'ultima notte</h2>
@@ -193,26 +183,9 @@
 </div>
 
 <script>
-let API_KEY = localStorage.getItem('gemini_api_key') || "";
+// Chiave API predefinita e integrata direttamente nel codice
+const API_KEY = "AQ.Ab8RN6I7Lx6xdvECQwIwOpebDlVridG3EfKCzpx4IjWFV30pVA";
 let difficulty = 'easy';
-
-window.addEventListener('DOMContentLoaded', () => {
-  if (API_KEY) {
-    document.getElementById('api-key-input').value = API_KEY;
-    document.getElementById('key-status').textContent = "✅ Chiave API salvata in memoria.";
-  }
-});
-
-function saveApiKey() {
-  let val = document.getElementById('api-key-input').value.trim();
-  if (!val) {
-    alert("Inserisci una chiave valida.");
-    return;
-  }
-  API_KEY = val;
-  localStorage.setItem('gemini_api_key', API_KEY);
-  document.getElementById('key-status').textContent = "✅ Chiave salvata con successo!";
-}
 
 const CASES = {
   ai001: {
@@ -326,10 +299,6 @@ let cur = '', ev = [], notes = [], times = [], done = {};
 let chatHistory = {};
 
 function selectCase(key) {
-  if (!API_KEY) {
-    alert("Attenzione: Inserisci prima la tua API Key di Google AI Studio nella schermata principale!");
-    return;
-  }
   currentCaseKey = key;
   currentCase = CASES[key];
   chatHistory = {}; 
