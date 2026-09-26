@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dietro la Bugia</title>
+<title>Dietro la Bugia - AI Powered</title>
 <style>
   body { margin:0; font-family:Arial, sans-serif; background:#10131a; color:#eee; }
   .wrap { max-width:900px; margin:auto; padding:18px; }
@@ -11,10 +11,11 @@
   section.active { display:block; }
   .card { background:#191e28; border:1px solid #303746; border-radius:14px; padding:16px; margin:12px 0; }
   button { background:#7057e8; color:white; border:0; border-radius:9px; padding:11px 14px; font-weight:bold; margin:4px; cursor:pointer; }
+  button:disabled { background:#4a3f82; cursor:not-allowed; }
   button.sec { background:#29303c; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
   .chat { height:380px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
-  .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; }
+  .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; }
   .me { margin-left:auto; background:#513bb0; }
   .them { background:#29303c; }
   input, textarea { width:100%; box-sizing:border-box; background:#11151d; color:white; border:1px solid #394252; border-radius:9px; padding:11px; }
@@ -27,6 +28,7 @@
   .item { background:#222936; padding:11px; border-radius:9px; margin:7px 0; }
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
+  .api-box { background:#1f2633; border:1px solid #7057e8; padding:12px; border-radius:8px; margin-bottom:15px; }
 </style>
 </head>
 <body>
@@ -34,7 +36,14 @@
 
   <section id="home" class="active">
     <h1 class="center">🕵️ Dietro la Bugia</h1>
-    <p class="center small">Ogni verità lascia una traccia. Scegli un caso ed entra nella sala interrogatori.</p>
+    <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
+    
+    <div class="api-box">
+      <label><b>🔑 Chiave API Gemini:</b></label>
+      <input type="password" id="api-key" placeholder="Incolla qui la tua API Key di Google Gemini..." onchange="saveApiKey()">
+      <p class="small" style="margin-top:5px; margin-bottom:0;">Inserisci la tua API Key per far rispondere i sospetti tramite IA. (Viene salvata nel browser).</p>
+    </div>
+
     <div class="card">
       <h2>🤖 AI-001 — L'ultima notte</h2>
       <p>Caso d'inventiva moderno. Un giallo d'atmosfera con un delitto in una villa isolata.</p>
@@ -57,28 +66,10 @@
     </div>
   </section>
 
-  <section id="tutorial">
-    <h2>🎓 Corso Accelerato d'Investigazione</h2>
-    <div id="tut" class="card"></div>
-    <button onclick="nextTut()">Avanti</button>
-  </section>
-
-  <section id="mode">
-    <h2>🎯 Modalità di Gioco</h2>
-    <div class="card">
-      <button onclick="help=true;show('intro')">💡 Con Aiuti (Consigliato per iniziare)</button>
-      <p class="small">I sospetti avranno pulsanti con suggerimenti per le domande da porre.</p>
-    </div>
-    <div class="card">
-      <button class="sec" onclick="help=false;show('intro')">🧠 Detective Esperto (Senza Aiuti)</button>
-      <p class="small">Dovrai digitare tu ogni domanda usando parole chiave (es. orario, sangue, soldi, alibi, testimoni).</p>
-    </div>
-  </section>
-
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
-    <div class="notice">I dialoghi degli interrogatori rimarranno salvati. Puoi tornare a rileggerli o continuare le domande in qualsiasi momento.</div>
+    <div class="notice">I dialoghi degli interrogatori rimarranno salvati e l'IA ricordera tutto quello che le hai detto.</div>
     <button onclick="show('investigation')">🔎 Inizia l'Indagine</button>
   </section>
 
@@ -95,22 +86,22 @@
       <button class="sec" onclick="show('acc')">⚖️ Formula Accusa</button>
     </div>
     <br>
-    <button class="sec" onclick="show('home')">🏠 Torna alla Selezione Casi</button>
+    <button class="sec" onclick="show('home')">🏠 Torna al Menu</button>
   </section>
 
   <section id="inter">
-    <h2>🗣️ Stanza Interrogatori</h2>
+    <h2>🗣️ Stanza Interrogatori (IA)</h2>
     <div class="card center">
       <div id="expr" class="expr">😐</div>
       <b id="who"></b>
-      <p id="mood" class="small"></p>
+      <p id="mood" class="small">Risposte generate in tempo reale dall'IA.</p>
     </div>
     <div id="chat" class="chat"></div>
-    <div id="suggest" class="grid"></div>
-    <div class="row">
-      <input id="q" placeholder="Chiedi di alibi, orari, sangue, movente, testimoni..." onkeydown="if(event.key==='Enter')send()">
-      <button onclick="send()">Invia</button>
+    <div class="row" style="margin-top:10px;">
+      <input id="q" placeholder="Fai qualsiasi domanda al sospetto..." onkeydown="if(event.key==='Enter')send()">
+      <button id="send-btn" onclick="send()">Invia</button>
     </div>
+    <br>
     <button class="sec" onclick="show('investigation')">← Torna all'Indagine</button>
   </section>
 
@@ -126,7 +117,6 @@
 
   <section id="board">
     <h2>📌 Bacheca Personale Detective</h2>
-    <p class="small">Annota le incongruenze notate negli interrogatori per non dimenticarle.</p>
     <textarea id="note" placeholder="Scrivi una nota di deduzione..."></textarea>
     <button onclick="addNote()">➕ Aggiungi Nota</button>
     <div id="notes"></div>
@@ -135,7 +125,6 @@
 
   <section id="time">
     <h2>🕒 Ricostruzione Cronologica</h2>
-    <p class="small">Inserisci gli eventi in ordine di orario per verificare gli alibi dei sospetti.</p>
     <textarea id="te" placeholder="Es. 08:16 — Uscita dalla villetta"></textarea>
     <button onclick="addTime()">➕ Aggiungi Evento</button>
     <div id="times"></div>
@@ -180,41 +169,11 @@ const CASES = {
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
-    initialMsgs: {
-      Marco: 'Sono devastato. Andrea era il mio socio, non l\'avrei mai toccato.',
-      Elena: 'È un incubo. Eravamo sposati da 10 anni, anche se avevamo qualche problema.',
-      Davide: 'Io sono solo il custode. Lavoro qui da anni e faccio il mio dovere.',
-      Sofia: 'Ero la sua consulente finanziaria. La nostra era solo un\'intesa professionale!'
-    },
-    suggests: {
-      Marco: ['Dove eri tra le 23 e le 23:30?', 'Hai visto Elena nel corridoio?', 'Cosa sai dei problemi finanziari?'],
-      Elena: ['A che ora sei andata a dormire?', 'Hai inviato messaggi ad Andrea?', 'Di chi è il bottone trovato?'],
-      Davide: ['Hai sentito discussioni la notte del delitto?', 'A che ora sei andato via?'],
-      Sofia: ['Quali erano i tuoi rapporti finanziari?', 'Hai visto qualcuno uscire dallo studio?']
-    },
-    dialogues: {
-      Marco: {
-        alibi: "Tra le 23:00 e le 23:30 ero in archivio a cercare contratti aziendali. Nessuno può confermarlo purtroppo.",
-        soldi: "L'azienda stava perdendo colpi. Andrea voleva estromettere Sofia per sospetta malversazione.",
-        elena: "Elena e Andrea litigavano continuamente. La notte del delitto l'ho vista nervosa verso le 23:00.",
-        default: "Nello studio c'erano molti documenti sparsi. Non ho visto chi è entrato dopo le 22:50."
-      },
-      Elena: {
-        alibi: "Ero in camera da letto a leggere. Non sono mai scesa nello studio dopo cena!",
-        telefono: "Sì, gli ho inviato un messaggio alle 23:05, ma solo per chiedergli quando sarebbe salito...",
-        bottone: "Quel cardigan? Mi si è incastrato nella porta del corridoio giorni fa, non c'entra con la morte!",
-        default: "Siete fuori strada, cercate tra i suoi soci d'affari piuttosto che accusare la moglie!"
-      },
-      Davide: {
-        alibi: "Ero nella garconnière esterna. Sono uscito dalla villa principale verso le 22:40.",
-        sentito: "Alle 23:09 sono rientrato nel corridoio per prendere le chiavi e ho sentito una voce femminile urlare nello studio.",
-        default: "I signori Rinaldi urlavano spesso. Quella sera la voce sembrava decisamente quella della Signora Elena."
-      },
-      Sofia: {
-        alibi: "Sono arrivata alle 22:10 e me ne sono andata verso le 23:20 dopo aver controllato i bilanci.",
-        elena: "Alle 23:23, mentre uscivo dall'ingresso secondario, ho incrociato Elena che si sistemava i capelli in fretta.",
-        default: "Andrea voleva verificare i conti, ma non c'era alcuna tensione irreparabile tra noi."
-      }
+    prompts: {
+      Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Sai che l'azienda perdeva soldi e che Elena e Andrea litigavano spesso. Rispondi alle domande del detective rimanendo nel personaggio, con un tono un po' teso ma collaborativo. Massimo 2-3 frasi.",
+      Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei la COLPEVOLE. Alle 23:12 sei andata nello studio, avete litigato per il divorzio, l'hai colpito alle 23:16 con il fermacarte metallico lasciando un bottone del tuo cardigan. Mentirai sostenendo che eri in camera da letto a leggere. Se ti mostrano prove schiaccianti, inizia a innervosirti. Massimo 2-3 frasi.",
+      Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Eri nella dependance ma alle 23:09 sei rientrato nel corridoio e hai sentito una voce di donna urlare nello studio (era Elena). Sei un tipo schietto e formale. Massimo 2-3 frasi.",
+      Sofia: "Sei Sofia Bianchi, la consulente finanziaria. Sei INNOCENTE. Sei uscita dalla villa alle 23:20 e hai incrociato Elena nel corridoio che si sistemava i capelli in fretta. Rispondi in modo professionale ed elegante. Massimo 2-3 frasi."
     },
     tests: {
       autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Autopsia: Deceso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
@@ -224,152 +183,50 @@ const CASES = {
     },
     correctCulprit: 'Elena',
     requiredEvidences: ['autopsy', 'phone', 'paperweight'],
-    solutionText: "<h3>Incolpata: Elena Rinaldi</h3><p>Alle 23:05 invia un SMS per pretendere un chiarimento sulla separazione. Raggiunge lo studio alle 23:12, scoppia un violento diverbio sentito da Davide. Alle 23:16 afferra il fermacarte e colpisce il marito. Nel farlo perde un bottone. Viene vista nel corridoio da Sofia alle 23:23 mentre cerca di ricomporsi.</p>"
+    solutionText: "<h3>Incolpata: Elena Rinaldi</h3><p>Alle 23:05 invia un SMS per pretendere un chiarimento sulla separazione. Raggiunge lo studio alle 23:12, scoppia un violento diverbio. Alle 23:16 afferra il fermacarte e colpisce il marito, perdendo un bottone.</p>"
   },
   cogne: {
     title: "📰 Delitto di Cogne (2002)",
     desc: "<b>Vittima:</b> Samuele Lorenzi (3 anni).<br>Avvenuto la mattina del 30 gennaio 2002 nella frazione di Montroz.",
     place: "Villetta di Montroz, Cogne",
-    sceneNotice: "Analisi scientifica avanzata: test BPA (Bioluminescenza e macchie di sangue), orari dei soccorsi e verbali 118.",
-    objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante', '📞 Registrazione chiamata 118'],
-    suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi (Vicino)' },
-    initialMsgs: {
-      Annamaria: 'Mio figlio stava bene! Sono solo uscita per accompagnare Davide allo scuolabus alle 8:16 e quando sono tornata alle 8:24 ho trovato il disastro!',
-      Ada: 'Sono stata la prima ad arrivare. Ho pensato a un aneurisma o a una ferita alla testa, ho cercato solo di aiutarlo e pulirgli il viso.',
-      Ulisse: 'Ho sentito le urla di Annamaria, sono corso su. La porta era aperta ma sulla neve fuori non c\'erano impronte di estranei.'
-    },
-    suggests: {
-      Annamaria: ['Cosa indossavi quando sei uscita alle 8:16?', 'Perché il pigiama era sul letto?', 'Cosa hai fatto appena sei rientrata?'],
-      Ada: ['Perché hai lavato il viso al bambino?', 'Perché hai spostato il corpo sul letto?'],
-      Ulisse: ['Hai notato qualcuno sulla strada per la villetta?']
-    },
-    dialogues: {
-      Annamaria: {
-        orari: "Sono uscita esattamente alle 8:16 per il bus di Davide e sono rientrata alle 8:24. Solo 8 minuti! In 8 minuti un estraneo è entrato e ha fatto questo!",
-        pigiama: "Il pigiama? L'ho tolto prima di uscire... o forse era sul letto, ero agitata e sfinita dalla stanchezza!",
-        sangue: "Non ho spiegazioni per le macchie. Io ho solo preso il bambino in braccio per proteggerlo!",
-        default: "Nessuno vuol credere alla mia innocenza, ho perso mio figlio!"
-      },
-      Ada: {
-        orari: "Annamaria mi ha chiamato verso le 8:25 dicendo che a Samuele era 'scoppiato il testa'. Sono corsa subito.",
-        soccorsi: "Sì, ho pulito il viso e spostato il bambino per praticare la respirazione. Non pensavo ad un'aggressione brutale all'inizio.",
-        default: "Ero convinta fosse una causa naturale, un evento cerebrale devastante."
-      },
-      Ulisse: {
-        orari: "Ero fuori casa alle 8:15. Nessun veicolo sconosciuto o persona sospetta è passata per l'unica strada di Montroz.",
-        impronte: "La neve attorno alla casa era intonsa, tranne le traccie di Annamaria che andavano verso la fermata dello scuolabus.",
-        default: "È una tragedia incomprensibile per tutta la nostra comunità."
-      }
+    sceneNotice: "Analisi scientifica avanzata: test BPA, orari dei soccorsi e verbali 118.",
+    objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
+    suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
+    prompts: {
+      Annamaria: "Sei Annamaria Franzoni. Sei la colpevole ma ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio allo scuolabus e di essere tornata alle 8:24 trovando il bambino ferito. Piangi, sii drammatica e nega qualsiasi coinvolgimento. Massimo 2-3 frasi.",
+      Ada: "Sei la dottoressa Ada Satragni, medico curante arrivata per prima. Pensavi a un aneurisma cerebrale, hai lavato il viso al bambino per aiutarlo. Rispondi con tono medico ma difensivo per la tua buona fede. Massimo 2-3 frasi.",
+      Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Sostieni che sulla neve non c'erano impronte di estranei verso la villetta. Rispondi con tono calmo e dispiaciuto. Massimo 2-3 frasi."
     },
     tests: {
-      bpa: { name: '🩸 Perizia BPA (Bloodstain Pattern Analysis)', desc: 'Le micro-gocce a proiettile sul soffitto indicano che i colpi sono stati inferti da chi si trovava sopra il letto matrimoniale.' },
-      timing: { name: '⏱️ Studio della Finestra Temporale (8 minuti)', desc: 'Intervallo tra 8:16 e 8:24 troppo breve per la penetrazione e fuga di un estraneo senza lasciare tracce sulla neve.' },
-      pijama: { name: '👕 Perizia sul Pigiama della Madre', desc: 'Tracce di schizzi ematici da impatto e frammenti ossei posizionano il pigiama sul luogo del delitto durante l\'aggressione.' }
+      bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce a proiettile sul soffitto indicano che i colpi sono stati inferti da chi si trovava sopra il letto.' },
+      timing: { name: '⏱️ Finestra Temporale (8 min)', desc: 'Intervallo tra 8:16 e 8:24 troppo breve per la penetrazione di un estraneo senza lasciare tracce.' },
+      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici da impatto posizionano il pigiama sulla scena al momento dell\'aggressione.' }
     },
     correctCulprit: 'Annamaria',
     requiredEvidences: ['bpa', 'timing', 'pijama'],
-    solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie scientifiche sulla traiettoria degli schizzi di sangue (BPA) hanno stabilito che l'aggressore indossava il pigiama e si trovava sul letto al momento dei colpi, escludendo l'intervento di estranei nella finestra temporale di 8 minuti.</p>"
-  },
-  farrow: {
-    title: "🏛️ Delitto Farrow (Deptford, 1905)",
-    desc: "<b>Vittime:</b> Thomas e Ann Farrow.<br>Anziani proprietari di un negozio di panni massacrati a bastonate a Londra.",
-    place: "Deptford High Street, Londra (1905)",
-    sceneNotice: "Tecnologie del 1905: Metodo antropometrico Bertillon, calchi in gesso e le primissime impronte digitali (Sistema Henry).",
-    objects: ['🪙 Cassetta di ferro aperta e svuotata', '🪵 Bastone da passeggio spezzato', '🧦 Maschere improvvisate da calze'],
-    suspects: { Alfred: 'Alfred Stratton (22 anni)', Albert: 'Albert Stratton (20 anni)', Hannah: 'Hannah Cromarty' },
-    initialMsgs: {
-      Alfred: 'Io e mio fratello non c\'entriamo nulla con Deptford! La polizia ce l\'ha con noi perché siamo poveri.',
-      Albert: 'Eravamo nei pub a bere tutta la notte. Non ho mai visto quella cassetta di ferro in vita mia.',
-      Hannah: 'Alfred è tornato a casa la mattina presto del 27 marzo... tremava e si è cambiato subito le scarpe.'
-    },
-    suggests: {
-      Alfred: ['Dove hai preso le monete d\'oro che spendevi il giorno dopo?', 'Hai mai toccato quella cassetta di ferro?', 'Conosci il bastone trovato nel negozio?'],
-      Albert: ['A che ora sei tornato a casa?', 'Perché hai bruciato la tua giacca?'],
-      Hannah: ['Cosa ha portato Alfred a casa quella mattina?', 'Cosa ti ha detto di dire agli agenti?']
-    },
-    dialogues: {
-      Alfred: {
-        soldi: "I soldi che avevo al pub? Ho vinto alle scommesse sui cani, non ho rubato nulla!",
-        impronte: "Impronte? Cos'è questa diavoleria moderna? Io non ho mai toccato quella maledetta cassetta!",
-        alibi: "Dormivo nella mia stanza fino a tardi, chiedere a mio fratello per conferma.",
-        default: "Scotland Yard si sta inventando delle storie per mandarci alla forca!"
-      },
-      Albert: {
-        giacca: "La mia giacca era vecchia e sporca d'olio, l'ho buttata nel stufa per quello!",
-        fratello: "Alfred era con me, ma ci siamo separati per un'ora verso l'alba di lunedì.",
-        default: "Non abbiamo fatto del male a quei poveri vecchietti."
-      },
-      Hannah: {
-        mattina: "Alfred è arrivato verso le 7:30. Aveva della valuta in sterline che non aveva mai visto prima e mi ha detto di stare zitta.",
-        abiti: "Gli ho visto lavare del fango scuro e macchie brune dai pantaloni nel catino d'acqua.",
-        default: "Ho troppa paura di Alfred per dire altro agli ispettori..."
-      }
-    },
-    tests: {
-      fingerprint: { name: '🔍 Impronta Digitale (Metodo Galton-Henry)', desc: 'L\'impronta del pollice destro trovata sulla cassetta di ferro svuotata corrisponde perfettamente a quella di Alfred Stratton.' },
-      witness: { name: '👁️ Testimonianza del Lattaio e del Militare', desc: 'Avvistati due uomini con le descrizioni dei fratelli Stratton uscire di corsa dal negozio Farrow alle 7:15 del mattino.' },
-      clothes: { name: '🧥 Reperimento Abiti Bruciati', desc: 'I resti della giacca di Albert presentano tracce di grasso e sangue compatibili con la scena del crimine.' }
-    },
-    correctCulprit: 'Alfred',
-    requiredEvidences: ['fingerprint', 'witness', 'clothes'],
-    solutionText: "<h3>Verità Storica: Fratelli Alfred e Albert Stratton</h3><p>È stato il primo caso della storia britannica in cui la prova decisiva per un'esecuzione fu l'impronta digitale. L'impronta di Alfred lasciata sulla cassetta di ferro della bottega condannò a morte entrambi i fratelli nel maggio 1905.</p>"
-  },
-  jack: {
-    title: "🔍 Jack lo Squartatore (Whitechapel, 1888)",
-    desc: "<b>Vittima:</b> Catherine Eddowes.<br>Uccisa nella notte del 'Doppio Evento' a Mitre Square.",
-    place: "Whitechapel, Londra (Autunno 1888)",
-    sceneNotice: "Tecnologia Vittoriana: Lanterne ad olio, autopsia chirurgica visiva, assenza di analisi scientifiche molecolari.",
-    objects: ['🧺 Pezzo di grembiule insanguinato a Goulston St.', '✉️ Lettera anonima con inchiostro rosso', '🔪 Coltello a lama stretta da macellaio'],
-    suspects: { Kosminski: 'Aaron Kosminski (Barbiere)', Druitt: 'Montague John Druitt', Ostrog: 'Michael Ostrog' },
-    initialMsgs: {
-      Kosminski: 'Io sono solo un povero barbiere di Mile End. Sento delle voci nella mia testa, ma non faccio del male alle donne!',
-      Druitt: 'Sono un insegnante e avvocato di buona famiglia. Mia madre soffriva di mania, ma io sono lucido.',
-      Ostrog: 'Sono un medico e uno scienziato russo! La polizia mi perseguita solo per i miei piccoli precedenti di truffa!'
-    },
-    suggests: {
-      Kosminski: ['Dove ti trovavi verso l\'una di notte a Mitre Square?', 'Perché avevi un coltello da barbiere affilato?', 'Cosa ci facevi in Goulston Street?'],
-      Druitt: ['Perché ti trovavi nel quartiere di Whitechapel?', 'Hai nozioni di anatomia?'],
-      Ostrog: ['Dove si trovavano i tuoi strumenti da chirurgo?']
-    },
-    dialogues: {
-      Kosminski: {
-        alibi: "Vagavo per le strade di Whitechapel. La notte non riesco a dormire, le voci mi dicono di camminare...",
-        grembiule: "Goulston Street è vicino a dove vive mia sorella. Passavo di lì, ma non ho buttato io quella stoffa sporca!",
-        coltello: "Uso i rasoi per lavoro nella bottega, tutti i barbieri ne hanno uno affilato!",
-        default: "Mi volete rinchiudere in manicomio, lo so... ma io ho paura del sangue!"
-      },
-      Druitt: {
-        alibi: "Quella notte ero nella mia residenza a Blackheath dopo una partita di cricket. Nessuno mi ha visto a Whitechapel.",
-        anatomia: "Mio padre era un chirurgo, conosco dei concetti di base, ma non ho mai praticato la medicina.",
-        default: "Questa storia rovinera la mia reputazione e la mia carriera di insegnante..."
-      },
-      Ostrog: {
-        alibi: "Ero ricoverato in una casa di cura in Francia in quelle settimane! La polizia di Londra mente sul mio conto!",
-        coltello: "Non ho strumenti medici con me, me li hanno sequestrati durante il mio ultimo arresto.",
-        default: "Non sono un assassino di donne, sono un gentiluomo caduto in disgrazia!"
-      }
-    },
-    tests: {
-      autopsy: { name: '🩺 Autopsia del Dr. Gordon Brown (1888)', desc: 'L\'assassino possiede grande destrezza manuale e nozioni di anatomia per la rimozione rapida degli organi al buio.' },
-      apron: { name: '🧼 Pezzo di Grembiule di Goulston Street', desc: 'Trovato vicino alla scritta contro gli ebrei. Unisce Mitre Square al quartiere dove risiede Kosminski.' },
-      patrol: { name: '🕒 Verbali di Ronda Agente Watkins', desc: 'Mitre Square controllata alle 1:30 (vuota). Corpo trovato alle 1:45. L\'assassino conosceva perfettamente i tempi della polizia.' }
-    },
-    correctCulprit: 'Kosminski',
-    requiredEvidences: ['autopsy', 'apron', 'patrol'],
-    solutionText: "<h3>Principale Sospetto Storico: Aaron Kosminski</h3><p>Anche se il caso è ufficialmente irrisolto, gli alti vertici di Scotland Yard dell'epoca (Sir Robert Anderson e l'ispettore Swanson) individuarono in Kosminski il sospetto numero uno, internato in manicomio poco dopo la fine dei delitti.</p>"
+    solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie scientifiche BPA hanno stabilito che l'aggressore indossava il pigiama e si trovava sul letto al momento dei colpi.</p>"
   }
 };
 
 let currentCaseKey = 'ai001';
 let currentCase = CASES.ai001;
+let cur = '', ev = [], notes = [], times = [], done = {};
+let chatHistory = {}; // Mantiene la cronologia per l'API di Gemini
 
-let help=false, cur='', press={}, ev=[], notes=[], times=[], done={}, step=0;
-let chatLogs = {}; // Memorizza le conversazioni di ciascun sospetto
+window.onload = function() {
+  let savedKey = localStorage.getItem('gemini_api_key');
+  if (savedKey) document.getElementById('api-key').value = savedKey;
+}
+
+function saveApiKey() {
+  let key = document.getElementById('api-key').value.trim();
+  localStorage.setItem('gemini_api_key', key);
+}
 
 function selectCase(key) {
   currentCaseKey = key;
   currentCase = CASES[key];
-  chatLogs = {}; // Reset chat per il nuovo caso
+  chatHistory = {}; 
   
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-desc').innerHTML = currentCase.desc;
@@ -395,8 +252,7 @@ function selectCase(key) {
   }
 
   document.getElementById('sol-text').innerHTML = currentCase.solutionText;
-  
-  start();
+  show('intro');
 }
 
 function show(id) {
@@ -408,42 +264,6 @@ function show(id) {
   if (id === 'acc') renderAE();
 }
 
-function start() {
-  help = false;
-  cur = '';
-  press = {};
-  for(let k in currentCase.suspects) press[k] = 0;
-  ev = [];
-  notes = [];
-  times = [];
-  done = {};
-  step = 0;
-  
-  document.getElementById('ec').textContent = '0';
-  document.getElementById('results').innerHTML = '';
-  renderNotes();
-  renderTimes();
-  
-  show('tutorial');
-  tut();
-}
-
-function tut() {
-  let a = [
-    '<b>1. Analisi del Caso:</b> Ogni storia ha indizi scientifici coerenti con la propria epoca storica.',
-    '<b>2. Interrogatorio Dinamico:</b> Fai domande scritte su argomenti chiave (es: orario, alibi, sangue, soldi, testimoni).',
-    '<b>3. Livello di Pressione:</b> Più incalzi il sospetto sulle sue contraddizioni, più questo diventerà nervoso e cederà.',
-    '<b>4. Rilievo Reperti:</b> Vai nella sezione "Scena" per sbloccare le perizie e raccogliere le prove necessarie.',
-    '<b>5. Formulazione Accusa:</b> Collega il giusto sospetto alle prove raccolte per ottenere una condanna!'
-  ];
-  document.getElementById('tut').innerHTML = '<b>Modulo Guida ' + (step + 1) + ' di 5</b><p>' + a[step] + '</p>';
-}
-
-function nextTut() {
-  if (step < 4) { step++; tut(); } 
-  else show('mode');
-}
-
 function inter(s) {
   cur = s;
   show('inter');
@@ -452,31 +272,16 @@ function inter(s) {
   const chatDiv = document.getElementById('chat');
   chatDiv.innerHTML = '';
   
-  // Se non esiste ancora una cronologia salvata per questo sospetto, inizializzala
-  if (!chatLogs[s]) {
-    chatLogs[s] = [];
-    addMsgToLog(s, 'them', currentCase.initialMsgs[s] || 'Non ho nulla da dichiarare.');
+  if (!chatHistory[s]) {
+    chatHistory[s] = [];
   }
   
-  // Rendi visibile l'intera cronologia salvata
-  chatLogs[s].forEach(m => renderMsg(m.sender, m.text));
-  
-  document.getElementById('suggest').innerHTML = '';
-  if (help && currentCase.suggests[s]) {
-    currentCase.suggests[s].forEach(q => {
-      let b = document.createElement('button');
-      b.className = 'sec';
-      b.textContent = q;
-      b.onclick = () => { document.getElementById('q').value = q; send(); };
-      document.getElementById('suggest').appendChild(b);
-    });
-  }
-  mood();
-}
-
-function addMsgToLog(suspect, sender, text) {
-  if (!chatLogs[suspect]) chatLogs[suspect] = [];
-  chatLogs[suspect].push({ sender: sender, text: text });
+  // Ripristina messaggi salvati
+  chatHistory[s].forEach(m => {
+    if (m.role !== 'system') {
+      renderMsg(m.role === 'user' ? 'me' : 'them', m.parts[0].text);
+    }
+  });
 }
 
 function renderMsg(c, t) {
@@ -488,53 +293,58 @@ function renderMsg(c, t) {
   chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-function send() {
-  let qInput = document.getElementById('q');
-  let s = qInput.value.trim();
-  if (!s) return;
-  qInput.value = '';
-  
-  // Salva e visualizza il messaggio del giocatore
-  addMsgToLog(cur, 'me', s);
-  renderMsg('me', s);
-  
-  let l = s.toLowerCase();
-  press[cur] = (press[cur] || 0) + 1;
-  
-  let rep = reply(l);
-  
-  // Salva e visualizza la risposta del sospetto
-  addMsgToLog(cur, 'them', rep);
-  renderMsg('them', rep);
-  
-  mood();
-}
-
-function reply(q) {
-  let d = currentCase.dialogues[cur];
-  if (!d) return "Non ho risposte da darvi su questo argomento.";
-  
-  if (/dove|orari|ora|alibi|quand|uscita|rientro/.test(q) && d.alibi) return d.alibi;
-  if (/soldi|denaro|bilanc|finanz|pover|sterlin/.test(q) && d.soldi) return d.soldi;
-  if (/sangue|macchi|pigiama|vestit|grembiul|giacca/.test(q) && (d.sangue || d.giacca || d.abiti || d.grembiule)) return d.sangue || d.giacca || d.abiti || d.grembiule;
-  if (/elena|fratello|anatomia|soccors|impront|telefono|bottone/.test(q)) {
-    if (d.elena) return d.elena;
-    if (d.fratello) return d.fratello;
-    if (d.anatomia) return d.anatomia;
-    if (d.soccorsi) return d.soccorsi;
-    if (d.impronte) return d.impronte;
-    if (d.telefono) return d.telefono;
-    if (d.bottone) return d.bottone;
+async function send() {
+  let apiKey = localStorage.getItem('gemini_api_key');
+  if (!apiKey) {
+    alert("Inserisci prima la tua API Key di Google Gemini nella schermata iniziale!");
+    return;
   }
-  
-  return d.default || "Continuo a ripetere che sono estraneo a questi fatti.";
-}
 
-function mood() {
-  let p = press[cur] || 0;
-  let e = p >= 4 ? '😨' : (p >= 2 ? '😟' : '😐');
-  document.getElementById('expr').textContent = e;
-  document.getElementById('mood').textContent = p >= 4 ? 'È sotto forte pressione ed esita prima di rispondere.' : (p >= 2 ? 'Inizia a mostrare nervosismo.' : 'Atteggiamento distaccato e controllato.');
+  let qInput = document.getElementById('q');
+  let qText = qInput.value.trim();
+  if (!qText) return;
+
+  let sendBtn = document.getElementById('send-btn');
+  qInput.value = '';
+  qInput.disabled = true;
+  sendBtn.disabled = true;
+
+  // Aggiungi e mostra domanda dell'utente
+  renderMsg('me', qText);
+  
+  if (!chatHistory[cur]) chatHistory[cur] = [];
+  chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
+
+  // Prepara la richiesta per l'API di Gemini
+  let systemPrompt = currentCase.prompts[cur];
+  
+  let contents = [
+    { role: 'user', parts: [{ text: "ISTRUZIONI DI RUOLO: " + systemPrompt }] },
+    { role: 'model', parts: [{ text: "Ho capito. Sono pronto a rispondere all'interrogatorio restando nel personaggio." }] },
+    ...chatHistory[cur]
+  ];
+
+  try {
+    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: contents })
+    });
+
+    let data = await response.json();
+    let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Non ho risposte da dare.";
+
+    // Salva e mostra la risposta dell'IA
+    chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
+    renderMsg('them', replyText);
+
+  } catch (err) {
+    renderMsg('them', "⚠️ Errore di connessione con l'IA. Controlla la tua API Key.");
+  }
+
+  qInput.disabled = false;
+  sendBtn.disabled = false;
+  qInput.focus();
 }
 
 function scene() {
@@ -553,11 +363,7 @@ function test(k) {
 function addNote() {
   let input = document.getElementById('note');
   let x = input.value.trim();
-  if (x) {
-    notes.push(x);
-    input.value = '';
-    renderNotes();
-  }
+  if (x) { notes.push(x); input.value = ''; renderNotes(); }
 }
 
 function renderNotes() {
@@ -569,11 +375,7 @@ function renderNotes() {
 function addTime() {
   let input = document.getElementById('te');
   let x = input.value.trim();
-  if (x) {
-    times.push(x);
-    input.value = '';
-    renderTimes();
-  }
+  if (x) { times.push(x); input.value = ''; renderTimes(); }
 }
 
 function renderTimes() {
@@ -591,17 +393,14 @@ function renderAE() {
 function accuse() {
   let c = document.querySelector('input[name="cul"]:checked')?.value;
   let a = [...document.querySelectorAll('#ae input:checked')].map(x => x.value);
-  
   let ok = (c === currentCase.correctCulprit);
   
-  currentCase.requiredEvidences.forEach(req => {
-    if (!a.includes(req)) ok = false;
-  });
+  currentCase.requiredEvidences.forEach(req => { if (!a.includes(req)) ok = false; });
 
   show('result');
   document.getElementById('rt').textContent = ok ? '🎉 CASO RISOLTO CON SUCCESSO' : '💥 ACCUSA RESPINTA / GAME OVER';
   document.getElementById('rx').innerHTML = ok 
-    ? '<p>Eccellente lavoro investigativo! Le tue prove e la scelta del sospetto reggono perfettamente di fronte ai giudici.</p>' 
+    ? '<p>Eccellente lavoro! Le tue prove e la scelta del sospetto reggono perfettamente di fronte ai giudici.</p>' 
     : '<p>L\'accusa è crollata! Non hai presentato le prove necessarie o hai incriminato la persona sbagliata.</p>';
 }
 
@@ -609,7 +408,6 @@ function esc(s) {
   return s.replace(/[&<>"']/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[x]));
 }
 
-// Inizio sulla schermata Home
 show('home');
 </script>
 </body>
