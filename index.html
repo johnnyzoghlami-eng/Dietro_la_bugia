@@ -38,7 +38,7 @@
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
     
     <div class="status-box center">
-      🟢 <b>Chiave API Google Gemini configurata ed attiva!</b>
+      🟢 <b>Chiave API ed IA aggiornate a Gemini 3.8 Flash!</b>
     </div>
 
     <div class="card">
@@ -172,7 +172,6 @@
 <script type="module">
 import { GoogleGenAI } from '@google/genai';
 
-// CHIAVE API CONFIGURATA DIRETTAMENTE
 const API_KEY = "AQ.Ab8RN6Kweg6mEUR7umVAcIU6V6Cp6d68YhyFy8I9Ajf0CNyzaQ";
 
 const CASES = {
@@ -249,7 +248,7 @@ const CASES = {
     prompts: {
       Druitt: "Sei Montague Druitt, avvocato e insegnante. Neghi qualsiasi coinvolgimento e rispondi con linguaggio formale ed elegante dell'epoca in italiano. Massimo 2 frasi.",
       Kosminski: "Sei Aaron Kosminski, un barbiere polacco. Sostieni di essere stato scambiato per qualcun altro. Rispondi con tono molto confuso e agitato in italiano. Massimo 2 frasi.",
-      Ostrog: "Sei Michael Ostrog, un truffatore e medico russo. Hai precedenti per porto d'armi ma neghi recisamente gli omicidi. Rispondi in italiano. Massimo 2 frasi."
+      Ostrog: "Sei Michael Ostrog, un truffatore e medico russo. Hai precedents per porto d'armi ma neghi recisamente gli omicidi. Rispondi in italiano. Massimo 2 frasi."
     },
     tests: {
       medical: { name: '🩺 Perizia Anatomica Dr. Phillips', desc: 'L\'aggressore possiede nozioni di anatomia o chirurgia per la precisione delle mutilazioni.' },
@@ -353,8 +352,10 @@ window.send = async function() {
 
   try {
     const ai = new GoogleGenAI({ apiKey: API_KEY });
+    
+    // Aggiornato al modello supportato gemini-3.8-flash
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.8-flash',
       contents: chatHistory[cur],
       config: {
         systemInstruction: currentCase.prompts[cur]
