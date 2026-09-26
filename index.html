@@ -441,8 +441,8 @@ async function send() {
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
   try {
-    // Aggiornato al modello standard gemini-2.5-flash
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+    // Aggiornato al modello standard gemini-3.8-flash
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${API_KEY}`;
     
     const contents = [
       {
