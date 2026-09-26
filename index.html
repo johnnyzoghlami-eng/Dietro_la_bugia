@@ -16,8 +16,8 @@
   button.suggest { background:#2a2359; border:1px solid #7057e8; color:#d2c9ff; text-align:left; font-weight:normal; border-radius:8px; width:100%; margin:4px 0; }
   button.suggest:hover { background:#3b317a; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
-  .chat { height:320px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
-  .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; }
+  .chat { height:300px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
+  .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; word-break: break-word; }
   .me { margin-left:auto; background:#513bb0; }
   .them { background:#29303c; }
   input, textarea { width:100%; box-sizing:border-box; background:#11151d; color:white; border:1px solid #394252; border-radius:99px; padding:11px; }
@@ -40,12 +40,12 @@
 
   <section id="home" class="active">
     <h1 class="center">🕵️ Dietro la Bugia</h1>
-    <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
+    <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'IA.</p>
 
     <div class="key-box">
       <label class="small"><b>🔑 Inserisci la tua API Key di Google AI Studio:</b></label>
       <div class="row" style="margin-top:6px;">
-        <input type="password" id="api-key-input" placeholder="Incolla qui la chiave (es. AIzaSy...)">
+        <input type="password" id="api-key-input" placeholder="Incolla qui la chiave (AIzaSy...)">
         <button onclick="saveApiKey()">Salva</button>
       </div>
       <div id="key-status" class="small" style="margin-top:4px; color:#4ef064;"></div>
@@ -63,12 +63,12 @@
     </div>
     <div class="card">
       <h2>🏛️ Delitto Farrow (Deptford) — 1905</h2>
-      <p>Caso storico reale. Un duplice omicidio a Londra che cambiò la storia della criminologia con il metodo Bertillon e le prime impronte.</p>
+      <p>Caso storico reale. Un duplice omicidio a Londra che cambiò la storia della criminologia.</p>
       <button onclick="selectCase('farrow')">▶️ Gioca Questo Caso</button>
     </div>
     <div class="card">
       <h2>🔍 Jack lo Squartatore — 1888</h2>
-      <p>Caso storico. Londra, Whitechapel. Nessuna tecnologia moderna: interrogatori basati su ronda, verbali d'epoca e vestiti insanguinati.</p>
+      <p>Caso storico. Londra, Whitechapel. Interrogatori basati su ronda, verbali d'epoca e vestiti insanguinati.</p>
       <button onclick="selectCase('jack')">▶️ Gioca Questo Caso</button>
     </div>
   </section>
@@ -81,11 +81,11 @@
       <h3>🎯 Scegli la difficoltà per questo caso:</h3>
       <button class="diff-btn" onclick="startWithDifficulty('easy')">
         🟢 Modalità Facile (Domande Guidate + IA)
-        <div class="small" style="font-weight:normal; margin-top:4px;">Avrai a disposizione suggerimenti con domande pronte da inviare con un click o scriverne di tue.</div>
+        <div class="small" style="font-weight:normal; margin-top:4px;">Suggerimenti con domande pronte da inviare con un click o scriverne di tue.</div>
       </button>
       <button class="diff-btn" onclick="startWithDifficulty('normal')">
         🔴 Modalità Normale (Esperienza Libera con IA)
-        <div class="small" style="font-weight:normal; margin-top:4px;">Nessun aiuto: potrai scrivere liberamente qualsiasi domanda o contestazione al sospetto gestito dall'IA.</div>
+        <div class="small" style="font-weight:normal; margin-top:4px;">Nessun aiuto: scrivi liberamente qualsiasi domanda o contestazione al sospetto.</div>
       </button>
     </div>
 
@@ -198,20 +198,25 @@ let difficulty = 'easy';
 
 window.addEventListener('DOMContentLoaded', () => {
   if (API_KEY) {
-    document.getElementById('api-key-input').value = API_KEY;
-    document.getElementById('key-status').textContent = "✅ Chiave API salvata in memoria.";
+    const inputEl = document.getElementById('api-key-input');
+    if (inputEl) inputEl.value = API_KEY;
+    const statusEl = document.getElementById('key-status');
+    if (statusEl) statusEl.textContent = "✅ Chiave API salvata in memoria.";
   }
 });
 
 function saveApiKey() {
-  let val = document.getElementById('api-key-input').value.trim();
+  const inputEl = document.getElementById('api-key-input');
+  if (!inputEl) return;
+  let val = inputEl.value.trim();
   if (!val) {
     alert("Inserisci una chiave valida.");
     return;
   }
   API_KEY = val;
   localStorage.setItem('gemini_api_key', API_KEY);
-  document.getElementById('key-status').textContent = "✅ Chiave salvata con successo!";
+  const statusEl = document.getElementById('key-status');
+  if (statusEl) statusEl.textContent = "✅ Chiave salvata con successo!";
 }
 
 const CASES = {
@@ -327,52 +332,68 @@ let chatHistory = {};
 
 function selectCase(key) {
   if (!API_KEY) {
-    alert("Attenzione: Inserisci prima la tua API Key di Google AI Studio nella schermata principale!");
+    alert("Attenzione: Inserisci prima la tua API Key di Google AI Studio in alto e clicca su Salva!");
     return;
   }
   currentCaseKey = key;
   currentCase = CASES[key];
   chatHistory = {}; 
   ev = []; notes = []; times = []; done = {};
-  document.getElementById('ec').textContent = '0';
-  document.getElementById('results').innerHTML = '';
   
-  document.getElementById('case-title').textContent = currentCase.title;
-  document.getElementById('case-desc').innerHTML = currentCase.desc;
-  document.getElementById('case-place').textContent = currentCase.place;
-  document.getElementById('scene-notice').textContent = currentCase.sceneNotice;
+  const ecEl = document.getElementById('ec');
+  if(ecEl) ecEl.textContent = '0';
+  const resEl = document.getElementById('results');
+  if(resEl) resEl.innerHTML = '';
+  
+  const titleEl = document.getElementById('case-title');
+  if(titleEl) titleEl.textContent = currentCase.title;
+  const descEl = document.getElementById('case-desc');
+  if(descEl) descEl.innerHTML = currentCase.desc;
+  const placeEl = document.getElementById('case-place');
+  if(placeEl) placeEl.textContent = currentCase.place;
+  const noticeEl = document.getElementById('scene-notice');
+  if(noticeEl) noticeEl.textContent = currentCase.sceneNotice;
   
   let sGrid = document.getElementById('suspects-grid');
-  sGrid.innerHTML = '';
-  for (let id in currentCase.suspects) {
-    sGrid.innerHTML += `<button onclick="inter('${id}')">👤 ${currentCase.suspects[id]}</button>`;
+  if(sGrid) {
+    sGrid.innerHTML = '';
+    for (let id in currentCase.suspects) {
+      sGrid.innerHTML += `<button onclick="inter('${id}')">👤 ${currentCase.suspects[id]}</button>`;
+    }
   }
   
   let tGrid = document.getElementById('tests-grid');
-  tGrid.innerHTML = '';
-  for (let tid in currentCase.tests) {
-    tGrid.innerHTML += `<button onclick="test('${tid}')">${currentCase.tests[tid].name}</button>`;
+  if(tGrid) {
+    tGrid.innerHTML = '';
+    for (let tid in currentCase.tests) {
+      tGrid.innerHTML += `<button onclick="test('${tid}')">${currentCase.tests[tid].name}</button>`;
+    }
   }
   
   let cOpt = document.getElementById('culprit-options');
-  cOpt.innerHTML = '';
-  for (let id in currentCase.suspects) {
-    cOpt.innerHTML += `<label class="option"><input type="radio" name="cul" value="${id}"> ${currentCase.suspects[id]}</label>`;
+  if(cOpt) {
+    cOpt.innerHTML = '';
+    for (let id in currentCase.suspects) {
+      cOpt.innerHTML += `<label class="option"><input type="radio" name="cul" value="${id}"> ${currentCase.suspects[id]}</label>`;
+    }
   }
 
-  document.getElementById('sol-text').innerHTML = currentCase.solutionText;
+  const solEl = document.getElementById('sol-text');
+  if(solEl) solEl.innerHTML = currentCase.solutionText;
   show('intro');
 }
 
 function startWithDifficulty(diff) {
   difficulty = diff;
-  document.getElementById('case-mode-label').textContent = diff === 'easy' ? '🟢 Modalità: Facile (Domande Guidate + IA)' : '🔴 Modalità: Normale (Esperienza Libera con IA)';
+  const modeLabel = document.getElementById('case-mode-label');
+  if(modeLabel) modeLabel.textContent = diff === 'easy' ? '🟢 Modalità: Facile (Domande Guidate + IA)' : '🔴 Modalità: Normale (Esperienza Libera con IA)';
   show('investigation');
 }
 
 function show(id) {
   document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  if(target) target.classList.add('active');
   if (id === 'scene') scene();
   if (id === 'board') renderNotes();
   if (id === 'time') renderTimes();
@@ -382,38 +403,44 @@ function show(id) {
 function inter(s) {
   cur = s;
   show('inter');
-  document.getElementById('who').textContent = currentCase.suspects[s];
+  const whoEl = document.getElementById('who');
+  if(whoEl) whoEl.textContent = currentCase.suspects[s];
 
   const guidedBox = document.getElementById('guided-questions');
   const guidedBtns = document.getElementById('guided-buttons');
   
   if (difficulty === 'easy' && currentCase.guidedQuestions && currentCase.guidedQuestions[s]) {
-    guidedBox.style.display = 'block';
-    guidedBtns.innerHTML = '';
-    currentCase.guidedQuestions[s].forEach(q => {
-      let qEscaped = q.replace(/'/g, "\\'");
-      guidedBtns.innerHTML += `<button class="suggest" onclick="askGuided('${qEscaped}')">💬 ${q}</button>`;
-    });
+    if(guidedBox) guidedBox.style.display = 'block';
+    if(guidedBtns) {
+      guidedBtns.innerHTML = '';
+      currentCase.guidedQuestions[s].forEach(q => {
+        let qEscaped = q.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        guidedBtns.innerHTML += `<button class="suggest" onclick="askGuided(\\'${qEscaped}\\')">💬 ${q}</button>`;
+      });
+    }
   } else {
-    guidedBox.style.display = 'none';
+    if(guidedBox) guidedBox.style.display = 'none';
   }
   
   const chatDiv = document.getElementById('chat');
-  chatDiv.innerHTML = '';
-  
-  if (!chatHistory[s]) {
-    chatHistory[s] = [];
+  if(chatDiv) {
+    chatDiv.innerHTML = '';
+    if (!chatHistory[s]) {
+      chatHistory[s] = [];
+    }
+    chatHistory[s].forEach(m => {
+      const text = m.parts ? m.parts[0].text : m.content;
+      renderMsg(m.role === 'user' ? 'me' : 'them', text);
+    });
   }
-  
-  chatHistory[s].forEach(m => {
-    const text = m.parts ? m.parts[0].text : m.content;
-    renderMsg(m.role === 'user' ? 'me' : 'them', text);
-  });
 }
 
 function askGuided(text) {
-  document.getElementById('q').value = text;
-  send();
+  const qEl = document.getElementById('q');
+  if(qEl) {
+    qEl.value = text;
+    send();
+  }
 }
 
 function renderMsg(c, t) {
@@ -421,19 +448,22 @@ function renderMsg(c, t) {
   d.className = 'msg ' + (c === 'me' ? 'me' : 'them');
   d.textContent = t;
   const chatDiv = document.getElementById('chat');
-  chatDiv.appendChild(d);
-  chatDiv.scrollTop = chatDiv.scrollHeight;
+  if(chatDiv) {
+    chatDiv.appendChild(d);
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+  }
 }
 
 async function send() {
-  let qInput = document.getElementById('q');
+  const qInput = document.getElementById('q');
+  if(!qInput) return;
   let qText = qInput.value.trim();
   if (!qText) return;
 
-  let sendBtn = document.getElementById('send-btn');
+  const sendBtn = document.getElementById('send-btn');
   qInput.value = '';
   qInput.disabled = true;
-  sendBtn.disabled = true;
+  if(sendBtn) sendBtn.disabled = true;
 
   renderMsg('me', qText);
   
@@ -441,13 +471,12 @@ async function send() {
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
   try {
-    // Utilizzo del modello stabile gemini-1.5-flash
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
     
     const contents = [
       {
         role: 'user',
-        parts: [{ text: `[ISTRUZIONI SISTEMA: ${currentCase.prompts[cur]}]` }]
+        parts: [{ text: `[ISTRUZIONI DI SISTEMA PER IL PERSONAGGIO]: ${currentCase.prompts[cur]}` }]
       },
       ...chatHistory[cur]
     ];
@@ -461,7 +490,11 @@ async function send() {
     const data = await res.json();
 
     if (data.error) {
-      throw new Error(data.error.message || "Errore API");
+      throw new Error(data.error.message || "Errore API Google");
+    }
+
+    if (!data.candidates || !data.candidates[0].content) {
+      throw new Error("Risposta vuota dall'IA.");
     }
 
     let replyText = data.candidates[0].content.parts[0].text;
@@ -470,55 +503,70 @@ async function send() {
 
   } catch (err) {
     console.error(err);
-    renderMsg('them', "❌ Errore durante l'interrogatorio: " + err.message);
+    renderMsg('them', "❌ Errore IA: " + err.message);
   }
 
   qInput.disabled = false;
-  sendBtn.disabled = false;
+  if(sendBtn) sendBtn.disabled = false;
   qInput.focus();
 }
 
 function scene() {
-  document.getElementById('objects').innerHTML = currentCase.objects
-    .map(x => '<div class="item">' + x + '</div>').join('');
+  const objEl = document.getElementById('objects');
+  if(objEl) {
+    objEl.innerHTML = currentCase.objects.map(x => '<div class="item">' + x + '</div>').join('');
+  }
 }
 
 function test(k) {
   if (done[k]) return;
   done[k] = 1;
   ev.push(k);
-  document.getElementById('results').innerHTML += '<div class="card"><b>' + currentCase.tests[k].desc + '</b></div>';
-  document.getElementById('ec').textContent = ev.length;
+  const resEl = document.getElementById('results');
+  if(resEl) resEl.innerHTML += '<div class="card"><b>' + currentCase.tests[k].desc + '</b></div>';
+  const ecEl = document.getElementById('ec');
+  if(ecEl) ecEl.textContent = ev.length;
 }
 
 function addNote() {
-  let input = document.getElementById('note');
+  const input = document.getElementById('note');
+  if(!input) return;
   let x = input.value.trim();
   if (x) { notes.push(x); input.value = ''; renderNotes(); }
 }
 
 function renderNotes() {
-  document.getElementById('notes').innerHTML = notes.map((x, i) =>
-    '<div class="item"><span>📝 ' + esc(x) + '</span><button onclick="notes.splice(' + i + ',1);renderNotes()">×</button></div>'
-  ).join('');
+  const notesEl = document.getElementById('notes');
+  if(notesEl) {
+    notesEl.innerHTML = notes.map((x, i) =>
+      '<div class="item"><span>📝 ' + esc(x) + '</span><button onclick="notes.splice(' + i + ',1);renderNotes()">×</button></div>'
+    ).join('');
+  }
 }
 
 function addTime() {
-  let input = document.getElementById('te');
+  const input = document.getElementById('te');
+  if(!input) return;
   let x = input.value.trim();
   if (x) { times.push(x); input.value = ''; renderTimes(); }
 }
 
 function renderTimes() {
-  document.getElementById('times').innerHTML = times.map((x, i) =>
-    '<div class="item"><span>🕒 ' + esc(x) + '</span><button onclick="times.splice(' + i + ',1);renderTimes()">×</button></div>'
-  ).join('');
+  const timesEl = document.getElementById('times');
+  if(timesEl) {
+    timesEl.innerHTML = times.map((x, i) =>
+      '<div class="item"><span>🕒 ' + esc(x) + '</span><button onclick="times.splice(' + i + ',1);renderTimes()">×</button></div>'
+    ).join('');
+  }
 }
 
 function renderAE() {
-  document.getElementById('ae').innerHTML = ev.map(k =>
-    '<label class="option"><input type="checkbox" value="' + k + '"> ' + currentCase.tests[k].name + '</label>'
-  ).join('') || '<span class="small">Nessun reperto analizzato. Vai in "Scena" per condurre perizie.</span>';
+  const aeEl = document.getElementById('ae');
+  if(aeEl) {
+    aeEl.innerHTML = ev.map(k =>
+      '<label class="option"><input type="checkbox" value="' + k + '"> ' + currentCase.tests[k].name + '</label>'
+    ).join('') || '<span class="small">Nessun reperto analizzato. Vai in "Scena" per condurre perizie.</span>';
+  }
 }
 
 function accuse() {
@@ -529,10 +577,14 @@ function accuse() {
   currentCase.requiredEvidences.forEach(req => { if (!a.includes(req)) ok = false; });
 
   show('result');
-  document.getElementById('rt').textContent = ok ? '🎉 CASO RISOLTO CON SUCCESSO' : '💥 ACCUSA RESPINTA / GAME OVER';
-  document.getElementById('rx').innerHTML = ok 
-    ? '<p>Eccellente lavoro! Le tue prove e la scelta del sospetto reggono perfettamente di fronte ai giudici.</p>' 
-    : '<p>L\'accusa è crollata! Non hai presentato le prove necessarie o hai incriminato la persona sbagliata.</p>';
+  const rtEl = document.getElementById('rt');
+  if(rtEl) rtEl.textContent = ok ? '🎉 CASO RISOLTO CON SUCCESSO' : '💥 ACCUSA RESPINTA / GAME OVER';
+  const rxEl = document.getElementById('rx');
+  if(rxEl) {
+    rxEl.innerHTML = ok 
+      ? '<p>Eccellente lavoro! Le tue prove e la scelta del sospetto reggono perfettamente di fronte ai giudici.</p>' 
+      : '<p>L\'accusa è crollata! Non hai presentato le prove necessarie o hai incriminato la persona sbagliata.</p>';
+  }
 }
 
 function esc(s) {
