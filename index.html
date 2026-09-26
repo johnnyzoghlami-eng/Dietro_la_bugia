@@ -27,7 +27,7 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con l'immagine esatta che hai caricato */
+  /* Schermata Home con l'immagine integrata e pulsante in basso */
   #home.active {
     display: flex;
     flex-direction: column;
@@ -37,15 +37,28 @@
     text-align: center;
     padding-bottom: 8vh;
     box-sizing: border-box;
-    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(12,15,23,0.9)), url('16919_2.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 30%, rgba(12,15,23,0.95) 85%), 
+                radial-gradient(circle at center, #1b263b 0%, #080a0f 100%);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+  }
+
+  .home-poster-box {
+    margin: auto;
+    max-width: 380px;
+    width: 85%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    border: 1px solid var(--border-color);
+  }
+
+  .home-poster-box img {
+    width: 100%;
+    display: block;
   }
 
   .hero-container {
@@ -128,9 +141,15 @@
 <body>
 <div class="wrap">
 
-  <!-- SCHERMATA HOME PRINCIPALE -->
+  <!-- SCHERMATA HOME PRINCIPALE CON LA TUA IMMAGINE -->
   <section id="home" class="active">
-    <button onclick="show('case-selection')">▶️ Inizia</button>
+    <div class="home-poster-box">
+      <!-- Immagine incorporata direttamente in alta definizione -->
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="Dietro la Bugia">
+    </div>
+    <div style="margin-top: 25px; margin-bottom: 2vh;">
+      <button onclick="show('case-selection')">▶️ Inizia</button>
+    </div>
   </section>
 
   <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
@@ -374,7 +393,7 @@ const CASES = {
   },
   cogne: {
     title: "📰 Delitto di Cogne (2002)",
-    desc: "Vittima: Samuele Lorenzi (3 years). Avvenuto la mattina del 30 gennaio 2002.",
+    desc: "Vittima: Samuele Lorenzi (3 anni). Avvenuto la mattina del 30 gennaio 2002.",
     place: "Villetta di Montroz, Cogne",
     sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
@@ -424,7 +443,7 @@ const CASES = {
   jack: {
     title: "⭐ Jack lo Squartatore (1888)",
     desc: "Sito indagine: Whitechapel, Londra. Analisi storica dei sospetti dell'autunno 1888.",
-    place: "Whitechapel, Londra",
+    place: "Quartiere di Whitechapel",
     sceneNotice: "Verbali di ronda, autopsie d'epoca e perizie di Scotland Yard.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
@@ -562,7 +581,7 @@ async function send() {
 
   try {
     if (GROQ_API_KEY && GROQ_API_KEY.length > 5) {
-      const res = url_fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -571,7 +590,6 @@ async function send() {
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
           messages: [
-            { role: "system", content: "Sei il personaggio di un caso investigativo." },
             ...chatHistory[cur].map(m => ({ role: m.role === 'me' ? 'user' : 'assistant', content: m.content }))
           ]
         })
