@@ -42,14 +42,14 @@
     <h1 class="center">🕵️ Dietro la Bugia</h1>
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
 
-    <!-- BANNER GESTIONE API KEY -->
+    <!-- BANNER GESTIONE API KEY (OPZIONALE) -->
     <div class="api-key-banner">
-      <b>🔑 Configurazione API Key Gemini:</b>
+      <b>🔑 Configurazione API Key (Facoltativa):</b>
       <div class="row" style="margin-top:8px;">
-        <input type="password" id="api-key-input" placeholder="Incolla qui la tua Gemini API Key...">
-        <button onclick="saveApiKey()">Salva Key</button>
+        <input type="password" id="api-key-input" placeholder="Lascia vuoto per usare la modalità automatica...">
+        <button onclick="saveApiKey()">Salva</button>
       </div>
-      <p class="small" style="margin:6px 0 0 0;">Ottienila gratis su <a href="https://aistudio.google.com/" target="_blank" style="color:#a896ff;">Google AI Studio</a>. La chiave verrà salvata solo nel tuo browser.</p>
+      <p class="small" style="margin:6px 0 0 0;">Se non inserisci una chiave, il gioco utilizzerà un simulatore di risposte integrato per non bloccarsi.</p>
     </div>
 
     <!-- CASO TUTORIAL -->
@@ -81,7 +81,7 @@
     </div>
   </section>
 
-  <!-- SCHERMATA INTRODUTTIVA E SCELTA DIFFICOLTÀ PER OGNI CASO -->
+  <!-- SCHERMATA INTRODUTTIVA E SCELTA DIFFICOLTÀ -->
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
@@ -125,7 +125,7 @@
     <h2>🗣️ Stanza Interrogatori</h2>
     <div class="card center">
       <b id="who"></b>
-      <p id="mood" class="small">Risposte in tempo reale dall'IA.</p>
+      <p id="mood" class="small">Sessione d'interrogatorio attiva.</p>
     </div>
     <div id="chat" class="chat"></div>
 
@@ -203,23 +203,21 @@
 </div>
 
 <script>
-// Carica la chiave API salvata se presente
 let API_KEY = localStorage.getItem('gemini_api_key') || '';
-if(API_KEY) {
-  document.addEventListener("DOMContentLoaded", () => {
-    let input = document.getElementById('api-key-input');
-    if(input) input.value = API_KEY;
-  });
-}
+document.addEventListener("DOMContentLoaded", () => {
+  let input = document.getElementById('api-key-input');
+  if(input && API_KEY) input.value = API_KEY;
+});
 
 function saveApiKey() {
   const val = document.getElementById('api-key-input').value.trim();
+  API_KEY = val;
   if(val) {
-    API_KEY = val;
     localStorage.setItem('gemini_api_key', val);
-    alert(" API Key salvata con successo!");
+    alert("✅ API Key salvata con successo!");
   } else {
-    alert("Inserisci una chiave valida.");
+    localStorage.removeItem('gemini_api_key');
+    alert("ℹ️ Chiave rimossa. Il gioco userà le risposte simulate.");
   }
 }
 
@@ -238,8 +236,8 @@ const CASES = {
       Paolo: "Sei Paolo, il restauratore. Sei COLPEVOLE. Hai usato un piede di porco per forzare la teca e rubare la statuetta alle 19:45 lasciando le tue impronte sul vetro. Cerchi di dire che eri già andato via alle 19:30. Rispondi in massimo 2 frasi."
     },
     fallbackReplies: {
-      Matteo: "Ero alla garitta dell'ingresso principale tutto il tempo, non sono mai andato nella sala della reliquia.",
-      Paolo: "Io sono uscito dal laboratorio verso le 19:30, non so nulla della teca spezzata."
+      Matteo: "Vi giuro che ero all'ingresso principale a controllare i monitor. Non mi sono mai mosso da lì.",
+      Paolo: "Io ho solo fatto il mio lavoro nel laboratorio di restauro, a quell'ora stavo sistemando gli attrezzi."
     },
     guidedQuestions: {
       Matteo: [
@@ -269,10 +267,16 @@ const CASES = {
     objects: ["🔩 Fermacarte metallico pesante", "🥃 Bicchiere con tracce", "📱 Telefono cellulare", "🧵 Cardigan strappato"],
     suspects: { Marco: "Marco Ferri", Elena: "Elena Rinaldi", Davide: "Davide Moretti", Sofia: "Sofia Bianchi" },
     prompts: {
-      Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Sai che l'azienda perdeva soldi e che Elena e Andrea litigavano spesso. Rispondi in italiano rimanendo perfettamente nel personaggio. Massimo 2 frasi.",
-      Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio, avete litigato per il divorzio e l'hai colpito alle 23:16 con il fermacarte metallico lasciando un bottone del tuo cardigan. Mentirai dicendo che dormivi. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
-      Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Eri nella dependance ma alle 23:09 hai sentito una voce di donna urlare nello studio. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
-      Sofia: "Sei Sofia Bianchi, la consulente finanziaria. Sei INNOCENTE. Sei uscita dalla villa alle 23:20 e hai incrociato Elena nel corridoio che si sistemava i capelli in fretta. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi."
+      Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Rispondi in italiano. Massimo 2 frasi.",
+      Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio e avete litigato. Rispondi in italiano. Massimo 2 frasi.",
+      Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Alle 23:09 hai sentito una voce di donna urlare. Rispondi in italiano. Massimo 2 frasi.",
+      Sofia: "Sei Sofia Bianchi, consulente finanziaria. Sei INNOCENTE. Sei uscita alle 23:20 incrociando Elena. Rispondi in italiano. Massimo 2 frasi."
+    },
+    fallbackReplies: {
+      Marco: "Ero in archivio a sbrigare pratiche urgenti, non c'entro nulla con quello che è successo.",
+      Elena: "Mio marito ed io avevamo i nostri problemi, ma vi assicuro che a quell'ora riposavo in camera mia.",
+      Davide: "Stavo controllando i perimetri della villa quando ho sentito urti provenire dallo studio.",
+      Sofia: "Ho salutato Andrea e me ne sono andata prima che la situazione in casa precipitasse."
     },
     guidedQuestions: {
       Marco: ["Dove ti trovavi durante il delitto?", "Qual era la situazione finanziaria dell'azienda?"],
@@ -298,9 +302,14 @@ const CASES = {
     objects: ["🛏️ Letto matrimoniale con macchie", "👟 Clogs/Ciabatte da neve", "🩺 Borsa del medico curante"],
     suspects: { Annamaria: "Annamaria Franzoni", Ada: "Dr.ssa Ada Satragni", Ulisse: "Ulisse Lorenzi" },
     prompts: {
-      Annamaria: "Sei Annamaria Franzoni. Ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio allo scuolabus e di essere tornata alle 8:24 trovando il bambino ferito. Piangi e nega qualsiasi coinvolgimento. Rispondi in italiano. Massimo 2 frasi.",
-      Ada: "Sei la dottoressa Ada Satragni, medico curante arrivata per prima. Pensavi a un aneurisma cerebrale, hai lavato il viso al bambino per aiutarlo. Rispondi con tono medico ma difensivo in italiano. Massimo 2 frasi.",
-      Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Sostieni che sulla neve non c'erano impronte di estranei verso la villetta. Rispondi in italiano con tono calmo. Massimo 2 frasi."
+      Annamaria: "Sei Annamaria Franzoni. Ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio. Rispondi in italiano. Massimo 2 frasi.",
+      Ada: "Sei la dottoressa Ada Satragni, medico curante. Hai prestato i primi soccorsi. Rispondi in italiano. Massimo 2 frasi.",
+      Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Rispondi in italiano. Massimo 2 frasi."
+    },
+    fallbackReplies: {
+      Annamaria: "Vi prego credetemi, ero fuori con l'altro bambino e quando sono rientrata ho trovato questa tragedia.",
+      Ada: "Sono accorsa subito non appena ho ricevuto la chiamata, la situazione era disperata.",
+      Ulisse: "Ho sentito confusione e mi sono precipitato fuori sulla neve per vedere cosa stesse succedendo."
     },
     guidedQuestions: {
       Annamaria: ["Qual è la ricostruzione esatta dei tuoi minuti tra le 8:15 e le 8:25?", "Come ti spieghi le tracce sul pigiama?"],
@@ -324,8 +333,12 @@ const CASES = {
     objects: ["🔐 Cassaforte svuotata", "📜 Maschera di calza di seta", "🔍 Scatola di metallo con impronta"],
     suspects: { Alfred: "Alfred Stratton", Albert: "Albert Stratton" },
     prompts: {
-      Alfred: "Sei Alfred Stratton. Sei il COLPEVOLE assieme a tuo fratello Albert. Sostieni che l'impronta di pollice trovata sulla scatola metallica non sia la tua e che eri a dormire. Sei arrogante ed evasivo. Rispondi in italiano. Massimo 2 frasi.",
-      Albert: "Sei Albert Stratton, fratello e complice di Alfred. Cerchi di scaricare la colpa o accampare alibi confusi sulla notte della rapina. Rispondi in italiano. Massimo 2 frasi."
+      Alfred: "Sei Alfred Stratton. Sostieni di essere innocente. Rispondi in italiano. Massimo 2 frasi.",
+      Albert: "Sei Albert Stratton, fratello di Alfred. Rispondi in italiano. Massimo 2 frasi."
+    },
+    fallbackReplies: {
+      Alfred: "Non so nulla di questa storia, quella notte eravamo altrove a dormire.",
+      Albert: "Mio fratello non c'entra niente con la bottega dei coniugi Farrow."
     },
     guidedQuestions: {
       Alfred: ["Di chi è l'impronta lasciata sulla scatola della cassaforte?", "Dove eri la notte dell'aggressione ai Farrow?"],
@@ -347,9 +360,14 @@ const CASES = {
     objects: ["✉️ Lettera Dear Boss", "🔪 Bisturi da chirurgo", "🧥 Grembiule di cuoio"],
     suspects: { Druitt: "Montague Druitt", Kosminski: "Aaron Kosminski", Ostrog: "Michael Ostrog" },
     prompts: {
-      Druitt: "Sei Montague Druitt, avvocato e insegnante. Neghi qualsiasi coinvolgimento e rispondi con linguaggio formale ed elegante dell'epoca in italiano. Massimo 2 frasi.",
-      Kosminski: "Sei Aaron Kosminski, un barbiere polacco. Sostieni di essere stato scambiato per qualcun altro. Rispondi con tono molto confuso e agitato in italiano. Massimo 2 frasi.",
-      Ostrog: "Sei Michael Ostrog, un truffatore e medico russo. Hai precedenti per porto d'armi ma neghi recisamente gli omicidi. Rispondi in italiano. Massimo 2 frasi."
+      Druitt: "Sei Montague Druitt, avvocato. Neghi qualsiasi coinvolgimento. Rispondi in italiano. Massimo 2 frasi.",
+      Kosminski: "Sei Aaron Kosminski. Rispondi in italiano con tono confuso. Massimo 2 frasi.",
+      Ostrog: "Sei Michael Ostrog, truffatore. Rispondi in italiano. Massimo 2 frasi."
+    },
+    fallbackReplies: {
+      Druitt: "I miei impegni professionali e culturali mi tengono ben lontano da simili orrori notturni.",
+      Kosminski: "Perché continuate a seguirmi? Io non faccio del male a nessuno.",
+      Ostrog: "Ho un passato turbolento, d'accordo, ma non sono un assassino sanguinario."
     },
     guidedQuestions: {
       Druitt: ["Dove ti trovavi durante la notte dell'ultimo duplice omicidio?", "Hai conoscenze in ambito anatomico?"],
@@ -482,19 +500,7 @@ async function send() {
   if (!chatHistory[cur]) chatHistory[cur] = [];
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
-  // Se l'API KEY non è stata ancora inserita, la richiediamo con un prompt
-  if (!API_KEY) {
-    let keyPrompt = prompt("Per usare l'Intelligenza Artificiale, inserisci la tua API Key di Gemini (gratuita su Google AI Studio):");
-    if (keyPrompt) {
-      API_KEY = keyPrompt.trim();
-      localStorage.setItem('gemini_api_key', API_KEY);
-      let input = document.getElementById('api-key-input');
-      if(input) input.value = API_KEY;
-    }
-  }
-
-  // Se è presente la chiave API proviamo la chiamata remota
-  if (API_KEY) {
+  if (API_KEY && API_KEY.length > 5) {
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
       
@@ -515,20 +521,21 @@ async function send() {
       const data = await res.json();
 
       if (data.error) {
-        throw new Error(data.error.message || "Chiave API non valida o errore di connessione.");
+        throw new Error(data.error.message || "Errore API");
       }
 
       let replyText = data.candidates[0].content.parts[0].text;
       chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
       renderMsg('them', replyText);
-
     } catch (err) {
-      console.warn("Errore API, attivazione risposte fallback:", err);
-      useFallbackReply(err.message);
+      console.warn("Utilizzo risposta di riserva per errore API:", err.message);
+      useFallbackReply();
     }
   } else {
-    // Risposta offline se non c'è la chiave
-    useFallbackReply("Nessuna API Key inserita (Modalità Offline).");
+    // Risposta simulata offline immediata se non c'è una API key configurata
+    setTimeout(() => {
+      useFallbackReply();
+    }, 400);
   }
 
   qInput.disabled = false;
@@ -536,16 +543,16 @@ async function send() {
   qInput.focus();
 }
 
-function useFallbackReply(reason) {
+function useFallbackReply() {
   let replyText = "";
   if (currentCase.fallbackReplies && currentCase.fallbackReplies[cur]) {
     replyText = currentCase.fallbackReplies[cur];
   } else {
-    replyText = "Non ho molto da aggiungere a quello che ho già dichiarato agli agenti.";
+    replyText = "Vi ho già detto tutto quello che so riguardo a questa faccenda.";
   }
   
   chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
-  renderMsg('them', replyText + `\n\n[Nota: ${reason}]`);
+  renderMsg('them', replyText);
 }
 
 function scene() {
