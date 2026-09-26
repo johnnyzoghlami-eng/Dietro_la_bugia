@@ -333,7 +333,8 @@ async function send() {
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    // URL aggiornato al modello corrente gemini-2.5-flash
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
     
     const contents = [
       {
