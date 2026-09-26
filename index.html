@@ -42,17 +42,15 @@
     <h1 class="center">🕵️ Dietro la Bugia</h1>
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
 
-    <!-- BANNER GESTIONE API KEY (OPZIONALE) -->
     <div class="api-key-banner">
       <b>🔑 Configurazione API Key (Facoltativa):</b>
       <div class="row" style="margin-top:8px;">
         <input type="password" id="api-key-input" placeholder="Lascia vuoto per usare la modalità automatica...">
         <button onclick="saveApiKey()">Salva</button>
       </div>
-      <p class="small" style="margin:6px 0 0 0;">Se non inserisci una chiave, il gioco utilizzerà un simulatore di risposte integrato per non bloccarsi.</p>
+      <p class="small" style="margin:6px 0 0 0;">Se non inserisci una chiave, il gioco userà un simulatore integrato per non bloccarsi.</p>
     </div>
 
-    <!-- CASO TUTORIAL -->
     <div class="card" style="border: 2px solid #7057e8;">
       <h2>🎓 Tutorial — Il Furto della Reliquia</h2>
       <p>Caso guidato d'addestramento. Impara come raccogliere perizie, interrogare i sospetti e formulare l'accusa.</p>
@@ -81,7 +79,6 @@
     </div>
   </section>
 
-  <!-- SCHERMATA INTRODUTTIVA E SCELTA DIFFICOLTÀ -->
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
@@ -129,7 +126,6 @@
     </div>
     <div id="chat" class="chat"></div>
 
-    <!-- BOX DOMANDE GUIDATE -->
     <div id="guided-questions" style="margin-top:10px; display:none;">
       <span class="small">💡 <b>Domande Suggerite (Modalità Facile):</b></span>
       <div id="guided-buttons"></div>
@@ -231,10 +227,6 @@ const CASES = {
     sceneNotice: "In questo caso di prova impara ad analizzare le teche e le telecamere per raccogliere prove valide in tribunale.",
     objects: ["🏛️ Teca in vetro forzata", "🧹 Straccio per le pulizie intriso d'olio"],
     suspects: { Matteo: "Matteo (Custode)", Paolo: "Paolo (Restauratore)" },
-    prompts: {
-      Matteo: "Sei Matteo, il custode del museo. Sei INNOCENTE. Eri all'ingresso principale fino alle 20:00 e non sei mai entrato nella sala oro. Rispondi con tono tranquillo in massimo 2 frasi.",
-      Paolo: "Sei Paolo, il restauratore. Sei COLPEVOLE. Hai usato un piede di porco per forzare la teca e rubare la statuetta alle 19:45 lasciando le tue impronte sul vetro. Cerchi di dire che eri già andato via alle 19:30. Rispondi in massimo 2 frasi."
-    },
     fallbackReplies: {
       Matteo: "Vi giuro che ero all'ingresso principale a controllare i monitor. Non mi sono mai mosso da lì.",
       Paolo: "Io ho solo fatto il mio lavoro nel laboratorio di restauro, a quell'ora stavo sistemando gli attrezzi."
@@ -266,12 +258,6 @@ const CASES = {
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ["🔩 Fermacarte metallico pesante", "🥃 Bicchiere con tracce", "📱 Telefono cellulare", "🧵 Cardigan strappato"],
     suspects: { Marco: "Marco Ferri", Elena: "Elena Rinaldi", Davide: "Davide Moretti", Sofia: "Sofia Bianchi" },
-    prompts: {
-      Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Rispondi in italiano. Massimo 2 frasi.",
-      Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio e avete litigato. Rispondi in italiano. Massimo 2 frasi.",
-      Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Alle 23:09 hai sentito una voce di donna urlare. Rispondi in italiano. Massimo 2 frasi.",
-      Sofia: "Sei Sofia Bianchi, consulente finanziaria. Sei INNOCENTE. Sei uscita alle 23:20 incrociando Elena. Rispondi in italiano. Massimo 2 frasi."
-    },
     fallbackReplies: {
       Marco: "Ero in archivio a sbrigare pratiche urgenti, non c'entro nulla con quello che è successo.",
       Elena: "Mio marito ed io avevamo i nostri problemi, ma vi assicuro che a quell'ora riposavo in camera mia.",
@@ -301,18 +287,13 @@ const CASES = {
     sceneNotice: "Analisi scientifica avanzata: test BPA, orari dei soccorsi e verbali 118.",
     objects: ["🛏️ Letto matrimoniale con macchie", "👟 Clogs/Ciabatte da neve", "🩺 Borsa del medico curante"],
     suspects: { Annamaria: "Annamaria Franzoni", Ada: "Dr.ssa Ada Satragni", Ulisse: "Ulisse Lorenzi" },
-    prompts: {
-      Annamaria: "Sei Annamaria Franzoni. Ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio. Rispondi in italiano. Massimo 2 frasi.",
-      Ada: "Sei la dottoressa Ada Satragni, medico curante. Hai prestato i primi soccorsi. Rispondi in italiano. Massimo 2 frasi.",
-      Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Rispondi in italiano. Massimo 2 frasi."
-    },
     fallbackReplies: {
       Annamaria: "Vi prego credetemi, ero fuori con l'altro bambino e quando sono rientrata ho trovato questa tragedia.",
       Ada: "Sono accorsa subito non appena ho ricevuto la chiamata, la situazione era disperata.",
       Ulisse: "Ho sentito confusione e mi sono precipitato fuori sulla neve per vedere cosa stesse succedendo."
     },
     guidedQuestions: {
-      Annamaria: ["Qual è la ricostruzione esatta dei tuoi minuti tra le 8:15 e le 8:25?", "Come ti spieghi le tracce sul pigiama?"],
+      Annamaria: ["Qual è la ricostruzione esatta dei tuoi minuti tra le 8:15 e le 8:25?", "Como ti spieghi le tracce sul pigiama?"],
       Ada: ["Perché hai spostato e lavato il bambino prima dell'arrivo del 118?", "Cosa hai pensato appena sei arrivata?"],
       Ulisse: ["Hai notato qualcuno strano avvicinarsi alla casa sulla neve?", "Quando hai incontrato Annamaria?"]
     },
@@ -332,10 +313,6 @@ const CASES = {
     sceneNotice: "Criminologia d'inizio '900: confronto di impronte su cassaforte e metodo antropometrico Bertillon.",
     objects: ["🔐 Cassaforte svuotata", "📜 Maschera di calza di seta", "🔍 Scatola di metallo con impronta"],
     suspects: { Alfred: "Alfred Stratton", Albert: "Albert Stratton" },
-    prompts: {
-      Alfred: "Sei Alfred Stratton. Sostieni di essere innocente. Rispondi in italiano. Massimo 2 frasi.",
-      Albert: "Sei Albert Stratton, fratello di Alfred. Rispondi in italiano. Massimo 2 frasi."
-    },
     fallbackReplies: {
       Alfred: "Non so nulla di questa storia, quella notte eravamo altrove a dormire.",
       Albert: "Mio fratello non c'entra niente con la bottega dei coniugi Farrow."
@@ -359,11 +336,6 @@ const CASES = {
     sceneNotice: "Tecnica investigativa vittoriana: verbali di ronda, autopsie d'epoca e perizie grafologiche.",
     objects: ["✉️ Lettera Dear Boss", "🔪 Bisturi da chirurgo", "🧥 Grembiule di cuoio"],
     suspects: { Druitt: "Montague Druitt", Kosminski: "Aaron Kosminski", Ostrog: "Michael Ostrog" },
-    prompts: {
-      Druitt: "Sei Montague Druitt, avvocato. Neghi qualsiasi coinvolgimento. Rispondi in italiano. Massimo 2 frasi.",
-      Kosminski: "Sei Aaron Kosminski. Rispondi in italiano con tono confuso. Massimo 2 frasi.",
-      Ostrog: "Sei Michael Ostrog, truffatore. Rispondi in italiano. Massimo 2 frasi."
-    },
     fallbackReplies: {
       Druitt: "I miei impegni professionali e culturali mi tengono ben lontano da simili orrori notturni.",
       Kosminski: "Perché continuate a seguirmi? Io non faccio del male a nessuno.",
@@ -466,8 +438,16 @@ function inter(s) {
   }
   
   chatHistory[s].forEach(m => {
-    const text = m.parts ? m.parts[0].text : m.content;
-    renderMsg(m.role === 'user' ? 'me' : 'them', text);
+    let text = "";
+    if (typeof m === 'string') {
+      text = m;
+    } else if (m.parts && m.parts[0]) {
+      text = m.parts[0].text;
+    } else if (m.content) {
+      text = m.content;
+    }
+    let roleClass = (m.role === 'user' || m.sender === 'me') ? 'me' : 'them';
+    renderMsg(roleClass, text);
   });
 }
 
@@ -532,10 +512,9 @@ async function send() {
       useFallbackReply();
     }
   } else {
-    // Risposta simulata offline immediata se non c'è una API key configurata
     setTimeout(() => {
       useFallbackReply();
-    }, 400);
+    }, 300);
   }
 
   qInput.disabled = false;
