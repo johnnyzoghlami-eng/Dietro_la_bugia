@@ -27,7 +27,7 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home a schermo intero senza bordi, immagine intera e tasto sovrapposto */
+  /* Schermata Home a schermo intero con immagine intera e pulsante più in alto dentro il box */
   #home.active {
     display: flex;
     flex-direction: column;
@@ -40,7 +40,7 @@
     height: 100vh;
     box-sizing: border-box;
     overflow: hidden;
-    padding: 0 20px 50px 20px; /* Aumentato il padding inferiore per sollevare il pulsante */
+    padding: 0 20px 85px 20px; /* Margine inferiore aumentato per sollevare il tasto dentro l'immagine */
     background: #000;
     z-index: 100;
   }
@@ -53,15 +53,12 @@
     height: 100%;
     z-index: 1;
     background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .home-poster-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Riempie lo schermo mantenendo le proporzioni senza bordi neri immensi */
+    object-fit: contain; /* Mantiene l'immagine intera con lo sfondo nero originale */
     display: block;
   }
 
