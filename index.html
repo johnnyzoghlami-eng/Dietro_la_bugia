@@ -27,12 +27,12 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home a Schermo Pieno */
+  /* Schermata Home ottimizzata e centrata */
   #home.active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     min-height: 100vh;
     box-sizing: border-box;
     position: fixed;
@@ -41,42 +41,36 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding: 0 0 40px 0;
-    background: #000;
+    padding: 24px 16px 36px 16px;
+    background: #05070b;
   }
 
   .home-poster-box {
-    position: absolute;
-    top: 0;
-    left: 0;
+    flex: 1;
+    max-width: 380px;
     width: 100%;
-    height: 100%;
-    z-index: 1;
+    max-height: calc(100vh - 130px);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.9);
+    border: 1px solid var(--border-color);
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
   }
 
   .home-poster-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Mostra l'intera immagine senza tagliarla */
     display: block;
-    filter: brightness(0.85);
-  }
-
-  /* Sfumatura in basso per far risaltare il tasto Inizia sopra l'immagine */
-  #home.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
-    z-index: 2;
-    pointer-events: none;
   }
 
   #home.active > div:not(.home-poster-box) {
-    position: relative;
+    width: 100%;
+    max-width: 380px;
     z-index: 3;
   }
 
@@ -124,6 +118,7 @@
     text-transform: uppercase; 
     letter-spacing: 1px; 
     box-shadow: 0 4px 20px rgba(194,37,37,0.7);
+    width: 100%;
   }
   button:hover { background: var(--accent-red-hover); }
   button:active { transform: scale(0.98); }
@@ -160,7 +155,7 @@
 <body>
 <div class="wrap">
 
-  <!-- SCHERMATA HOME PRINCIPALE A SCHERMO PIENO -->
+  <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
     <div class="home-poster-box">
       <img src="copertina.jpg" alt="Dietro la Bugia">
