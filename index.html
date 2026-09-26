@@ -27,15 +27,15 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con l'immagine di copertina e pulsante in basso */
+  /* Schermata Home con l'immagine di copertina e pulsante */
   #home.active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     min-height: 100vh;
     text-align: center;
-    padding-bottom: 8vh;
+    padding: 20px;
     box-sizing: border-box;
     background: linear-gradient(180deg, rgba(0,0,0,0.15) 30%, rgba(12,15,23,0.95) 85%), 
                 radial-gradient(circle at center, #1b263b 0%, #080a0f 100%);
@@ -48,18 +48,21 @@
   }
 
   .home-poster-box {
-    margin: auto;
-    max-width: 360px;
-    width: 85%;
-    border-radius: 16px;
+    max-width: 320px;
+    width: 100%;
+    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     border: 1px solid var(--border-color);
+    background: #000;
+    margin-bottom: 20px;
   }
 
   .home-poster-box img {
     width: 100%;
+    height: auto;
     display: block;
+    object-fit: cover;
   }
 
   .hero-container {
@@ -147,7 +150,7 @@
     <div class="home-poster-box">
       <img src="copertina.jpg" alt="Dietro la Bugia">
     </div>
-    <div style="margin-top: 20px; margin-bottom: 2vh;">
+    <div>
       <button onclick="show('case-selection')">▶️ Inizia</button>
     </div>
   </section>
