@@ -3,176 +3,306 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dietro la Bugia - AI Powered</title>
+<title>Dietro la Bugia - Noir Edition</title>
 <style>
-  body { margin:0; font-family:Arial, sans-serif; background:#10131a; color:#eee; }
-  .wrap { max-width:900px; margin:auto; padding:18px; }
+  :root {
+    --bg-main: #0c0f17;
+    --bg-card: #151a26;
+    --border-color: #262f45;
+    --accent-red: #c22525;
+    --accent-red-hover: #e02e2e;
+    --text-main: #f0f2f5;
+    --text-muted: #9aa4b2;
+    --purple-btn: #513bb0;
+  }
+
+  body { margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:var(--bg-main); color:var(--text-main); }
+  .wrap { max-width:900px; margin:auto; padding:16px; box-sizing:border-box; }
   section { display:none; }
   section.active { display:block; }
-  .card { background:#191e28; border:1px solid #303746; border-radius:14px; padding:16px; margin:12px 0; }
-  button { background:#7057e8; color:white; border:0; border-radius:99px; padding:11px 16px; font-weight:bold; margin:4px; cursor:pointer; }
-  button:disabled { background:#4a3f82; cursor:not-allowed; }
-  button.sec { background:#29303c; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
-  .chat { height:260px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
-  .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; }
-  .me { margin-left:auto; background:#513bb0; }
-  .them { background:#29303c; }
-  input, textarea { width:100%; box-sizing:border-box; background:#11151d; color:white; border:1px solid #394252; border-radius:99px; padding:11px; }
-  textarea { min-height:120px; border-radius:12px; }
-  .row { display:flex; gap:8px; }
-  .row input { flex:1; }
-  .center { text-align:center; }
-  .small { color:#aaa; font-size:13px; }
-  .item { background:#222936; padding:11px; border-radius:99px; margin:7px 0; display:flex; justify-content:space-between; align-items:center; }
-  .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
-  .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
-  .suggestions { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-  .sugg-btn { background:#2b3548; font-size:12px; padding:8px 12px; border-radius:8px; border:1px solid #434f67; cursor:pointer; color:#ddd; }
-  .sugg-btn:hover { background:#3b4760; }
+
+  /* Grafica Stile Screenshot (Home & Titoli) */
+  .hero-container {
+    text-align: center;
+    padding: 30px 10px 20px 10px;
+    background: linear-gradient(180deg, rgba(197,37,37,0.15) 0%, rgba(12,15,23,0) 100%);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    border-radius: 0 0 20px 20px;
+  }
+  .hero-logo {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+    margin: 0;
+  }
+  .hero-logo span { color: var(--accent-red); text-shadow: 0 0 15px rgba(194,37,37,0.6); }
+  .hero-subtitle { color: var(--text-muted); font-size: 13px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin: 12px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  
+  /* Sezioni Casistiche */
+  .section-title { font-size: 15px; color: var(--accent-red); text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 10px 4px; font-weight: bold; border-left: 3px solid var(--accent-red); padding-left: 8px; }
+
+  /* Pulsanti stile dossier */
+  button { background: var(--accent-red); color: white; border: 0; border-radius: 8px; padding: 12px 20px; font-weight: bold; font-size: 14px; cursor: pointer; transition: background 0.2s, transform 0.1s; text-transform: uppercase; letter-spacing: 0.5px; }
+  button:hover { background: var(--accent-red-hover); }
+  button:active { transform: scale(0.98); }
+  button:disabled { background: #3a2222; color: #777; cursor: not-allowed; }
+  button.sec { background: #222b3c; border: 1px solid var(--border-color); color: var(--text-main); }
+  button.sec:hover { background: #2c384e; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
+  
+  /* Chat e Interrogatori */
+  .chat { height: 280px; overflow-y: auto; background: #080a0f; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+  .msg { padding: 10px 14px; border-radius: 10px; margin: 8px 0; max-width: 82%; white-space: pre-wrap; font-size: 14px; line-height: 1.4; }
+  .me { margin-left: auto; background: var(--purple-btn); color: white; border-bottom-right-radius: 2px; }
+  .them { background: #1f2838; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
+
+  input, textarea { width: 100%; box-sizing: border-box; background: #0f131d; color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 14px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--accent-red); }
+  textarea { min-height: 120px; }
+
+  .row { display: flex; gap: 8px; }
+  .row input { flex: 1; }
+  .center { text-align: center; }
+  .small { color: var(--text-muted); font-size: 12px; }
+  
+  .item { background: #1b2333; padding: 12px; border-radius: 8px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+  .notice { background: #161e2e; border-left: 4px solid var(--accent-red); padding: 14px; border-radius: 6px; font-size: 13px; line-height: 1.4; margin-bottom: 12px; }
+  .option { display: block; background: #171f2f; padding: 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border-color); cursor: pointer; }
+  .option:hover { border-color: var(--accent-red); }
+
+  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .sugg-btn { background: #1d273a; font-size: 12px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; color: #cbd5e1; text-transform: none; font-weight: normal; }
+  .sugg-btn:hover { background: #28344d; color: white; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
+  <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
-    <h1 class="center">🕵️ Dietro la Bugia</h1>
-    <p class="center small">Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
+    <div class="hero-container">
+      <h1 class="hero-logo">Dietro la <span>Bugia</span></h1>
+      <p class="hero-subtitle">Ogni storia nasconde una verità.</p>
+    </div>
 
-    <div class="card">
-      <h2>🤖 AI-001 — L'ultima notte</h2>
-      <p>Caso d'inventiva moderno. Un giallo d'atmosfera con un delitto in una villa isolata.</p>
-      <button onclick="askDifficulty('ai001')">▶️ Gioca Questo Caso</button>
+    <div class="center" style="margin: 30px 0;">
+      <button onclick="show('case-selection')" style="font-size: 18px; padding: 16px 40px; box-shadow: 0 0 20px rgba(194,37,37,0.4);">▶️ INIZIA INDAGINE</button>
     </div>
-    <div class="card">
-      <h2>📰 Delitto di Cogne — 2002</h2>
-      <p>Caso reale moderno. Analizza la complessa cronologia dei minuti e le perizie.</p>
-      <button onclick="askDifficulty('cogne')">▶️ Gioca Questo Caso</button>
-    </div>
-    <div class="card">
-      <h2>🏛️ Delitto Farrow (Deptford) — 1905</h2>
-      <p>Caso storico reale. Un duplice omicidio a Londra risolto con le prime impronte.</p>
-      <button onclick="askDifficulty('farrow')">▶️ Gioca Questo Caso</button>
-    </div>
-    <div class="card">
-      <h2>🔍 Jack lo Squartatore — 1888</h2>
-      <p>Caso storico. Londra, Whitechapel. Interrogatori basati su verbali d'epoca.</p>
-      <button onclick="askDifficulty('jack')">▶️ Gioca Questo Caso</button>
+
+    <div class="card center" style="border-style: dashed; background: transparent; margin-top: 40px;">
+      <p class="small" style="margin:0;">Seleziona "Inizia Indagine" per accedere ai fascicoli riservati suddivisi per categorie di rischio.</p>
     </div>
   </section>
 
-  <!-- Schermata Scelta Difficoltà -->
-  <section id="difficulty" class="center">
-    <h2>⚙️ Scegli la Difficoltà di Gioco</h2>
-    <p class="small">Seleziona come desideri affrontare l'indagine:</p>
-    <div class="card" style="max-width:500px; margin:20px auto;">
-      <h3>🟢 Facile</h3>
-      <p class="small">Durante gli interrogatori avrai dei suggerimenti di domande pronte da cliccare.</p>
-      <button onclick="selectCaseWithDiff('facile')">Gioca a Facile</button>
+  <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
+  <section id="case-selection">
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:20px; letter-spacing:1px;">📂 FASCICOLI ARCHIVIO</h2>
+      <p class="hero-subtitle">Seleziona il caso da aprire</p>
     </div>
-    <div class="card" style="max-width:500px; margin:20px auto;">
-      <h3>🔵 Normale</h3>
-      <p class="small">Nessun aiuto. Dovrai formulare tu tutte le domande logiche ai sospettati.</p>
-      <button class="sec" onclick="selectCaseWithDiff('normale')">Gioca a Normale</button>
+
+    <!-- Sezione 1: Casi inventati dall'IA -->
+    <div class="section-title">1. Casi Inventati dall'IA</div>
+    <div class="card">
+      <h3 style="margin:0 0 6px 0; color:white;">🤖 AI-001 — L'ultima notte</h3>
+      <p class="small">Villa Rinaldi. Un giallo d'atmosfera con un delitto in una villa isolata e quattro sospettati.</p>
+      <button onclick="askDifficulty('ai001')" style="margin-top:10px;">📂 Apri Fascicolo</button>
+    </div>
+
+    <!-- Sezione 2: Casi moderni -->
+    <div class="section-title">2. Casi Moderni</div>
+    <div class="card">
+      <h3 style="margin:0 0 6px 0; color:white;">📰 Delitto di Cogne (2002)</h3>
+      <p class="small">Villetta di Montroz. Analizza la complessa cronologia dei minuti, i verbali del 118 e le perizie sul sangue.</p>
+      <button onclick="askDifficulty('cogne')" style="margin-top:10px;">📂 Apri Fascicolo</button>
+    </div>
+
+    <!-- Sezione 3: Casi storici -->
+    <div class="section-title">3. Casi Storici</div>
+    <div class="card">
+      <h3 style="margin:0 0 6px 0; color:white;">🏛️ Delitto Farrow (Deptford, 1905)</h3>
+      <p class="small">Londra. Un duplice omicidio che ha cambiato per sempre la storia della criminologia con le impronte digitali.</p>
+      <button onclick="askDifficulty('farrow')" style="margin-top:10px;">📂 Apri Fascicolo</button>
+    </div>
+
+    <!-- Sezione 4: Casi premium -->
+    <div class="section-title">4. Casi Premium</div>
+    <div class="card" style="border-color: #8c6922; background: linear-gradient(135deg, #151a26 0%, #261f15 100%);">
+      <h3 style="margin:0 0 6px 0; color:#f6c453;">⭐ Jack lo Squartatore (Whitechapel, 1888)</h3>
+      <p class="small">Londra. L'indagine più oscura di fine ottocento tra ronda notturna, autopsie d'epoca e verbali di Scotland Yard.</p>
+      <button onclick="askDifficulty('jack')" style="margin-top:10px; background:#b8860b;">🔒 Apri Caso Premium</button>
+    </div>
+
+    <br>
+    <button class="sec" onclick="show('home')">← Torna alla Home</button>
+  </section>
+
+  <!-- SCHERMATA SCELTA DIFFICOLTÀ -->
+  <section id="difficulty" class="center">
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:20px;">⚙️ PROTOCOLLO DI INDAGINE</h2>
+      <p class="hero-subtitle">Configura il livello di sfida</p>
+    </div>
+
+    <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
+      <h3 style="color:#4ade80; margin-top:0;">🟢 Livello Facile</h3>
+      <p class="small">Durante gli interrogatori nella stanza dedicata, il sistema ti fornirà suggerimenti di domande investigative pronte da cliccare.</p>
+      <button onclick="selectCaseWithDiff('facile')" style="width:100%; background:#1e3a29; border:1px solid #4ade80; color:#4ade80;">Seleziona Facile</button>
+    </div>
+
+    <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
+      <h3 style="color:#60a5fa; margin-top:0;">🔵 Livello Normale</h3>
+      <p class="small">Nessun aiuto esterno. Dovrai formulare ed inserire tu autonomamente tutte le domande logiche per smascherare i sospetti.</p>
+      <button class="sec" onclick="selectCaseWithDiff('normale')" style="width:100%;">Seleziona Normale</button>
     </div>
     <br>
-    <button class="sec" onclick="show('home')">← Torna al Menu</button>
+    <button class="sec" onclick="show('case-selection')">← Torna ai Casi</button>
   </section>
 
+  <!-- DASHBOARD INDAGINE -->
   <section id="investigation">
-    <h2>🔎 Dashboard Indagine</h2>
-    <div class="card">
-      <b id="case-title"></b><br>
-      <span id="case-place"></span> — caso aperto (<span id="diff-badge" style="color:#a494ff; font-weight:bold;"></span>)<br>
-      <span class="small">Prove scientifiche/reperti raccolti: <span id="ec">0</span></span>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">🔎 CENTRALE OPERATIVA</h2>
+      <p class="hero-subtitle" id="case-title"></p>
     </div>
-    <h3>Sospetti da Interrogare</h3>
+
+    <div class="card">
+      <b>Ubicazione Rilievi:</b> <span id="case-place"></span><br>
+      <b>Profilo Difficoltà:</b> <span id="diff-badge" style="color:var(--accent-red); font-weight:bold;"></span><br>
+      <span class="small">Prove scientifiche acquisite: <span id="ec" style="color:white; font-weight:bold;">0</span></span>
+    </div>
+
+    <h3 style="font-size:14px; text-transform:uppercase; color:var(--text-muted);">Sospetti Registrati</h3>
     <div class="grid" id="suspects-grid"></div>
-    <h3>Strumenti Analitici</h3>
+
+    <h3 style="font-size:14px; text-transform:uppercase; color:var(--text-muted); margin-top:20px;">Strumenti Analitici</h3>
     <div class="grid">
-      <button class="sec" onclick="show('scene')">🧪 Scena / Perizie</button>
-      <button class="sec" onclick="show('board')">📌 Bacheca Appunti</button>
+      <button class="sec" onclick="show('scene')">🧪 Scena / Reperti</button>
+      <button class="sec" onclick="show('board')">📌 Bacheca Note</button>
       <button class="sec" onclick="show('time')">🕒 Timeline</button>
       <button class="sec" onclick="show('acc')">⚖️ Formula Accusa</button>
     </div>
     <br>
-    <button class="sec" onclick="show('home')">🏠 Torna al Menu</button>
+    <button class="sec" onclick="show('case-selection')">📂 Cambia Caso</button>
   </section>
 
+  <!-- STANZA INTERROGATORI -->
   <section id="inter">
-    <h2>🗣️ Stanza Interrogatori</h2>
-    <div class="card center">
-      <b id="who"></b>
-      <p class="small">Interroga il sospetto in tempo reale.</p>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">🗣️ SALA INTERROGATORI</h2>
+      <p class="hero-subtitle" id="who"></p>
     </div>
+
     <div id="chat" class="chat"></div>
     
-    <!-- Area suggerimenti per modalità Facile -->
     <div id="suggestions-box" class="suggestions" style="display:none;"></div>
 
-    <div class="row" style="margin-top:10px;">
+    <div class="row" style="margin-top:12px;">
       <input id="q" placeholder="Fai una domanda al sospetto..." onkeydown="if(event.key==='Enter')send()">
       <button id="send-btn" onclick="send()">Invia</button>
     </div>
     <br>
-    <button class="sec" onclick="show('investigation')">← Torna all'Indagine</button>
+    <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
   </section>
 
+  <!-- SCENA E REPERTI -->
   <section id="scene">
-    <h2>🧪 Reperti e Rilievi della Scientifica</h2>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">🧪 RILIEVI DELLA SCIENTIFICA</h2>
+      <p class="hero-subtitle">Analisi forense della scena</p>
+    </div>
+
     <div class="notice" id="scene-notice"></div>
     <div id="objects"></div>
-    <h3>Esami e Rilevamenti Disponibili</h3>
+
+    <h3 style="font-size:14px; text-transform:uppercase; color:var(--text-muted); margin-top:20px;">Esami di Laboratorio</h3>
     <div class="grid" id="tests-grid"></div>
-    <div id="results"></div>
+    <div id="results" style="margin-top:10px;"></div>
     <br>
-    <button class="sec" onclick="show('investigation')">← Torna all'Indagine</button>
+    <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
   </section>
 
+  <!-- BACHECA APPUNTI -->
   <section id="board">
-    <h2>📌 Bacheca Personale Detective</h2>
-    <textarea id="note" placeholder="Scrivi una nota di deduzione..."></textarea>
-    <button onclick="addNote()">➕ Aggiungi Nota</button>
-    <div id="notes"></div>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">📌 BACHECA INVESTIGATIVA</h2>
+      <p class="hero-subtitle">Note e deduzioni personali</p>
+    </div>
+
+    <textarea id="note" placeholder="Scrivi una nota di deduzione o un indizio chiave..."></textarea>
+    <button onclick="addNote()" style="margin-top:8px;">➕ Registra Nota</button>
+    <div id="notes" style="margin-top:15px;"></div>
     <br>
-    <button class="sec" onclick="show('investigation')">← Torna all'Indagine</button>
+    <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
   </section>
 
+  <!-- TIMELINE -->
   <section id="time">
-    <h2>🕒 Ricostruzione Cronologica</h2>
-    <textarea id="te" placeholder="Es. 08:16 — Uscita dalla villetta"></textarea>
-    <button onclick="addTime()">➕ Aggiungi Evento</button>
-    <div id="times"></div>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">🕒 RICOSTRUZIONE ORARIA</h2>
+      <p class="hero-subtitle">Sequenza temporale dei fatti</p>
+    </div>
+
+    <textarea id="te" placeholder="Es. 08:16 — Uscita dalla villetta di Montroz"></textarea>
+    <button onclick="addTime()" style="margin-top:8px;">➕ Aggiungi Evento</button>
+    <div id="times" style="margin-top:15px;"></div>
     <br>
-    <button class="sec" onclick="show('investigation')">← Torna all'Indagine</button>
+    <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
   </section>
 
+  <!-- ACCUSA FINALE -->
   <section id="acc">
-    <h2>⚖️ Aula di Tribunale / Mandato di Cattura</h2>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">⚖️ MANDATO DI CATTURA</h2>
+      <p class="hero-subtitle">Formula l'accusa finale davanti ai giudici</p>
+    </div>
+
     <div class="card">
-      <h3>1. Individua il Colpevole</h3>
+      <h3 style="margin-top:0; font-size:15px; color:var(--accent-red);">1. Individua il Colpevole</h3>
       <div id="culprit-options"></div>
     </div>
+    
     <div class="card">
-      <h3>2. Seleziona le Prove Schiaccianti</h3>
+      <h3 style="margin-top:0; font-size:15px; color:var(--accent-red);">2. Seleziona le Prove Schiaccianti</h3>
       <div id="ae"></div>
     </div>
-    <button onclick="accuse()">🔨 Emetti Ordinanza di Custodia</button>
-    <button class="sec" onclick="show('investigation')">← Torna all'Indagine</button>
+
+    <button onclick="accuse()" style="width:100%; padding:15px; font-size:16px; margin-top:10px;">🔨 Emetti Ordinanza di Custodia</button>
+    <br><br>
+    <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
   </section>
 
+  <!-- RISULTATO -->
   <section id="result">
-    <h2 id="rt"></h2>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 id="rt" style="margin:0; font-size:18px;"></h2>
+      <p class="hero-subtitle">Verdetto del processo</p>
+    </div>
+
     <div id="rx" class="card"></div>
-    <button onclick="show('home')">📂 Scegli un Altro Caso</button>
-    <button class="sec" onclick="show('solution')">🔐 Consulta la Soluzione Completa</button>
+    
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button onclick="show('case-selection')" style="flex:1;">📂 Scegli un Altro Caso</button>
+      <button class="sec" onclick="show('solution')" style="flex:1;">🔐 Soluzione Completa</button>
+    </div>
   </section>
 
+  <!-- SOLUZIONE -->
   <section id="solution">
-    <h2>🔐 Atti del Processo / Verità Storica</h2>
-    <div class="card" id="sol-text"></div>
+    <div class="hero-container" style="padding: 15px;">
+      <h2 style="margin:0; font-size:18px;">🔐 ATTI RISERVATI DEL PROCESSO</h2>
+      <p class="hero-subtitle">La verità ufficiale dei fatti</p>
+    </div>
+
+    <div class="card" id="sol-text" style="line-height: 1.6;"></div>
     <br>
-    <button onclick="show('home')">🏠 Torna al Menu Principale</button>
+    <button class="sec" onclick="show('case-selection')">📂 Torna alla Scelta Casi</button>
   </section>
 
 </div>
@@ -183,7 +313,7 @@ const GROQ_API_KEY = "";
 const CASES = {
   ai001: {
     title: "🤖 AI-001 — L'ultima notte",
-    desc: "<b>Vittima:</b> Andrea Rinaldi, 42 anni.<br>Trovato senza vita nello studio di Villa Rinaldi con una ferita alla testa.",
+    desc: "Vittima: Andrea Rinaldi, 42 anni. Trovato senza vita nello studio di Villa Rinaldi con una ferita alla testa.",
     place: "Villa Rinaldi",
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
@@ -212,7 +342,7 @@ const CASES = {
   },
   cogne: {
     title: "📰 Delitto di Cogne (2002)",
-    desc: "<b>Vittima:</b> Samuele Lorenzi (3 anni).<br>Avvenuto la mattina del 30 gennaio 2002.",
+    desc: "Vittima: Samuele Lorenzi (3 anni). Avvenuto la mattina del 30 gennaio 2002.",
     place: "Villetta di Montroz, Cogne",
     sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
@@ -238,7 +368,7 @@ const CASES = {
   },
   farrow: {
     title: "🏛️ Delitto Farrow (1905)",
-    desc: "<b>Vittime:</b> Thomas e Ann Farrow.<br>Londra, Deptford.",
+    desc: "Vittime: Thomas e Ann Farrow. Londra, Deptford.",
     place: "Bottega Farrow, Deptford",
     sceneNotice: "Criminologia d'inizio '900: impronte digitali e metodo Bertillon.",
     objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
@@ -260,10 +390,10 @@ const CASES = {
     solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Primo caso in Gran Bretagna risolto con le impronte digitali.</p>"
   },
   jack: {
-    title: "🔍 Jack lo Squartatore (1888)",
-    desc: "<b>Sito indagine:</b> Whitechapel, Londra.",
+    title: "⭐ Jack lo Squartatore (1888)",
+    desc: "Sito indagine: Whitechapel, Londra. Analisi storica dei sospetti dell'autunno 1888.",
     place: "Quartiere di Whitechapel",
-    sceneNotice: "Verbali di ronda e autopsie d'epoca.",
+    sceneNotice: "Verbali di ronda, autopsie d'epoca e perizie di Scotland Yard.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
     suggestions: {
@@ -307,7 +437,7 @@ function selectCaseWithDiff(diff) {
   
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-place').textContent = currentCase.place;
-  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (con suggerimenti)' : 'Normale');
+  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (con suggerimenti)' : 'Normale (senza aiuti)');
   document.getElementById('scene-notice').textContent = currentCase.sceneNotice;
   
   let sGrid = document.getElementById('suspects-grid');
@@ -357,11 +487,10 @@ function inter(s) {
     renderMsg(m.role === 'user' ? 'me' : 'them', m.content);
   });
 
-  // Gestione pulsanti di suggerimento in modalità Facile
   let suggBox = document.getElementById('suggestions-box');
   if (currentDifficulty === 'facile' && currentCase.suggestions && currentCase.suggestions[s]) {
     suggBox.style.display = 'flex';
-    suggBox.innerHTML = '<span class="small" style="width:100%; color:#a494ff;">💡 Domande suggerite:</span>' + 
+    suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453;">💡 Domande suggerite dagli atti:</span>' + 
       currentCase.suggestions[s].map(q => `<button class="sugg-btn" onclick="useSuggestion('${q.replace(/'/g, "\\'")}')">${q}</button>`).join('');
   } else {
     suggBox.style.display = 'none';
@@ -419,15 +548,15 @@ async function send() {
       if (data.choices && data.choices[0]) {
         replyText = data.choices[0].message.content;
       } else {
-        throw new Error("Risposta vuota da Groq");
+        throw new Error("Risposta vuota");
       }
     } else {
-      await new Promise(r => setTimeout(r, 600));
-      let base = currentCase.fallbacks[cur] || "Non ho altro da aggiungere su questa faccenda.";
-      replyText = base + " (Risposta basata sul profilo del sospetto)";
+      await new Promise(r => setTimeout(r, 500));
+      let base = currentCase.fallbacks[cur] || "Non ho altro da dichiarare.";
+      replyText = base + " (Risposta verbale registrata)";
     }
   } catch (err) {
-    replyText = currentCase.fallbacks[cur] || "Preferisco non rispondere a questa domanda al momento.";
+    replyText = currentCase.fallbacks[cur] || "Preferisco non rispondere al momento.";
   }
 
   chatHistory[cur].push({ role: 'assistant', content: replyText });
@@ -440,14 +569,14 @@ async function send() {
 
 function scene() {
   document.getElementById('objects').innerHTML = currentCase.objects
-    .map(x => '<div class="item">' + x + '</div>').join('');
+    .map(x => '<div class="item"><span>' + x + '</span></div>').join('');
 }
 
 function test(k) {
   if (done[k]) return;
   done[k] = 1;
   ev.push(k);
-  document.getElementById('results').innerHTML += '<div class="card"><b>' + currentCase.tests[k].desc + '</b></div>';
+  document.getElementById('results').innerHTML += '<div class="card" style="border-color:var(--accent-red);"><b>' + currentCase.tests[k].desc + '</b></div>';
   document.getElementById('ec').textContent = ev.length;
 }
 
@@ -459,7 +588,7 @@ function addNote() {
 
 function renderNotes() {
   document.getElementById('notes').innerHTML = notes.map((x, i) =>
-    '<div class="item"><span>📝 ' + esc(x) + '</span><button onclick="notes.splice(' + i + ',1);renderNotes()">×</button></div>'
+    '<div class="item"><span>📝 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px;" onclick="notes.splice(' + i + ',1);renderNotes()">✕</button></div>'
   ).join('');
 }
 
@@ -471,14 +600,14 @@ function addTime() {
 
 function renderTimes() {
   document.getElementById('times').innerHTML = times.map((x, i) =>
-    '<div class="item"><span>🕒 ' + esc(x) + '</span><button onclick="times.splice(' + i + ',1);renderTimes()">×</button></div>'
+    '<div class="item"><span>🕒 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px;" onclick="times.splice(' + i + ',1);renderTimes()">✕</button></div>'
   ).join('');
 }
 
 function renderAE() {
   document.getElementById('ae').innerHTML = ev.map(k =>
     '<label class="option"><input type="checkbox" value="' + k + '"> ' + currentCase.tests[k].name + '</label>'
-  ).join('') || '<span class="small">Nessun reperto analizzato. Vai in "Scena" per condurre perizie.</span>';
+  ).join('') || '<span class="small">Nessun reperto scientifico analizzato. Visita la sezione "Scena / Reperti".</span>';
 }
 
 function accuse() {
@@ -489,10 +618,10 @@ function accuse() {
   currentCase.requiredEvidences.forEach(req => { if (!a.includes(req)) ok = false; });
 
   show('result');
-  document.getElementById('rt').textContent = ok ? '🎉 CASO RISOLTO CON SUCCESSO' : '💥 ACCUSA RESPINTA / GAME OVER';
+  document.getElementById('rt').textContent = ok ? '🎉 CASO RISOLTO CON SUCCESSO' : '💥 ACCUSA RESPINTA / ERRORE GIUDIZIARIO';
   document.getElementById('rx').innerHTML = ok 
-    ? '<p>Eccellente lavoro! Le tue prove e la scelta del sospetto reggono perfettamente di fronte ai giudici.</p>' 
-    : '<p>L\'accusa è crollata! Non hai presentato le prove necessarie o hai incriminato la persona sbagliata.</p>';
+    ? '<p>I tuoi riscontri e l\'individuazione del colpevole sono inattaccabili. La giustizia ha fatto il suo corso.</p>' 
+    : '<p>Il giudice ha respinto l\'ordinanza: mancano prove fondamentali o il sospettato incriminato non è quello giusto.</p>';
 }
 
 function esc(s) {
