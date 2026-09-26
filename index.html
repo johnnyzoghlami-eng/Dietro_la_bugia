@@ -138,22 +138,27 @@
   button:hover { background: var(--accent-red-hover); }
   button:active { transform: scale(0.98); }
   button:disabled { background: #3a2222; color: #777; cursor: not-allowed; box-shadow: none; }
-  button.sec { background: rgba(34, 43, 60, 0.9); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: none; }
+  button.sec { background: rgba(34, 43, 60, 0.9); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: none; width: 100%; }
   button.sec:hover { background: rgba(44, 56, 78, 0.9); }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
   
-  .chat { height: 280px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+  .chat { height: 240px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 10px; }
   .msg { padding: 10px 14px; border-radius: 10px; margin: 8px 0; max-width: 82%; white-space: pre-wrap; font-size: 14px; line-height: 1.4; }
   .me { margin-left: auto; background: var(--purple-btn); color: white; border-bottom-right-radius: 2px; }
   .them { background: #1f2838; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
 
   input, textarea { width: 100%; box-sizing: border-box; background: rgba(15, 19, 29, 0.95); color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 14px; }
   input:focus, textarea:focus { outline: none; border-color: var(--accent-red); }
-  textarea { min-height: 120px; }
+  
+  /* Chat libera grande specificata dall'utente */
+  .chat-input-area {
+    min-height: 90px;
+    resize: vertical;
+    font-family: inherit;
+    margin-bottom: 8px;
+  }
 
-  .row { display: flex; gap: 8px; }
-  .row input { flex: 1; }
   .center { text-align: center; }
   .small { color: var(--text-muted); font-size: 12px; }
   
@@ -162,8 +167,8 @@
   .option { display: block; background: rgba(23, 31, 47, 0.85); padding: 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border-color); cursor: pointer; }
   .option:hover { border-color: var(--accent-red); }
 
-  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .sugg-btn { background: #1d273a; font-size: 12px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; color: #cbd5e1; text-transform: none; font-weight: normal; box-shadow: none; }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .sugg-btn { background: #1d273a; font-size: 12px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; color: #cbd5e1; text-transform: none; font-weight: normal; box-shadow: none; width: auto; }
   .sugg-btn:hover { background: #28344d; color: white; }
 </style>
 </head>
@@ -187,7 +192,6 @@
       <p class="hero-subtitle">Scegli l'archivio da investigare</p>
     </div>
 
-    <!-- Sezione 1: Casi inventati dall'IA -->
     <div class="section-title">1. Casi inventati dall'IA</div>
     <div class="card">
       <h3 style="margin:0 0 6px 0; color:white; font-size:16px;">🤖 AI-001 — L'ultima notte</h3>
@@ -195,7 +199,6 @@
       <button onclick="askDifficulty('ai001')" style="margin-top:12px; padding:10px 20px; font-size:14px;">📂 Apri Fascicolo</button>
     </div>
 
-    <!-- Sezione 2: Casi moderni -->
     <div class="section-title">2. Casi moderni</div>
     <div class="card">
       <h3 style="margin:0 0 6px 0; color:white; font-size:16px;">📰 Delitto di Cogne (2002)</h3>
@@ -203,7 +206,6 @@
       <button onclick="askDifficulty('cogne')" style="margin-top:12px; padding:10px 20px; font-size:14px;">📂 Apri Fascicolo</button>
     </div>
 
-    <!-- Sezione 3: Casi storici -->
     <div class="section-title">3. Casi storici</div>
     <div class="card">
       <h3 style="margin:0 0 6px 0; color:white; font-size:16px;">🏛️ Delitto Farrow (Deptford, 1905)</h3>
@@ -211,7 +213,6 @@
       <button onclick="askDifficulty('farrow')" style="margin-top:12px; padding:10px 20px; font-size:14px;">📂 Apri Fascicolo</button>
     </div>
 
-    <!-- Sezione 4: Casi premium -->
     <div class="section-title">4. Casi premium</div>
     <div class="card" style="border-color: #8c6922; background: rgba(38, 31, 21, 0.9);">
       <h3 style="margin:0 0 6px 0; color:#f6c453; font-size:16px;">⭐ Jack lo Squartatore (Whitechapel, 1888)</h3>
@@ -233,14 +234,14 @@
 
     <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
       <h3 style="color:#4ade80; margin-top:0;">🟢 Livello Facile</h3>
-      <p class="small">Il sistema ti fornisce suggerimenti di domande pronte da cliccare. I sospettati mentono inizialmente, ma se li affronti con le prove scoperte, potrai contraddirli e metterli alle strette.</p>
+      <p class="small">Suggerimenti dinamici basati su prove e sul dialogo in corso. I sospettati mentono, ma puoi contraddirli se hai le prove.</p>
       <button onclick="selectCaseWithDiff('facile')" style="width:100%; background:#1e3a29; border:1px solid #4ade80; color:#4ade80;">Seleziona Facile</button>
     </div>
 
     <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
       <h3 style="color:#60a5fa; margin-top:0;">🔵 Livello Normale</h3>
       <p class="small">Nessun aiuto esterno. Dovrai formulare ed inserire tu autonomamente tutte le domande logiche.</p>
-      <button class="sec" onclick="selectCaseWithDiff('normale')" style="width:100%;">Seleziona Normale</button>
+      <button class="sec" onclick="selectCaseWithDiff('normale')">Seleziona Normale</button>
     </div>
     <br>
     <button class="sec" onclick="show('case-selection')">← Torna ai Casi</button>
@@ -283,9 +284,9 @@
     <div id="chat" class="chat"></div>
     <div id="suggestions-box" class="suggestions" style="display:none;"></div>
 
-    <div class="row" style="margin-top:12px;">
-      <input id="q" placeholder="Fai una domanda al sospetto..." onkeydown="if(event.key==='Enter')send()">
-      <button id="send-btn" onclick="send()">Invia</button>
+    <div>
+      <textarea id="q" class="chat-input-area" placeholder="Scrivi qui la tua domanda o l'accusa al sospetto..." onkeydown="if(event.key==='Enter' && event.ctrlKey){send(); event.preventDefault();}"></textarea>
+      <button id="send-btn" onclick="send()">Invia Messaggio</button>
     </div>
     <br>
     <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
@@ -388,8 +389,7 @@
 </div>
 
 <script>
-// Inserisci qui la tua chiave API di Groq per attivare l'intelligenza artificiale negli interrogatori
-const GROQ_API_KEY = ""; 
+const GROQ_API_KEY = ""; // Inserisci qui la tua chiave API di Groq
 
 const CASES = {
   ai001: {
@@ -399,7 +399,7 @@ const CASES = {
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
-    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Inizialmente puoi mentire, sviare o difenderti. Tuttavia, se l'investigatore ti fa una domanda basata su prove concrete scoperte (come impronte, tabulati telefonici o perizie scientifiche) che ti mettono alle strette, devi mostrare tensione, contraddirti e ammettere parzialmente la verità o giustificarti in modo goffo perché sei stato scoperto. Rispondi sempre in italiano.",
+    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Inizialmente puoi mentire, sviare o difenderti. Tuttavia, se l'investigatore ti fa una domanda basata su prove concrete scoperte (come impronte, tabulati telefonici o perizie scientifiche) o fa notare contraddizioni nel tuo racconto, devi mostrare tensione, ammettere parzialmente la verità o giustificarti in modo goffo perché sei stato messo alle strette. Rispondi sempre in italiano.",
     suggestions: {
       Marco: ["Dove ti trovavi tra le 23:00 e le 23:30?", "C'erano problemi economici in azienda?"],
       Elena: ["Perché hai mandato quell'SMS alle 23:05?", "Cosa hai fatto dopo la discussione nello studio?", "Abbiamo trovato le tue impronte sul fermacarte e il bottone vicino alla vittima: perché hai mentito?"],
@@ -572,13 +572,17 @@ function inter(s) {
     renderMsg(m.role === 'user' ? 'me' : 'them', m.content);
   });
 
+  updateSuggestions(s);
+}
+
+function updateSuggestions(s) {
   let suggBox = document.getElementById('suggestions-box');
   if (currentDifficulty === 'facile' && currentCase.suggestions) {
     suggBox.style.display = 'flex';
     
-    // Unisci suggerimenti di base del sospettato con quelli sbloccati dalle prove trovate
     let currentSuggestions = [...(currentCase.suggestions[s] || [])];
     
+    // Adatta in base alle prove scoperte
     ev.forEach(testId => {
       if (testId === 'phone' || testId === 'timing') {
         currentSuggestions.push("Perché ha mentito sui suoi spostamenti o sui messaggi a quell'ora?");
@@ -591,7 +595,24 @@ function inter(s) {
       }
     });
 
-    suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453;">💡 Domande suggerite dagli atti e prove:</span>' + 
+    // Adatta in base all'ultima risposta data dal sospettato nel dialogo
+    if (chatHistory[s] && chatHistory[s].length > 0) {
+      let lastMsg = chatHistory[s][chatHistory[s].length - 1];
+      if (lastMsg.role === 'assistant') {
+        let textLower = lastMsg.content.toLowerCase();
+        if (textLower.includes('archivio') || textLower.includes('camera') || textLower.includes('casa')) {
+          currentSuggestions.push("Può confermare chi era con lei esattamente in quel momento?");
+        }
+        if (textLower.includes('fraintende') || textLower.includes('nulla') || textLower.includes('sbagliate')) {
+          currentSuggestions.push("I fatti dicono il contrario: chi l'ha vista veramente laggiù?");
+        }
+      }
+    }
+
+    // Rimuovi duplicati
+    currentSuggestions = [...new Set(currentSuggestions)];
+
+    suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453; margin-bottom:4px;">💡 Domande suggerite dal dialogo e dalle prove:</span>' + 
       currentSuggestions.map(q => `<button class="sugg-btn" onclick="useSuggestion('${q.replace(/'/g, "\\'")}')">${q}</button>`).join('');
   } else {
     suggBox.style.display = 'none';
@@ -676,6 +697,9 @@ async function send() {
   chatHistory[cur].push({ role: 'assistant', content: replyText });
   renderMsg('them', replyText);
 
+  // Aggiorna dinamicamente i suggerimenti in base all'evoluzione della chat
+  updateSuggestions(cur);
+
   qInput.disabled = false;
   sendBtn.disabled = false;
   qInput.focus();
@@ -702,7 +726,7 @@ function addNote() {
 
 function renderNotes() {
   document.getElementById('notes').innerHTML = notes.map((x, i) =>
-    '<div class="item"><span>📝 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px;" onclick="notes.splice(' + i + ',1);renderNotes()">✕</button></div>'
+    '<div class="item"><span>📝 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px; width:auto;" onclick="notes.splice(' + i + ',1);renderNotes()">✕</button></div>'
   ).join('');
 }
 
@@ -714,7 +738,7 @@ function addTime() {
 
 function renderTimes() {
   document.getElementById('times').innerHTML = times.map((x, i) =>
-    '<div class="item"><span>🕒 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px;" onclick="times.splice(' + i + ',1);renderTimes()">✕</button></div>'
+    '<div class="item"><span>🕒 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px; width:auto;" onclick="times.splice(' + i + ',1);renderTimes()">✕</button></div>'
   ).join('');
 }
 
