@@ -27,7 +27,7 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con il detective e la lente d'ingrandimento integrata in modo sicuro */
+  /* Schermata Home con l'immagine esatta che hai caricato */
   #home.active {
     display: flex;
     flex-direction: column;
@@ -37,31 +37,16 @@
     text-align: center;
     padding-bottom: 8vh;
     box-sizing: border-box;
-    background: linear-gradient(180deg, rgba(0,0,0,0.1) 20%, rgba(12,15,23,0.92) 85%), 
-                radial-gradient(circle at center, #1b263b 0%, #080a0f 100%);
+    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(12,15,23,0.9)), url('16919_2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
   }
-
-  .home-content-box {
-    margin-bottom: auto;
-    margin-top: 20vh;
-  }
-
-  .hero-logo {
-    font-size: 36px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: white;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.9);
-    margin: 0;
-  }
-  .hero-logo span { color: var(--accent-red); text-shadow: 0 0 20px rgba(194,37,37,0.8); }
-  .hero-subtitle { color: #d1d5db; font-size: 13px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
 
   .hero-container {
     text-align: center;
@@ -145,10 +130,6 @@
 
   <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
-    <div class="home-content-box">
-      <h1 class="hero-logo">Dietro la <span>Bugia</span></h1>
-      <p class="hero-subtitle">Ogni storia nasconde una verità.</p>
-    </div>
     <button onclick="show('case-selection')">▶️ Inizia</button>
   </section>
 
@@ -393,7 +374,7 @@ const CASES = {
   },
   cogne: {
     title: "📰 Delitto di Cogne (2002)",
-    desc: "Vittima: Samuele Lorenzi (3 anni). Avvenuto la mattina del 30 gennaio 2002.",
+    desc: "Vittima: Samuele Lorenzi (3 years). Avvenuto la mattina del 30 gennaio 2002.",
     place: "Villetta di Montroz, Cogne",
     sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
@@ -443,7 +424,7 @@ const CASES = {
   jack: {
     title: "⭐ Jack lo Squartatore (1888)",
     desc: "Sito indagine: Whitechapel, Londra. Analisi storica dei sospetti dell'autunno 1888.",
-    place: "Quartiere di Whitechapel",
+    place: "Whitechapel, Londra",
     sceneNotice: "Verbali di ronda, autopsie d'epoca e perizie di Scotland Yard.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
@@ -581,7 +562,7 @@ async function send() {
 
   try {
     if (GROQ_API_KEY && GROQ_API_KEY.length > 5) {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const res = url_fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
