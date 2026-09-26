@@ -37,12 +37,24 @@
     <p class="center small">Ogni verità lascia una traccia.</p>
     <div class="card">
       <h2>🤖 AI-001 — L'ultima notte</h2>
-      <p>Un caso investigativo interattivo. Interroga, analizza, prendi appunti, ricostruisci la timeline e accusa.</p>
-      <button onclick="start()">▶️ Inizia</button>
+      <p>Caso d'inventiva moderno. Interroga, analizza, prendi appunti e ricostruisci la timeline.</p>
+      <button onclick="selectCase('ai001')">▶️ Gioca Questo Caso</button>
     </div>
-    <div class="card"><b>📰 Casi moderni reali</b><br>Delitto di Cogne — 2002</div>
-    <div class="card"><b>🏛️ Casi storici reali</b><br>Delitto Farrow — 1905</div>
-    <div class="card"><b>🔒 Premium futuro</b><br>Jack lo Squartatore e altri casi speciali.</div>
+    <div class="card">
+      <h2>📰 Delitto di Cogne — 2002</h2>
+      <p>Caso reale moderno. Analizza le tempistiche dei soccorsi, la traiettoria delle macchie e la testimonianza della madre.</p>
+      <button onclick="selectCase('cogne')">▶️ Gioca Questo Caso</button>
+    </div>
+    <div class="card">
+      <h2>🏛️ Delitto Farrow (Deptford) — 1905</h2>
+      <p>Caso storico reale. Un duplice omicidio a Londra risolto grazie a una delle prime analisi di impronte digitali su una scatola di contanti.</p>
+      <button onclick="selectCase('farrow')">▶️ Gioca Questo Caso</button>
+    </div>
+    <div class="card">
+      <h2>🔍 Jack lo Squartatore — 1888</h2>
+      <p>Caso storico. Londra, Whitechapel. Nessuna impronta o test DNA: solo testimoni visivi, vestiti macchiati, orari delle patuglie e vecchi metodi dell'epoca.</p>
+      <button onclick="selectCase('jack')">▶️ Gioca Questo Caso</button>
+    </div>
   </section>
 
   <section id="tutorial">
@@ -64,22 +76,17 @@
   </section>
 
   <section id="intro">
-    <h2>🤖 L'ultima notte</h2>
-    <div class="card"><b>Vittima:</b> Andrea Rinaldi, 42 anni, imprenditore.</div>
-    <div class="notice">Il colpevole è determinato in anticipo, ma la soluzione non viene mostrata. Dovrai costruire la tua ricostruzione.</div>
+    <h2 id="case-title"></h2>
+    <div class="card" id="case-desc"></div>
+    <div class="notice">Analizza le prove con i soli mezzi disponibili per l'epoca dell'evento. Costruisci la tua accusa finale.</div>
     <button onclick="show('investigation')">🔎 Inizia l'indagine</button>
   </section>
 
   <section id="investigation">
     <h2>🔎 Indagine</h2>
-    <div class="card">Villa Rinaldi — caso aperto<br><span class="small">Prove raccolte: <span id="ec">0</span></span></div>
+    <div class="card"><span id="case-place"></span> — caso aperto<br><span class="small">Prove raccolte: <span id="ec">0</span></span></div>
     <h3>Sospetti</h3>
-    <div class="grid">
-      <button onclick="inter('Marco')">👤 Marco Ferri</button>
-      <button onclick="inter('Elena')">👤 Elena Rinaldi</button>
-      <button onclick="inter('Davide')">👤 Davide Moretti</button>
-      <button onclick="inter('Sofia')">👤 Sofia Bianchi</button>
-    </div>
+    <div class="grid" id="suspects-grid"></div>
     <h3>Strumenti</h3>
     <div class="grid">
       <button class="sec" onclick="show('scene')">🧪 Scena / Analisi</button>
@@ -87,6 +94,8 @@
       <button class="sec" onclick="show('time')">🕒 Timeline</button>
       <button class="sec" onclick="show('acc')">⚖️ Accusa</button>
     </div>
+    <br>
+    <button class="sec" onclick="show('home')">🏠 Torna al Menu Casi</button>
   </section>
 
   <section id="inter">
@@ -99,7 +108,7 @@
     <div id="chat" class="chat"></div>
     <div id="suggest" class="grid"></div>
     <div class="row">
-      <input id="q" placeholder="Scrivi qualsiasi domanda..." onkeydown="if(event.key==='Enter')send()">
+      <input id="q" placeholder="Scrivi una domanda..." onkeydown="if(event.key==='Enter')send()">
       <button onclick="send()">Invia</button>
     </div>
     <button class="sec" onclick="show('investigation')">← Indagine</button>
@@ -107,18 +116,10 @@
 
   <section id="scene">
     <h2>🧪 Scena e analisi</h2>
-    <div class="notice">La polizia segnala possibili elementi. Non ti dice quale sia l'arma del delitto. Decidi tu cosa analizzare.</div>
+    <div class="notice" id="scene-notice"></div>
     <div id="objects"></div>
-    <h3>Esami</h3>
-    <div class="grid">
-      <button onclick="test('autopsy')">🩺 Autopsia</button>
-      <button onclick="test('toxicology')">🧪 Tossicologico</button>
-      <button onclick="test('phone')">📱 Telefono</button>
-      <button onclick="test('paperweight')">🔩 Fermacarte</button>
-      <button onclick="test('button')">🧵 Bottone</button>
-      <button onclick="test('davide')">👂 Davide</button>
-      <button onclick="test('sofia')">👀 Sofia</button>
-    </div>
+    <h3>Esami e Rilevamenti</h3>
+    <div class="grid" id="tests-grid"></div>
     <div id="results"></div>
     <button class="sec" onclick="show('investigation')">← Indagine</button>
   </section>
@@ -135,7 +136,7 @@
   <section id="time">
     <h2>🕒 Timeline</h2>
     <p class="small">Nessun evento viene compilato automaticamente.</p>
-    <textarea id="te" placeholder="Es. 23:09 — Davide sente una discussione"></textarea>
+    <textarea id="te" placeholder="Es. 08:15 — Arrivo dei soccorsi / Avvistamento sospetto"></textarea>
     <button onclick="addTime()">➕ Aggiungi evento</button>
     <div id="times"></div>
     <button class="sec" onclick="show('investigation')">← Indagine</button>
@@ -145,13 +146,10 @@
     <h2>⚖️ Accusa finale</h2>
     <div class="card">
       <h3>Sospetto</h3>
-      <label class="option"><input type="radio" name="cul" value="Marco"> Marco Ferri</label>
-      <label class="option"><input type="radio" name="cul" value="Elena"> Elena Rinaldi</label>
-      <label class="option"><input type="radio" name="cul" value="Davide"> Davide Moretti</label>
-      <label class="option"><input type="radio" name="cul" value="Sofia"> Sofia Bianchi</label>
+      <div id="culprit-options"></div>
     </div>
     <div class="card">
-      <h3>Prove</h3>
+      <h3>Prove determinanti</h3>
       <div id="ae"></div>
     </div>
     <button onclick="accuse()">🔨 Conferma accusa</button>
@@ -163,36 +161,189 @@
     <div id="rx" class="card"></div>
     <button onclick="start()">🔄 Rigioca il caso</button>
     <button class="sec" onclick="show('solution')">🔐 Scopri la soluzione</button>
-    <p class="notice">Per una maggiore esperienza di gioco, ti consigliamo di rigiocare il caso senza consultare la soluzione.</p>
   </section>
 
   <section id="solution">
-    <h2>🔐 Soluzione</h2>
-    <div class="card">
-      <h3>Colpevole: Elena Rinaldi</h3>
-      <p>Alle 23:05 Elena scrive ad Andrea: “Dobbiamo parlare. Adesso.” Entra nello studio alle 23:12. Durante il confronto lo colpisce con il pesante fermacarte alle 23:16 e tenta di far sembrare la scena un'aggressione esterna.</p>
-      <p>Le contraddizioni sono collegate a telefono, fermacarte, bottone, testimonianza di Davide e testimonianza di Sofia.</p>
-      <h3>Timeline reale</h3>
-      <p>22:10 Sofia entra → 22:17 Marco arrives → 22:31 confronto con Elena → 22:52 litigio → 23:05 messaggio → 23:09 discussione → 23:12 Elena nello studio → 23:16 colpo → 23:18 esce → 23:20 Sofia torna → 23:23 vede Elena → 23:27 Marco nota qualcosa → 23:34 Davide va via → 23:38 Elena “trova” Andrea → 23:40 allarme.</p>
-    </div>
-    <button onclick="start()">🔄 Rigioca</button>
+    <h2>🔐 Soluzione Storica / Processuale</h2>
+    <div class="card" id="sol-text"></div>
+    <button onclick="show('home')">🏠 Torna ai Casi</button>
   </section>
 
 </div>
 
 <script>
-let help = false, cur = '', press = {Marco:0, Elena:0, Davide:0, Sofia:0}, ev = [], notes = [], times = [], done = {}, step = 0;
-
-const names = { Marco:'Marco Ferri', Elena:'Elena Rinaldi', Davide:'Davide Moretti', Sofia:'Sofia Bianchi' };
-const evname = {
-  autopsy: 'Autopsia: forte trauma cranico',
-  toxicology: 'Tossicologico negativo',
-  phone: 'Telefono: conversazione cancellata con Elena',
-  paperweight: 'Fermacarte: traccia riconducibile a Elena',
-  button: 'Bottone compatibile con il cardigan di Elena',
-  davide: 'Davide: sente la voce di Elena',
-  sofia: 'Sofia: vede Elena alle 23:23'
+// DATABASE DEI CASI
+const CASES = {
+  ai001: {
+    title: "🤖 AI-001 — L'ultima notte",
+    desc: "<b>Vittima:</b> Andrea Rinaldi, 42 anni, imprenditore.<br>Trovato privo di vita nello studio della sua villa.",
+    place: "Villa Rinaldi",
+    sceneNotice: "Elementi moderni individuati dalla polizia scientifica.",
+    objects: ['🔩 Fermacarte metallico', '🥃 Bicchiere', '💊 Farmaci', '📱 Telefono', '🗑️ Cestino'],
+    suspects: {
+      Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi'
+    },
+    initialMsgs: {
+      Marco: 'Sono qui per rispondere, ma non ho ucciso Andrea.',
+      Elena: 'È tutto assurdo. Andrea era mio marito.',
+      Davide: 'Non so perché sono ancora qui.',
+      Sofia: 'Andrea aveva questioni economiche con me, ma non l’ho ucciso.'
+    },
+    suggests: {
+      Marco: ['Dove eri tra le 23 e le 23:30?', 'Hai visto Elena?'],
+      Elena: ['Dove eri alle 23:15?', 'Hai scritto ad Andrea?'],
+      Davide: ['Quando hai lasciato la villa?', 'Hai sentito una voce?'],
+      Sofia: ['A che ora sei arrivata?', 'Hai visto Elena?']
+    },
+    tests: {
+      autopsy: { name: '🩺 Autopsia', desc: 'Autopsia: forte trauma cranico.' },
+      toxicology: { name: '🧪 Tossicologico', desc: 'Tossicologico negativo.' },
+      phone: { name: '📱 Telefono', desc: 'Telefono: conversazione cancellata con Elena.' },
+      paperweight: { name: '🔩 Fermacarte', desc: 'Fermacarte: traccia riconducibile ad Elena.' },
+      button: { name: '🧵 Bottone', desc: 'Bottone compatibile con il cardigan di Elena.' },
+      davide: { name: '👂 Testimonianza Davide', desc: 'Davide: sente la voce di Elena alle 23:09.' },
+      sofia: { name: '👀 Testimonianza Sofia', desc: 'Sofia: vede Elena alle 23:23.' }
+    },
+    correctCulprit: 'Elena',
+    requiredEvidences: ['autopsy'],
+    atLeastOne: ['phone', 'paperweight'],
+    atLeastOneOther: ['davide', 'sofia'],
+    solutionText: "<h3>Colpevole: Elena Rinaldi</h3><p>Alle 23:05 Elena scrive ad Andrea, entra nello studio alle 23:12 e lo colpisce con il fermacarte alle 23:16. Cerca poi di depistare le indagini.</p>"
+  },
+  cogne: {
+    title: "📰 Delitto di Cogne (2002)",
+    desc: "<b>Vittima:</b> Samuele Lorenzi, 3 anni.<br>Avvenuto la mattina del 30 gennaio 2002 nella villetta di Montroz.",
+    place: "Villetta di Montroz",
+    sceneNotice: "Analisi della scena del crimine, macchie di sangue (BPA) e orari dei soccorsi.",
+    objects: ['🛏️ Letto matrimoniale', '👟 Clogs/Clogs da neve', '🩺 Borsa del medico', '📞 Chiamata 118'],
+    suspects: {
+      Annamaria: 'Annamaria Franzoni', Ada: 'Ada Satragni (Medico)', Ulisse: 'Ulisse Lorenzi (Vicino)'
+    },
+    initialMsgs: {
+      Annamaria: 'Sono solo uscita per accompagnare Davide allo scuolabus! Il bambino piangeva, stava bene!',
+      Ada: 'Sono arrivata pensando a un aneurisma, ho pulito il viso al bimbo per aiutarlo a respirare.',
+      Ulisse: 'Ho sentito le urla e sono corso ad aiutare, non ho visto estranei scappare.'
+    },
+    suggests: {
+      Annamaria: ['A che ora sei uscita esattamente?', 'Indossavi le ciabatte da neve?'],
+      Ada: ['Perché hai spostato il corpo?', 'Cosa hai notato sulla testa?'],
+      Ulisse: ['Hai visto qualche sconosciuto sulla strada?']
+    },
+    tests: {
+      bpa: { name: '🩸 Analisi macchie (BPA)', desc: 'Le macchie sul soffitto indicano colpi inferti da posizione ricurva sul letto; macchie su pigiama e ciabatte.' },
+      timing: { name: '⏱️ Cronologia Soccorsi', desc: 'Finestra temporale ristretta: 8:16 uscita di casa - 8:24 chiamata al 118.' },
+      weapon: { name: '🔨 Ricerca Arma', desc: 'L\'arma (oggetto di rame o piccozza) non viene trovata, ma le ferite indicano corpo contundente.' },
+      pijama: { name: '👕 Pigiama sul letto', desc: 'Il pigiama della madre era sul letto durante la produzione degli schizzi di sangue.' }
+    },
+    correctCulprit: 'Annamaria',
+    requiredEvidences: ['bpa', 'timing', 'pijama'],
+    atLeastOne: [],
+    atLeastOneOther: [],
+    solutionText: "<h3>Colpevole: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie medico-legali e la BPA (Bloodstain Pattern Analysis) hanno dimostrato che chi ha colpito indossava il pigiama e si trovava sul letto nella finestra di 8 minuti prima della chiamata dei soccorsi.</p>"
+  },
+  farrow: {
+    title: "🏛️ Delitto Farrow — Deptford (1905)",
+    desc: "<b>Vittime:</b> Thomas e Ann Farrow, gestori di un negozio di panni.<br>Caso storico risolto da Scotland Yard con la tecnologia dell'epoca.",
+    place: "Negozio Farrow, Londra 1905",
+    sceneNotice: "Strumenti scientifici del 1905: calchi, microscopio ottico e classificazione Bertillon / Impronte digitali di Henry.",
+    objects: ['🪙 Cassetta di ferro vuota', '🪵 Bastone di legno macchiato', '🧦 Maschere fatte da calze'],
+    suspects: {
+      Alfred: 'Alfred Stratton', Albert: 'Albert Stratton', Hannah: 'Hannah Cromarty (Fidanzata)'
+    },
+    initialMsgs: {
+      Alfred: 'Non ero a Deptford quella notte. Non saprei nemmeno come aprire quella cassaforte!',
+      Albert: 'Mio fratello ed io eravamo a bere. Nessuno può dimostrare che fossimo in quel negozio.',
+      Hannah: 'Alfred è tornato a casa con la giacca macchiata, mi ha detto di non fare domande...'
+    },
+    suggests: {
+      Alfred: ['Dove hai preso quei soldi la mattina dopo?', 'Conosci la cassetta di ferro?'],
+      Albert: ['Perché hai distrutto i tuoi vestiti?'],
+      Hannah: ['Cosa ti ha detto Alfred la mattina del delitto?']
+    },
+    tests: {
+      fingerprint: { name: '🔍 Impronta su Cassetta (Metodo Henry)', desc: 'Impronta di un pollice destro sulla cassetta di metallo corrisponde perfettamente ad Alfred Stratton.' },
+      witness: { name: '👁️ Testimone della strada', desc: 'Un milita stazionato nota due uomini uscire di corsa dal negozio Farrow alle 7:15 di mattina.' },
+      clothes: { name: '🧥 Abiti bruciati', desc: 'I fratelli hanno tentato di bruciare abiti macchiati di olio e sangue la mattina del 27 marzo.' }
+    },
+    correctCulprit: 'Alfred',
+    requiredEvidences: ['fingerprint', 'witness', 'clothes'],
+    atLeastOne: [],
+    atLeastOneOther: [],
+    solutionText: "<h3>Colpevole: Alfred Stratton (con Albert Stratton)</h3><p>Primo caso di omicidio nella storia britannica risolto grazie alla prova determinante delle impronte digitali rinvenute sulla cassetta dei contanti. Entrambi i fratelli Stratton furono impiccati nel 1905.</p>"
+  },
+  jack: {
+    title: "🔍 Jack lo Squartatore (1888)",
+    desc: "<b>Vittima:</b> Catherine Eddowes (Mitre Square, 30 Settembre 1888).<br>Tecnologia Vittoriana: nessuna analisi DNA, solo orari di ronda, indizi sulla scena e testimoni visivi.",
+    place: "Mitre Square / Whitechapel",
+    sceneNotice: "Nessuna tecnologia moderna disponibile. Solo autopsia visiva vittoriana, lanterne e rilievi della Polizia Metropolitana.",
+    objects: ['🧺 Pezzo di grembiule insanguinato', '✉️ Lettera "Dear Boss"', '🔪 Coltello da macellaio/chirurgo'],
+    suspects: {
+      Kosminski: 'Aaron Kosminski (Barbiere)', Druitt: 'Montague John Druitt', Ostrog: 'Michael Ostrog'
+    },
+    initialMsgs: {
+      Kosminski: 'Io lavoro soltanto nella mia bottega a Mile End. Ho grandi voci nella testa, ma non faccio del male a nessuno.',
+      Druitt: 'La mia famiglia pensa che io sia pazzo, ma sono un gentiluomo e un avvocato.',
+      Ostrog: 'Sono un medico e un truffatore, arrestatemi per i miei furti, ma non per questi orrori.'
+    },
+    suggests: {
+      Kosminski: ['Dove eri durante la notte del doppio evento?', 'Perché avevi macchie sul grembiule?'],
+      Druitt: ['Perché sei stato visto vicino a Whitechapel?'],
+      Ostrog: ['Dove si trovano i tuoi ferri chirurgici?']
+    },
+    tests: {
+      autopsy: { name: '🩺 Autopsia Vittoriana (Dr. Brown)', desc: 'Taglio netto alla gola da sinistra a destra; l\'aggressore ha competenze anatomiche o da macellaio.' },
+      apron: { name: '🧼 Pezzo di Grembiule a Goulston St.', desc: 'Trovato un pezzo di cotone insanguinato appartenente alla vittima vicino all\'abitazione dei sospetti polacchi.' },
+      patrol: { name: '🕒 Orari Ronda Agente Watkins', desc: 'Mitre Square era vuota alle 1:30. Il corpo è stato trovato alle 1:45. L\'assassino aveva solo 14 minuti.' }
+    },
+    correctCulprit: 'Kosminski',
+    requiredEvidences: ['autopsy', 'apron', 'patrol'],
+    atLeastOne: [],
+    atLeastOneOther: [],
+    solutionText: "<h3>Principale Sospetto Storico: Aaron Kosminski</h3><p>Sebbene il caso rimanga ufficialmente irrisolto, Kosminski (barbiere polacco affetto da gravi disturbi mentali) fu additato da alti funzionari di Scotland Yard (Swanson e Macnaghten) come il sospetto con i maggiori indizi di vicinanza e compatibilità con la scena di Goulston Street.</p>"
+  }
 };
+
+let currentCaseKey = 'ai001';
+let currentCase = CASES.ai001;
+
+let help=false, cur='', press={}, ev=[], notes=[], times=[], done={}, step=0;
+
+function selectCase(key) {
+  currentCaseKey = key;
+  currentCase = CASES[key];
+  
+  // Imposta UI intro
+  document.getElementById('case-title').textContent = currentCase.title;
+  document.getElementById('case-desc').innerHTML = currentCase.desc;
+  document.getElementById('case-place').textContent = currentCase.place;
+  document.getElementById('scene-notice').textContent = currentCase.sceneNotice;
+  
+  // Renderizza Sospetti
+  let sGrid = document.getElementById('suspects-grid');
+  sGrid.innerHTML = '';
+  for (let id in currentCase.suspects) {
+    sGrid.innerHTML += `<button onclick="inter('${id}')">👤 ${currentCase.suspects[id]}</button>`;
+  }
+  
+  // Renderizza Esami
+  let tGrid = document.getElementById('tests-grid');
+  tGrid.innerHTML = '';
+  for (let tid in currentCase.tests) {
+    tGrid.innerHTML += `<button onclick="test('${tid}')">${currentCase.tests[tid].name}</button>`;
+  }
+  
+  // Renderizza Radio Accusa
+  let cOpt = document.getElementById('culprit-options');
+  cOpt.innerHTML = '';
+  for (let id in currentCase.suspects) {
+    cOpt.innerHTML += `<label class="option"><input type="radio" name="cul" value="${id}"> ${currentCase.suspects[id]}</label>`;
+  }
+
+  // Soluzione
+  document.getElementById('sol-text').innerHTML = currentCase.solutionText;
+  
+  start();
+}
 
 function show(id) {
   document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
@@ -206,7 +357,8 @@ function show(id) {
 function start() {
   help = false;
   cur = '';
-  press = {Marco:0, Elena:0, Davide:0, Sofia:0};
+  press = {};
+  for(let k in currentCase.suspects) press[k] = 0;
   ev = [];
   notes = [];
   times = [];
@@ -226,9 +378,9 @@ function tut() {
   let a = [
     'Benvenuto: devi costruire la tua teoria senza che il gioco ti dia automaticamente la soluzione.',
     '🗣️ Interroga liberamente i sospetti. Con gli aiuti avrai domande suggerite; senza aiuti no.',
-    '🧪 La polizia individua possibili elementi, ma sei tu a scegliere quali analizzare.',
+    '🧪 Analizza gli elementi e gli esami disponibili per l\'epoca del caso.',
     '📌 Usa la bacheca per le tue deduzioni e 🕒 costruisci manualmente la timeline.',
-    '⚖️ Alla fine scegli sospetto e prove. Accusa corretta = confessione; accusa sbagliata = game over.'
+    '⚖️ Alla fine scegli sospetto e prove. Accusa corretta = vittoria; accusa sbagliata = game over.'
   ];
   document.getElementById('tut').innerHTML = '<b>Passo ' + (step + 1) + ' di 5</b><p>' + a[step] + '</p>';
 }
@@ -241,27 +393,14 @@ function nextTut() {
 function inter(s) {
   cur = s;
   show('inter');
-  document.getElementById('who').textContent = names[s];
+  document.getElementById('who').textContent = currentCase.suspects[s];
   document.getElementById('chat').innerHTML = '';
   
-  const initialMsgs = {
-    Marco: 'Sono qui per rispondere, ma non ho ucciso Andrea.',
-    Elena: 'È tutto assurdo. Andrea era mio marito.',
-    Davide: 'Non so perché sono ancora qui.',
-    Sofia: 'Andrea aveva questioni economiche con me, ma non l’ho ucciso.'
-  };
-  msg('them', initialMsgs[s]);
+  msg('them', currentCase.initialMsgs[s] || 'Non ho nulla da dire.');
   
   document.getElementById('suggest').innerHTML = '';
-  if (help) {
-    let x = {
-      Marco: ['Dove eri tra le 23 e le 23:30?', 'Hai visto Elena?'],
-      Elena: ['Dove eri alle 23:15?', 'Hai scritto ad Andrea?'],
-      Davide: ['Quando hai lasciato la villa?', 'Hai sentito una voce?'],
-      Sofia: ['A che ora sei arrivata?', 'Hai visto Elena?']
-    }[s];
-    
-    x.forEach(q => {
+  if (help && currentCase.suggests[s]) {
+    currentCase.suggests[s].forEach(q => {
       let b = document.createElement('button');
       b.className = 'sec';
       b.textContent = q;
@@ -289,7 +428,7 @@ function send() {
   msg('me', s);
   
   let l = s.toLowerCase();
-  let good = /dove|quando|orario|23|22|messagg|telefono|elena|sofia|davide|marco|studio|voce|corridoio/.test(l);
+  let good = /dove|quando|orario|ora|sangue|impront|vestit|strada|uscit|23|22|8:|1:|7:/.test(l);
   let bad = /hai ucciso|assassino|sei stato tu/.test(l);
   
   press[cur] += good ? 1 : (bad ? -1 : 0);
@@ -299,38 +438,44 @@ function send() {
 
 function reply(q) {
   let p = press[cur];
-  if (cur === 'Marco') {
-    if (/dove|orario|23|22/.test(q)) return p >= 2 ? 'Alle 23:05 ero ancora sui documenti, poi sono andato all’archivio per circa dodici minuti.' : 'Ero nello studio, poi mi sono allontanato per cercare documenti.';
-    if (/elena/.test(q)) return p >= 2 ? 'Ho avuto l’impressione che Elena non fosse dove diceva.' : 'Non voglio accusare nessuno.';
-    return 'Andrea aveva questioni finanziarie con me. Avevamo discussed.';
-  }
-  if (cur === 'Elena') {
-    if (/messagg|telefono/.test(q)) { press.Elena++; return p >= 3 ? 'Sì, gli avevo scritto. Volevo parlare con lui.' : 'Non ricordo tutti i messaggi.'; }
-    if (/dove|23|studio/.test(q)) return p >= 3 ? 'Sono andata nello studio per parlare con Andrea. Abbiamo litigato.' : 'Ero in camera.';
-    if (/will|divorz|document/.test(q)) return p >= 2 ? 'Andrea voleva cambiare molte cose.' : 'Il matrimonio era complicato.';
-    return 'Non capisco cosa tu stia cercando di dimostrare.';
-  }
-  if (cur === 'Davide') {
-    if (/dove|quando|lasci/.test(q)) return p >= 2 ? 'Non sono andato via alle 22:40. Sono rimasto fuori ancora un po’.' : 'Sono uscito intorno alle 22:40.';
-    if (/voce|sent|23/.test(q)) return p >= 2 ? 'Alle 23:09 ho sentito due persone discutere. Una voce mi sembrava quella di Elena.' : 'Ho sentito dei rumori.';
-    return 'Andrea sapeva che avevo preso dei soldi dall’azienda.';
-  }
-  if (cur === 'Sofia') {
-    if (/arriv|quando|23|22/.test(q)) return p >= 2 ? 'Ero già entrata verso le 22:10 per recuperare una busta, poi sono tornata alle 23:20.' : 'Sono arrivata alle 23:20.';
-    if (/elena|corridoio/.test(q)) return p >= 2 ? 'Alle 23:23 ho visto Elena nel corridoio.' : 'Non ho notato niente.';
-    return 'Andrea mi doveva una somma importante.';
+  
+  // Logica dinamica semplificata per i casi
+  if (currentCaseKey === 'ai001') {
+    if (cur === 'Marco') {
+      if (/dove|orario/.test(q)) return p >= 2 ? 'Alle 23:05 ero sui documenti, poi sono andato all’archivio per 12 minuti.' : 'Ero nello studio, poi mi sono allontanato.';
+      if (/elena/.test(q)) return p >= 2 ? 'Ho avuto l’impressione che Elena non fosse dove diceva.' : 'Non voglio accusare nessuno.';
+      return 'Andrea aveva questioni finanziarie con me.';
+    }
+    if (cur === 'Elena') {
+      if (/messagg|telefono/.test(q)) { press.Elena++; return p >= 3 ? 'Sì, gli avevo scritto. Volevo parlare con lui.' : 'Non ricordo tutti i messaggi.'; }
+      if (/dove|23/.test(q)) return p >= 3 ? 'Sono andata nello studio per parlare con Andrea. Abbiamo litigato.' : 'Ero in camera.';
+      return 'Non capisco cosa tu stia cercando di dimostrare.';
+    }
+    if (cur === 'Davide') {
+      if (/voce|sent/.test(q)) return p >= 2 ? 'Alle 23:09 ho sentito due persone discutere. Una voce sembrava di Elena.' : 'Ho sentito dei rumori.';
+      return 'Andrea sapeva dei soldi dell’azienda.';
+    }
+    if (cur === 'Sofia') {
+      if (/elena|corridoio/.test(q)) return p >= 2 ? 'Alle 23:23 ho visto Elena nel corridoio.' : 'Non ho notato niente.';
+      return 'Andrea mi doveva dei soldi.';
+    }
+  } else {
+    // Risposte Generiche Basate sulla pressione per i casi reali
+    if (p >= 2) return "Capisco dove vuoi arrivare... le mie risposte coincidono con le ricostruzioni ufficiali delle perizie.";
+    if (p < 0) return "Non tollero queste accuse infondate, parli con il mio avvocato!";
+    return "Ho già riferito agli inquirenti tutto quello che sapevo su quella tragica giornata.";
   }
 }
 
 function mood() {
-  let p = press[cur];
+  let p = press[cur] || 0;
   let e = p >= 4 ? '😨' : (p >= 2 ? '😟' : (p <= -2 ? '😠' : '😐'));
   document.getElementById('expr').textContent = e;
-  document.getElementById('mood').textContent = p >= 4 ? 'Sta cedendo.' : (p >= 2 ? 'È nervoso e sotto pressione.' : (p <= -2 ? 'Si è chiuso e collabora poco.' : 'Mantiene un atteggiamento controllato.'));
+  document.getElementById('mood').textContent = p >= 4 ? 'Sta cedendo.' : (p >= 2 ? 'È sotto pressione.' : (p <= -2 ? 'Si è chiuso.' : 'Atteggiamento controllato.'));
 }
 
 function scene() {
-  document.getElementById('objects').innerHTML = ['🔩 Fermacarte metallico', '🥃 Bicchiere', '💊 Farmaci', '📱 Telefono', '🗑️ Cestino']
+  document.getElementById('objects').innerHTML = currentCase.objects
     .map(x => '<div class="item">' + x + '</div>').join('');
 }
 
@@ -338,7 +483,7 @@ function test(k) {
   if (done[k]) return;
   done[k] = 1;
   ev.push(k);
-  document.getElementById('results').innerHTML += '<div class="card"><b>' + evname[k] + '</b></div>';
+  document.getElementById('results').innerHTML += '<div class="card"><b>' + currentCase.tests[k].desc + '</b></div>';
   document.getElementById('ec').textContent = ev.length;
 }
 
@@ -376,25 +521,39 @@ function renderTimes() {
 
 function renderAE() {
   document.getElementById('ae').innerHTML = ev.map(k =>
-    '<label class="option"><input type="checkbox" value="' + k + '"> ' + evname[k] + '</label>'
+    '<label class="option"><input type="checkbox" value="' + k + '"> ' + currentCase.tests[k].name + '</label>'
   ).join('') || '<span class="small">Nessuna prova raccolta.</span>';
 }
 
 function accuse() {
   let c = document.querySelector('input[name="cul"]:checked')?.value;
   let a = [...document.querySelectorAll('#ae input:checked')].map(x => x.value);
-  let ok = c === 'Elena' && a.length >= 3 && a.includes('autopsy') && (a.includes('phone') || a.includes('paperweight')) && (a.includes('davide') || a.includes('sofia'));
   
+  let ok = (c === currentCase.correctCulprit);
+  
+  // Verifica prove
+  currentCase.requiredEvidences.forEach(req => {
+    if (!a.includes(req)) ok = false;
+  });
+  
+  if (currentCase.atLeastOne && currentCase.atLeastOne.length > 0) {
+    let hasOne = currentCase.atLeastOne.some(x => a.includes(x));
+    if (!hasOne) ok = false;
+  }
+
   show('result');
   document.getElementById('rt').textContent = ok ? '🎉 CASO RISOLTO' : '💥 GAME OVER';
   document.getElementById('rx').innerHTML = ok 
-    ? '<p>Le prove reggono la ricostruzione. Elena viene messa alle strette e confessa.</p>' 
-    : '<p>L’accusa non è sufficientemente sostenuta. Il caso rimane irrisolto.</p>';
+    ? '<p>La tua ricostruzione e le prove selezionate reggono l\'accusa in tribunale / di fronte agli inquirenti!</p>' 
+    : '<p>L’accusa non è sufficientemente sostenuta dalle prove corrette o il sospetto è errato. Il caso crolla.</p>';
 }
 
 function esc(s) {
   return s.replace(/[&<>"']/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[x]));
 }
+
+// Inizio automatico sul primo caso
+selectCase('ai001');
 </script>
 </body>
 </html>
