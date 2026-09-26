@@ -78,7 +78,7 @@
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
-    <div class="notice">Ricorda: puoi fare domande libere su <b>orari, alibi, relazioni, soldi, macchie, orari o testimoni</b>.</div>
+    <div class="notice">I dialoghi degli interrogatori rimarranno salvati. Puoi tornare a rileggerli o continuare le domande in qualsiasi momento.</div>
     <button onclick="show('investigation')">🔎 Inizia l'Indagine</button>
   </section>
 
@@ -268,7 +268,7 @@ const CASES = {
     },
     correctCulprit: 'Annamaria',
     requiredEvidences: ['bpa', 'timing', 'pijama'],
-    solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie scientifiche sulla traiettoria degli schizzi di sangue (BPA) hanno stabilito che l'aggressore indossava il pigiama Cas precepts e si trovava sul letto al momento dei colpi, escludendo l'intervento di estranei nella finestra temporale di 8 minuti.</p>"
+    solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie scientifiche sulla traiettoria degli schizzi di sangue (BPA) hanno stabilito che l'aggressore indossava il pigiama e si trovava sul letto al momento dei colpi, escludendo l'intervento di estranei nella finestra temporale di 8 minuti.</p>"
   },
   farrow: {
     title: "🏛️ Delitto Farrow (Deptford, 1905)",
@@ -364,10 +364,12 @@ let currentCaseKey = 'ai001';
 let currentCase = CASES.ai001;
 
 let help=false, cur='', press={}, ev=[], notes=[], times=[], done={}, step=0;
+let chatLogs = {}; // Memorizza le conversazioni di ciascun sospetto
 
 function selectCase(key) {
   currentCaseKey = key;
   currentCase = CASES[key];
+  chatLogs = {}; // Reset chat per il nuovo caso
   
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-desc').innerHTML = currentCase.desc;
@@ -446,9 +448,18 @@ function inter(s) {
   cur = s;
   show('inter');
   document.getElementById('who').textContent = currentCase.suspects[s];
-  document.getElementById('chat').innerHTML = '';
   
-  msg('them', currentCase.initialMsgs[s] || 'Non ho nulla da dichiarare.');
+  const chatDiv = document.getElementById('chat');
+  chatDiv.innerHTML = '';
+  
+  // Se non esiste ancora una cronologia salvata per questo sospetto, inizializzala
+  if (!chatLogs[s]) {
+    chatLogs[s] = [];
+    addMsgToLog(s, 'them', currentCase.initialMsgs[s] || 'Non ho nulla da dichiarare.');
+  }
+  
+  // Rendi visibile l'intera cronologia salvata
+  chatLogs[s].forEach(m => renderMsg(m.sender, m.text));
   
   document.getElementById('suggest').innerHTML = '';
   if (help && currentCase.suggests[s]) {
@@ -463,7 +474,12 @@ function inter(s) {
   mood();
 }
 
-function msg(c, t) {
+function addMsgToLog(suspect, sender, text) {
+  if (!chatLogs[suspect]) chatLogs[suspect] = [];
+  chatLogs[suspect].push({ sender: sender, text: text });
+}
+
+function renderMsg(c, t) {
   let d = document.createElement('div');
   d.className = 'msg ' + (c === 'me' ? 'me' : 'them');
   d.textContent = t;
@@ -477,13 +493,20 @@ function send() {
   let s = qInput.value.trim();
   if (!s) return;
   qInput.value = '';
-  msg('me', s);
+  
+  // Salva e visualizza il messaggio del giocatore
+  addMsgToLog(cur, 'me', s);
+  renderMsg('me', s);
   
   let l = s.toLowerCase();
-  
-  // Reattività dinamica basata su parole chiave
   press[cur] = (press[cur] || 0) + 1;
-  msg('them', reply(l));
+  
+  let rep = reply(l);
+  
+  // Salva e visualizza la risposta del sospetto
+  addMsgToLog(cur, 'them', rep);
+  renderMsg('them', rep);
+  
   mood();
 }
 
