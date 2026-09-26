@@ -27,7 +27,7 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con l'immagine integrata e pulsante in basso */
+  /* Schermata Home con l'immagine di copertina e pulsante in basso */
   #home.active {
     display: flex;
     flex-direction: column;
@@ -44,11 +44,12 @@
     left: 0;
     width: 100%;
     height: 100%;
+    overflow-y: auto;
   }
 
   .home-poster-box {
     margin: auto;
-    max-width: 380px;
+    max-width: 360px;
     width: 85%;
     border-radius: 16px;
     overflow: hidden;
@@ -141,13 +142,12 @@
 <body>
 <div class="wrap">
 
-  <!-- SCHERMATA HOME PRINCIPALE CON LA TUA IMMAGINE -->
+  <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
     <div class="home-poster-box">
-      <!-- Immagine incorporata direttamente in alta definizione -->
-      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="Dietro la Bugia">
+      <img src="copertina.jpg" alt="Dietro la Bugia">
     </div>
-    <div style="margin-top: 25px; margin-bottom: 2vh;">
+    <div style="margin-top: 20px; margin-bottom: 2vh;">
       <button onclick="show('case-selection')">▶️ Inizia</button>
     </div>
   </section>
