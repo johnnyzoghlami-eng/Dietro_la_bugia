@@ -27,7 +27,7 @@
   .item { background:#222936; padding:11px; border-radius:99px; margin:7px 0; display:flex; justify-content:space-between; align-items:center; }
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
-  .api-box { background:#1f2633; border:1px solid #7057e8; padding:12px; border-radius:8px; margin-bottom:15px; }
+  .status-box { background:#16231a; border:1px solid #2e7d32; padding:12px; border-radius:8px; margin-bottom:15px; color:#81c784; }
 </style>
 </head>
 <body>
@@ -37,10 +37,8 @@
     <h1 class="center">🕵️ Dietro la Bugia</h1>
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
     
-    <div class="api-box">
-      <label><b>🔑 Chiave API Gemini:</b></label>
-      <input type="password" id="api-key" placeholder="Incolla qui la tua API Key di Google Gemini..." onchange="saveApiKey()">
-      <p class="small" style="margin-top:5px; margin-bottom:0;">La tua API Key è configurata automaticamente.</p>
+    <div class="status-box center">
+      🟢 <b>Chiave API Google Gemini configurata ed attiva!</b>
     </div>
 
     <div class="card">
@@ -68,7 +66,7 @@
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
-    <div class="notice">I dialoghi degli interrogatori sono gestiti dall'IA e ricorderanno la cronologia delle tue domande.</div>
+    <div class="notice">I dialoghi degli interrogatori sono gestiti in tempo reale dall'IA Gemini e ricorderanno le tue domande precedenti.</div>
     <br>
     <button onclick="show('investigation')">🔎 Inizia l'Indagine</button>
   </section>
@@ -163,7 +161,20 @@
 
 </div>
 
-<script>
+<script type="importmap">
+  {
+    "imports": {
+      "@google/genai": "https://esm.run/@google/genai"
+    }
+  }
+</script>
+
+<script type="module">
+import { GoogleGenAI } from '@google/genai';
+
+// CHIAVE API CONFIGURATA DIRETTAMENTE
+const API_KEY = "AQ.Ab8RN6Kweg6mEUR7umVAcIU6V6Cp6d68YhyFy8I9Ajf0CNyzaQ";
+
 const CASES = {
   ai001: {
     title: "🤖 AI-001 — L'ultima notte",
@@ -179,7 +190,7 @@ const CASES = {
       Sofia: "Sei Sofia Bianchi, la consulente finanziaria. Sei INNOCENTE. Sei uscita dalla villa alle 23:20 e hai incrociato Elena nel corridoio che si sistemava i capelli in fretta. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi."
     },
     tests: {
-      autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Autopsia: Deceso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
+      autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Autopsia: Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
       phone: { name: '📱 Tabulati e Memoria Telefono', desc: 'Sms cospicuo da Elena alle 23:05 ("Dobbiamo parlare subito"). Conversazione successiva cancellata.' },
       paperweight: { name: '🔩 Rilievi sul Fermacarte', desc: 'Tracce ematiche della vittima sul fermacarte e impronte parziali compatibili con Elena.' },
       button: { name: '🧵 Rilievo Tessile', desc: 'Bottone rinvenuto sotto il corpo del Rinaldi, perfettamente identico al vestito di Elena.' }
@@ -226,7 +237,7 @@ const CASES = {
     },
     correctCulprit: 'Alfred',
     requiredEvidences: ['fingerprint', 'witness'],
-    solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Fu il primo caso in Gran Britagna in cui le impronte digitali costituirono la prova decisiva.</p>"
+    solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Fu il primo caso in Gran Bretagna in cui le impronte digitali costituirono la prova decisiva.</p>"
   },
   jack: {
     title: "🔍 Jack lo Squartatore (1888)",
@@ -253,26 +264,9 @@ const CASES = {
 let currentCaseKey = 'ai001';
 let currentCase = CASES.ai001;
 let cur = '', ev = [], notes = [], times = [], done = {};
-let chatHistory = {}; 
+let chatHistory = {};
 
-window.onload = function() {
-  let defaultKey = "AQ.Ab8RN6Kweg6mEUR7umVAcIU6V6Cp6d68YhyFy8I9Ajf0CNyzaQ"; 
-
-  let savedKey = localStorage.getItem('gemini_api_key');
-  if (!savedKey && defaultKey) {
-    localStorage.setItem('gemini_api_key', defaultKey);
-    document.getElementById('api-key').value = defaultKey;
-  } else if (savedKey) {
-    document.getElementById('api-key').value = savedKey;
-  }
-}
-
-function saveApiKey() {
-  let key = document.getElementById('api-key').value.trim();
-  localStorage.setItem('gemini_api_key', key);
-}
-
-function selectCase(key) {
+window.selectCase = function(key) {
   currentCaseKey = key;
   currentCase = CASES[key];
   chatHistory = {}; 
@@ -305,18 +299,18 @@ function selectCase(key) {
 
   document.getElementById('sol-text').innerHTML = currentCase.solutionText;
   show('intro');
-}
+};
 
-function show(id) {
+window.show = function(id) {
   document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (id === 'scene') scene();
   if (id === 'board') renderNotes();
   if (id === 'time') renderTimes();
   if (id === 'acc') renderAE();
-}
+};
 
-function inter(s) {
+window.inter = function(s) {
   cur = s;
   show('inter');
   document.getElementById('who').textContent = currentCase.suspects[s];
@@ -331,7 +325,7 @@ function inter(s) {
   chatHistory[s].forEach(m => {
     renderMsg(m.role === 'user' ? 'me' : 'them', m.parts[0].text);
   });
-}
+};
 
 function renderMsg(c, t) {
   let d = document.createElement('div');
@@ -342,13 +336,7 @@ function renderMsg(c, t) {
   chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-async function send() {
-  let apiKey = localStorage.getItem('gemini_api_key');
-  if (!apiKey) {
-    alert("Inserisci la tua API Key di Google Gemini nella schermata iniziale!");
-    return;
-  }
-
+window.send = async function() {
   let qInput = document.getElementById('q');
   let qText = qInput.value.trim();
   if (!qText) return;
@@ -363,66 +351,48 @@ async function send() {
   if (!chatHistory[cur]) chatHistory[cur] = [];
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
-  let systemPrompt = currentCase.prompts[cur];
-  
-  // Endpoint per il modello Gemini 1.5 Flash
-  let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-  let bodyData = {
-    system_instruction: {
-      parts: [{ text: systemPrompt }]
-    },
-    contents: chatHistory[cur]
-  };
-
   try {
-    let response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: chatHistory[cur],
+      config: {
+        systemInstruction: currentCase.prompts[cur]
+      }
     });
 
-    let data = await response.json();
-
-    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      let replyText = data.candidates[0].content.parts[0].text;
-      chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
-      renderMsg('them', replyText);
-    } else if (data.error) {
-      console.error("Errore API:", data.error);
-      renderMsg('them', "⚠️ Errore API: " + (data.error.message || "Risposta non valida dall'IA."));
-    } else {
-      renderMsg('them', "⚠️ Impossibile ottenere una risposta dall'IA al momento.");
-    }
+    let replyText = response.text;
+    chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
+    renderMsg('them', replyText);
 
   } catch (err) {
-    console.error("Errore Fetch:", err);
-    renderMsg('them', "⚠️ Errore di connessione con la chiave API.");
+    console.error(err);
+    renderMsg('them', "❌ Errore durante l'interrogatorio: " + err.message);
   }
 
   qInput.disabled = false;
   sendBtn.disabled = false;
   qInput.focus();
-}
+};
 
 function scene() {
   document.getElementById('objects').innerHTML = currentCase.objects
     .map(x => '<div class="item">' + x + '</div>').join('');
 }
 
-function test(k) {
+window.test = function(k) {
   if (done[k]) return;
   done[k] = 1;
   ev.push(k);
   document.getElementById('results').innerHTML += '<div class="card"><b>' + currentCase.tests[k].desc + '</b></div>';
   document.getElementById('ec').textContent = ev.length;
-}
+};
 
-function addNote() {
+window.addNote = function() {
   let input = document.getElementById('note');
   let x = input.value.trim();
   if (x) { notes.push(x); input.value = ''; renderNotes(); }
-}
+};
 
 function renderNotes() {
   document.getElementById('notes').innerHTML = notes.map((x, i) =>
@@ -430,11 +400,11 @@ function renderNotes() {
   ).join('');
 }
 
-function addTime() {
+window.addTime = function() {
   let input = document.getElementById('te');
   let x = input.value.trim();
   if (x) { times.push(x); input.value = ''; renderTimes(); }
-}
+};
 
 function renderTimes() {
   document.getElementById('times').innerHTML = times.map((x, i) =>
@@ -448,7 +418,7 @@ function renderAE() {
   ).join('') || '<span class="small">Nessun reperto analizzato. Vai in "Scena" per condurre perizie.</span>';
 }
 
-function accuse() {
+window.accuse = function() {
   let c = document.querySelector('input[name="cul"]:checked')?.value;
   let a = [...document.querySelectorAll('#ae input:checked')].map(x => x.value);
   let ok = (c === currentCase.correctCulprit);
@@ -460,7 +430,7 @@ function accuse() {
   document.getElementById('rx').innerHTML = ok 
     ? '<p>Eccellente lavoro! Le tue prove e la scelta del sospetto reggono perfettamente di fronte ai giudici.</p>' 
     : '<p>L\'accusa è crollata! Non hai presentato le prove necessarie o hai incriminato la persona sbagliata.</p>';
-}
+};
 
 function esc(s) {
   return s.replace(/[&<>"']/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[x]));
