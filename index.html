@@ -40,7 +40,7 @@
     height: 100vh;
     box-sizing: border-box;
     overflow: hidden;
-    padding: 0 20px 85px 20px; /* Margine inferiore aumentato per sollevare il tasto dentro l'immagine */
+    padding: 0 20px 85px 20px;
     background: #000;
     z-index: 100;
   }
@@ -58,11 +58,10 @@
   .home-poster-box img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Mantiene l'immagine intera con lo sfondo nero originale */
+    object-fit: contain;
     display: block;
   }
 
-  /* Sfumatura scura in basso per fare risaltare il pulsante */
   #home.active::after {
     content: '';
     position: absolute;
