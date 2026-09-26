@@ -143,7 +143,7 @@
 
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
   
-  .chat { height: 240px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 10px; }
+  .chat { height: 220px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 10px; }
   .msg { padding: 10px 14px; border-radius: 10px; margin: 8px 0; max-width: 82%; white-space: pre-wrap; font-size: 14px; line-height: 1.4; }
   .me { margin-left: auto; background: var(--purple-btn); color: white; border-bottom-right-radius: 2px; }
   .them { background: #1f2838; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
@@ -151,9 +151,8 @@
   input, textarea { width: 100%; box-sizing: border-box; background: rgba(15, 19, 29, 0.95); color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 14px; }
   input:focus, textarea:focus { outline: none; border-color: var(--accent-red); }
   
-  /* Chat libera grande specificata dall'utente */
   .chat-input-area {
-    min-height: 90px;
+    min-height: 85px;
     resize: vertical;
     font-family: inherit;
     margin-bottom: 8px;
@@ -167,8 +166,8 @@
   .option { display: block; background: rgba(23, 31, 47, 0.85); padding: 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border-color); cursor: pointer; }
   .option:hover { border-color: var(--accent-red); }
 
-  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .sugg-btn { background: #1d273a; font-size: 12px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; color: #cbd5e1; text-transform: none; font-weight: normal; box-shadow: none; width: auto; }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; max-height: 130px; overflow-y: auto; }
+  .sugg-btn { background: #1d273a; font-size: 12px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; color: #cbd5e1; text-transform: none; font-weight: normal; box-shadow: none; width: auto; text-align: left; }
   .sugg-btn:hover { background: #28344d; color: white; }
 </style>
 </head>
@@ -234,13 +233,13 @@
 
     <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
       <h3 style="color:#4ade80; margin-top:0;">🟢 Livello Facile</h3>
-      <p class="small">Suggerimenti dinamici basati su prove e sul dialogo in corso. I sospettati mentono, ma puoi contraddirli se hai le prove.</p>
+      <p class="small">Suggerimenti dinamici avanzati per guidare passo dopo passo l'interrogatorio.</p>
       <button onclick="selectCaseWithDiff('facile')" style="width:100%; background:#1e3a29; border:1px solid #4ade80; color:#4ade80;">Seleziona Facile</button>
     </div>
 
     <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
       <h3 style="color:#60a5fa; margin-top:0;">🔵 Livello Normale</h3>
-      <p class="small">Nessun aiuto esterno. Dovrai formulare ed inserire tu autonomamente tutte le domande logiche.</p>
+      <p class="small">Suggerimenti dinamici reattivi e piena libertà di scrittura personalizzata.</p>
       <button class="sec" onclick="selectCaseWithDiff('normale')">Seleziona Normale</button>
     </div>
     <br>
@@ -282,10 +281,12 @@
     </div>
 
     <div id="chat" class="chat"></div>
-    <div id="suggestions-box" class="suggestions" style="display:none;"></div>
+    
+    <!-- Suggerimenti dinamici che cambiano in base al contesto e all'ultima risposta -->
+    <div id="suggestions-box" class="suggestions"></div>
 
     <div>
-      <textarea id="q" class="chat-input-area" placeholder="Scrivi qui la tua domanda o l'accusa al sospetto..." onkeydown="if(event.key==='Enter' && event.ctrlKey){send(); event.preventDefault();}"></textarea>
+      <textarea id="q" class="chat-input-area" placeholder="Scrivi liberamente la tua domanda, accusa o obiezione..." onkeydown="if(event.key==='Enter' && event.ctrlKey){send(); event.preventDefault();}"></textarea>
       <button id="send-btn" onclick="send()">Invia Messaggio</button>
     </div>
     <br>
@@ -389,7 +390,7 @@
 </div>
 
 <script>
-const GROQ_API_KEY = ""; // Inserisci qui la tua chiave API di Groq
+const GROQ_API_KEY = ""; // Inserisci qui la tua chiave API di Groq se desideri usarla
 
 const CASES = {
   ai001: {
@@ -399,12 +400,12 @@ const CASES = {
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
-    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Inizialmente puoi mentire, sviare o difenderti. Tuttavia, se l'investigatore ti fa una domanda basata su prove concrete scoperte (come impronte, tabulati telefonici o perizie scientifiche) o fa notare contraddizioni nel tuo racconto, devi mostrare tensione, ammettere parzialmente la verità o giustificarti in modo goffo perché sei stato messo alle strette. Rispondi sempre in italiano.",
+    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Inizialmente puoi mentire o difenderti. Se l'investigatore ti fa obiezioni o usa prove, reagisci in modo coerente. Se ti mettono alle strette puoi innervosirti, chiedere un legale o trincerarti dietro il silenzio. Rispondi sempre in italiano.",
     suggestions: {
-      Marco: ["Dove ti trovavi tra le 23:00 e le 23:30?", "C'erano problemi economici in azienda?"],
+      Marco: ["Dove ti trovavi tra le 23:00 e le 23:30?", "C'erano problemi economici in azienda?", "Hai visto qualcuno entrare nello studio di Andrea?"],
       Elena: ["Perché hai mandato quell'SMS alle 23:05?", "Cosa hai fatto dopo la discussione nello studio?", "Abbiamo trovato le tue impronte sul fermacarte e il bottone vicino alla vittima: perché hai mentito?"],
-      Davide: ["Hai sentito rumori o urla provenire dallo studio?", "Chi è entrato o uscito dalla villa a quell'ora?"],
-      Sofia: ["Hai notato qualcuno nei corridoi uscendo alle 23:20?", "Di cosa parlavi con Andrea prima di andare via?"]
+      Davide: ["Hai sentito rumori o urla provenire dallo studio?", "Chi è entrato o uscito dalla villa a quell'ora?", "Perché i tuoi turni di ronda risultano alterati?"],
+      Sofia: ["Hai notato qualcuno nei corridoi uscendo alle 23:20?", "Di cosa parlavi con Andrea prima di andare via?", "Il tuo contratto con la vittima era in scadenza?"]
     },
     fallbacks: {
       Marco: "Ero in archivio a cercare documenti tra le 23:00 e le 23:30. È vero che l'azienda perdeva soldi, ma non c'entro nulla con la sua morte.",
@@ -429,11 +430,11 @@ const CASES = {
     sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
     suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
-    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Inizialmente neghi con forza e difendi la tua versione, ma se ti vengono presentate prove scientifiche come il test BPA o la perizia sul pigiama che smentiscono i tuoi orari, devi vacillare, contraddirti e cercare di giustificare la presenza di macchie.",
+    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Inizialmente neghi con forza, ma se ti vengono presentate prove scientifiche o obiezioni, devi vacillare o chiedere la presenza dei legali. Rispondi sempre in italiano.",
     suggestions: {
       Annamaria: ["A che ora esatta è uscita per accompagnare lo scuolabus?", "Ha visto qualcuno aggirarsi in casa prima di trovare il bambino?", "Le analisi BPA dimostrano che i colpi sono stati inferti da chi era sul letto: perché il suo pigiama presenta tracce di sangue?"],
-      Ada: ["Quali condizioni ha riscontrato sul piccolo all'arrivo?", "Perché ha pensato a un malore iniziale?"],
-      Ulisse: ["Ha notato impronte sulla neve intorno alla villetta quella mattina?", "Ha sentito rumori insoliti provenire dalla casa dei vicini?"]
+      Ada: ["Quali condizioni ha riscontrato sul piccolo all'arrivo?", "Perché ha pensato a un malore iniziale?", "Ha notato anomalie nei vestiti o nel letto?"],
+      Ulisse: ["Ha notato impronte sulla neve intorno alla villetta quella mattina?", "Ha sentito rumori insoliti provenire dalla casa dei vicini?", "Conferma gli orari dei movimenti familiari?"]
     },
     fallbacks: {
       Annamaria: "Vi prego credetemi, ero uscita solo per accompagnare il bambino allo scuolabus! Quando sono rientrata l'ho trovato ferito nel lettino.",
@@ -456,10 +457,10 @@ const CASES = {
     sceneNotice: "Criminologia d'inizio '900: impronte digitali e metodo Bertillon.",
     objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
     suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
-    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Inizialmente neghi ogni coinvolgimento, ma se l'investigatore ti mostra la perizia dattiloscopica con la tua impronta digitale sulla scatola, devi balbettare e ammettere di essere stato lì o cadere in contraddizione.",
+    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Inizialmente neghi ogni coinvolgimento, ma se ti vengono mostrate prove dattiloscopiche reagisci con agitazione. Rispondi sempre in italiano.",
     suggestions: {
-      Alfred: ["Dov'eri la notte del duplice omicidio?", "Come spiega la sua impronta di pollice sulla scatola della cassaforte rinvenuta dalla scientifica?"],
-      Albert: ["Ha un alibi verificabile per le ore della rapina?", "Conferma la versione dei fatti di suo fratello Alfred?"]
+      Alfred: ["Dov'eri la notte del duplice omicidio?", "Come spiega la sua impronta di pollice sulla scatola della cassaforte rinvenuta dalla scientifica?", "Chi possedeva la maschera di calza di seta?"],
+      Albert: ["Ha un alibi verificabile per le ore della rapina?", "Conferma la versione dei fatti di suo fratello Alfred?", "Perché siete stati visti insieme vicino a Deptford all'alba?"]
     },
     fallbacks: {
       Alfred: "Io stavo dormendo tranquillamente quella notte! Quella storia dell'impronta sulla scatola è un'invenzione della polizia.",
@@ -480,7 +481,7 @@ const CASES = {
     sceneNotice: "Verbali di ronda, autopsie d'epoca e perizie di Scotland Yard.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
-    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Mantieni un atteggiamento freddo o alterato, ma se ti vengono presentati i dettagli anatomici dei reperti e delle perizie mediche che ti inchiodano, devi tradire segni di cedimento o giustificarti con agitazione.",
+    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Mantieni un atteggiamento freddo o evasivo, reagendo ai dettagli anatomici e alle prove. Rispondi sempre in italiano.",
     suggestions: {
       Druitt: ["Quali erano i suoi spostamenti durante le notti degli omicidi a Whitechapel?", "Perché i suoi colleghi riferiscono di comportamenti anomali in quei giorni?"],
       Kosminski: ["Perché è stato visto nei pressi delle scene dei delitti a quell'ora?", "Le perizie mediche parlano di conoscenze chirurgiche: come spiega la sua presenza costante nel quartiere e i reperti?"],
@@ -522,7 +523,7 @@ function selectCaseWithDiff(diff) {
   
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-place').textContent = currentCase.place;
-  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (con suggerimenti dinamici)' : 'Normale (senza aiuti)');
+  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (con suggerimenti avanzati)' : 'Normale (con suggerimenti reattivi)');
   document.getElementById('scene-notice').textContent = currentCase.sceneNotice;
   
   let sGrid = document.getElementById('suspects-grid');
@@ -572,57 +573,66 @@ function inter(s) {
     renderMsg(m.role === 'user' ? 'me' : 'them', m.content);
   });
 
-  updateSuggestions(s);
+  updateDynamicSuggestions(s, "");
 }
 
-function updateSuggestions(s) {
+// Funzione intelligente per generare suggerimenti in base all'ultima risposta ricevuta
+function updateDynamicSuggestions(s, lastReply) {
   let suggBox = document.getElementById('suggestions-box');
-  if (currentDifficulty === 'facile' && currentCase.suggestions) {
-    suggBox.style.display = 'flex';
+  suggBox.style.display = 'flex';
+  
+  let replyLower = (lastReply || "").toLowerCase();
+  let dynamicList = [];
+
+  // Se l'IA si trincera dietro un legale o rifiuta di parlare
+  if (replyLower.includes('legale') || replyLower.includes('avvocato') || replyLower.includes('silenzio') || replyLower.includes('non ho altro da dichiarare')) {
+    dynamicList = [
+      "Il silenzio o la richiesta di un legale non cancellano le prove trovate. Vuole confermarlo?",
+      "Possiamo procedere con l'arresto immediato o preferisce collaborare ora?",
+      "Le ricordo che omettere informazioni in un'indagine aggravano la sua posizione."
+    ];
+  } 
+  // Se l'IA si mostra infastidita o aggressiva
+  else if (replyLower.includes('assurda') || replyLower.includes('insinuazioni') || replyLower.includes('lasciatemi')) {
+    dynamicList = [
+      "Se è innocente, ci spieghi allora perché i tabulati la smentiscono.",
+      "Mantenga la calma e risponda alla domanda sull'orario dei fatti.",
+      "Chi altro aveva accesso alla stanza oltre a lei?"
+    ];
+  } 
+  // Se l'IA ammette parzialmente o vacilla
+  else if (replyLower.includes('forse') || replyLower.includes('diversamente') || replyLower.includes('ricordo')) {
+    dynamicList = [
+      "Quindi ammette di essere stata lì a quell'ora? Dica la verità completa.",
+      "Ci spieghi esattamente cosa è successo dopo quel momento.",
+      "Chi vi ha visti insieme mentre discutevate?"
+    ];
+  } 
+  // Situazione iniziale o generica
+  else {
+    dynamicList = [...(currentCase.suggestions[s] || [])];
     
-    let currentSuggestions = [...(currentCase.suggestions[s] || [])];
-    
-    // Adatta in base alle prove scoperte
+    // Aggiunge opzioni basate sulle prove scoperte finora
     ev.forEach(testId => {
       if (testId === 'phone' || testId === 'timing') {
-        currentSuggestions.push("Perché ha mentito sui suoi spostamenti o sui messaggi a quell'ora?");
+        dynamicList.push("Perché i tabulati o gli orari smentiscono il suo alibi?");
       }
-      if (testId === 'paperweight' || testId === 'fingerprint') {
-        currentSuggestions.push("Abbiamo trovato le sue impronte sulla prova chiave: come spiega questa bugia?");
-      }
-      if (testId === 'bpa' || testId === 'medical' || testId === 'pijama' || testId === 'button') {
-        currentSuggestions.push("Le analisi scientifiche smentiscono la sua versione dei fatti. Perché ha mentito?");
+      if (testId === 'paperweight' || testId === 'fingerprint' || testId === 'bpa' || testId === 'medical') {
+        dynamicList.push("Abbiamo la prova scientifica in mano: come giustifica la sua presenza?");
       }
     });
-
-    // Adatta in base all'ultima risposta data dal sospettato nel dialogo
-    if (chatHistory[s] && chatHistory[s].length > 0) {
-      let lastMsg = chatHistory[s][chatHistory[s].length - 1];
-      if (lastMsg.role === 'assistant') {
-        let textLower = lastMsg.content.toLowerCase();
-        if (textLower.includes('archivio') || textLower.includes('camera') || textLower.includes('casa')) {
-          currentSuggestions.push("Può confermare chi era con lei esattamente in quel momento?");
-        }
-        if (textLower.includes('fraintende') || textLower.includes('nulla') || textLower.includes('sbagliate')) {
-          currentSuggestions.push("I fatti dicono il contrario: chi l'ha vista veramente laggiù?");
-        }
-      }
-    }
-
-    // Rimuovi duplicati
-    currentSuggestions = [...new Set(currentSuggestions)];
-
-    suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453; margin-bottom:4px;">💡 Domande suggerite dal dialogo e dalle prove:</span>' + 
-      currentSuggestions.map(q => `<button class="sugg-btn" onclick="useSuggestion('${q.replace(/'/g, "\\'")}')">${q}</button>`).join('');
-  } else {
-    suggBox.style.display = 'none';
-    suggBox.innerHTML = '';
   }
+
+  // Rimuove eventuali duplicati
+  dynamicList = [...new Set(dynamicList)];
+
+  suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453; margin-bottom:2px;">💡 Nuovi suggerimenti adattati alla risposta (oppure scrivi liberamente sotto):</span>' + 
+    dynamicList.map(q => `<button class="sugg-btn" onclick="useSuggestion('${q.replace(/'/g, "\\'")}')">${q}.</button>`).join('');
 }
 
 function useSuggestion(qText) {
   document.getElementById('q').value = qText;
-  send();
+  send(); // Invia direttamente il suggerimento scelto
 }
 
 function renderMsg(c, t) {
@@ -677,15 +687,18 @@ async function send() {
       let historyLen = chatHistory[cur].filter(m => m.role === 'user').length;
       let qLower = qText.toLowerCase();
       
-      if (qLower.includes('perché') && (qLower.includes('mentito') || qLower.includes('prova') || qLower.includes('impronte') || qLower.includes('smentiscono'))) {
-        replyText = "Ehm... d'accordo, forse le cose sono andate un po' diversamente da come ho detto prima, ma non voleva essere un crimine!";
-      } else if (qLower.includes('dove') || qLower.includes('orario') || qLower.includes('ora')) {
-        replyText = "Ero altrove a quell'ora, e vi ho già spiegato la mia posizione. Non ho altro da aggiungere.";
+      // Simulatore di risposte reattive e difensive dell'IA
+      if (qLower.includes('legale') || qLower.includes('avvocato') || qLower.includes('arresto') || qLower.includes('prova')) {
+        replyText = "Questa storia sta diventando assurda e mi state mettendo in mezzo ingiustamente! Voglio che venga chiamato immediatamente un legale, non rispondo ad altro senza il mio avvocato.";
+      } else if (qLower.includes('perché') && (qLower.includes('mentito') || qLower.includes('smentiscono') || qLower.includes('alibi'))) {
+        replyText = "Ehm... d'accordo, forse ho omesso dei dettagli perché avevo paura di finire nei guai, ma vi giuro che non sono stato io!";
+      } else if (qLower.includes('dove') || qLower.includes('orario')) {
+        replyText = "Ve l'ho già detto, ero altrove. Non ho intenzione di ripetermi un'altra volta.";
       } else {
         const genericReplies = [
-          "Vi ho già detto tutto quello che so. Non insistete su questo punto.",
-          "Questa storia sta diventando assurda. Voglio che venga chiamato un legale.",
-          currentCase.fallbacks[cur] || "Non ho altro da dichiarare."
+          "Non ho niente da aggiungere a quello che ho già dichiarato.",
+          "State facendo un buco nell'acqua, io non c'entro assolutamente nulla con questa storia.",
+          currentCase.fallbacks[cur] || "Preferisco non rilasciare altre dichiarazioni."
         ];
         replyText = genericReplies[(historyLen - 1) % genericReplies.length];
       }
@@ -697,8 +710,8 @@ async function send() {
   chatHistory[cur].push({ role: 'assistant', content: replyText });
   renderMsg('them', replyText);
 
-  // Aggiorna dinamicamente i suggerimenti in base all'evoluzione della chat
-  updateSuggestions(cur);
+  // Aggiorna istantaneamente i suggerimenti in base a ciò che ha appena risposto l'IA!
+  updateDynamicSuggestions(cur, replyText);
 
   qInput.disabled = false;
   sendBtn.disabled = false;
