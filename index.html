@@ -30,7 +30,7 @@
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
   .diff-box { margin:15px 0; background:#191e28; padding:15px; border-radius:12px; border:1px solid #303746; text-align:center; }
-  .diff-btn { width: 100%; padding: 12px; margin: 6px 0; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; font-weight:bold; cursor:pointer; text-align:left; }
+  .diff-btn { width: 100%; padding: 12px; margin: 6px 0; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; font-weight:bold; cursor:pointer; text-align:left; box-sizing:border-box; }
   .diff-btn:hover { border-color:#7057e8; background:#382d73; }
 </style>
 </head>
@@ -203,8 +203,8 @@ const CASES = {
     desc: "<b>Caso scuola per nuovi detective:</b> Una statuetta d'oro è scomparsa dal museo civico. Due sospetti presenti durante la chiusura.<br><br>💡 <i>Obiettivo Tutorial: Raccogli perizie nella sezione 'Scena', interroga i sospetti e incrimina il vero colpevole in tribunale!</i>",
     place: "Museo Civico d'Arte",
     sceneNotice: "In questo caso di prova impara ad analizzare le teche e le telecamere per raccogliere prove valide in tribunale.",
-    objects: ['🏛️ Teca in vetro forzata', '🧹 Straccio per le pulizie intriso d'olio'],
-    suspects: { Matteo: 'Matteo (Custode)', Paolo: 'Paolo (Restauratore)' },
+    objects: ["🏛️ Teca in vetro forzata", "🧹 Straccio per le pulizie intriso d'olio"],
+    suspects: { Matteo: "Matteo (Custode)", Paolo: "Paolo (Restauratore)" },
     prompts: {
       Matteo: "Sei Matteo, il custode del museo. Sei INNOCENTE. Eri all'ingresso principale fino alle 20:00 e non sei mai entrato nella sala oro. Rispondi con tono tranquillo in massimo 2 frasi.",
       Paolo: "Sei Paolo, il restauratore. Sei COLPEVOLE. Hai usato un piede di porco per forzare la teca e rubare la statuetta alle 19:45 lasciando le tue impronte sul vetro. Cerchi di dire che eri già andato via alle 19:30. Rispondi in massimo 2 frasi."
@@ -222,11 +222,11 @@ const CASES = {
       ]
     },
     tests: {
-      fingerprints: { name: '🔍 Impronte sulla Teca', desc: 'Rilevate impronte digitali fresche di Paolo sul vetro del display della reliquia.' },
-      cameras: { name: '📹 Registrazione Videosorveglianza', desc: 'I filmati mostrano Paolo entrare nella sala oro alle 19:42 con una borsa.' }
+      fingerprints: { name: "🔍 Impronte sulla Teca", desc: "Rilevate impronte digitali fresche di Paolo sul vetro del display della reliquia." },
+      cameras: { name: "📹 Registrazione Videosorveglianza", desc: "I filmati mostrano Paolo entrare nella sala oro alle 19:42 con una borsa." }
     },
-    correctCulprit: 'Paolo',
-    requiredEvidences: ['fingerprints', 'cameras'],
+    correctCulprit: "Paolo",
+    requiredEvidences: ["fingerprints", "cameras"],
     solutionText: "<h3>Soluzione del Tutorial: Paolo (Restauratore)</h3><p>Paolo ha approfittato della chiusura del museo per forzare la teca con gli attrezzi da lavoro. Le sue impronte e i filmati della telecamera costituiscono le prove decisive.</p>"
   },
   ai001: {
@@ -234,8 +234,8 @@ const CASES = {
     desc: "<b>Vittima:</b> Andrea Rinaldi, 42 anni.<br>Trovato senza vita nello studio di Villa Rinaldi con una ferita alla testa.",
     place: "Villa Rinaldi (Scena del delitto)",
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
-    objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
-    suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
+    objects: ["🔩 Fermacarte metallico pesante", "🥃 Bicchiere con tracce", "📱 Telefono cellulare", "🧵 Cardigan strappato"],
+    suspects: { Marco: "Marco Ferri", Elena: "Elena Rinaldi", Davide: "Davide Moretti", Sofia: "Sofia Bianchi" },
     prompts: {
       Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Sai che l'azienda perdeva soldi e che Elena e Andrea litigavano spesso. Rispondi in italiano rimanendo perfettamente nel personaggio. Massimo 2 frasi.",
       Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio, avete litigato per il divorzio e l'hai colpito alle 23:16 con il fermacarte metallico lasciando un bottone del tuo cardigan. Mentirai dicendo che dormivi. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
@@ -249,13 +249,13 @@ const CASES = {
       Sofia: ["Hai incontrato qualcuno lasciando la villa?", "Come sembrava lo stato d'animo di Elena?"]
     },
     tests: {
-      autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Autopsia: Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
-      phone: { name: '📱 Tabulati e Memoria Telefono', desc: 'Sms cospicuo da Elena alle 23:05 ("Dobbiamo parlare subito"). Conversazione successiva cancellata.' },
-      paperweight: { name: '🔩 Rilievi sul Fermacarte', desc: 'Tracce ematiche della vittima sul fermacarte e impronte parziali compatibili con Elena.' },
-      button: { name: '🧵 Rilievo Tessile', desc: 'Bottone rinvenuto sotto il corpo del Rinaldi, perfettamente identico al vestito di Elena.' }
+      autopsy: { name: "🩺 Autopsia Medico-Legale", desc: "Autopsia: Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico." },
+      phone: { name: "📱 Tabulati e Memoria Telefono", desc: "Sms cospicuo da Elena alle 23:05 ('Dobbiamo parlare subito'). Conversazione successiva cancellata." },
+      paperweight: { name: "🔩 Rilievi sul Fermacarte", desc: "Tracce ematiche della vittima sul fermacarte e impronte parziali compatibili con Elena." },
+      button: { name: "🧵 Rilievo Tessile", desc: "Bottone rinvenuto sotto il corpo del Rinaldi, perfettamente identico al vestito di Elena." }
     },
-    correctCulprit: 'Elena',
-    requiredEvidences: ['autopsy', 'phone', 'paperweight'],
+    correctCulprit: "Elena",
+    requiredEvidences: ["autopsy", "phone", "paperweight"],
     solutionText: "<h3>Incolpata: Elena Rinaldi</h3><p>Alle 23:05 invia un SMS per pretendere un chiarimento sulla separazione. Raggiunge lo studio alle 23:12, scoppia un violento diverbio. Alle 23:16 afferra il fermacarte e colpisce il marito, perdendo un bottone.</p>"
   },
   cogne: {
@@ -263,8 +263,8 @@ const CASES = {
     desc: "<b>Vittima:</b> Samuele Lorenzi (3 anni).<br>Avvenuto la mattina del 30 gennaio 2002 nella frazione di Montroz.",
     place: "Villetta di Montroz, Cogne",
     sceneNotice: "Analisi scientifica avanzata: test BPA, orari dei soccorsi e verbali 118.",
-    objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
-    suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
+    objects: ["🛏️ Letto matrimoniale con macchie", "👟 Clogs/Ciabatte da neve", "🩺 Borsa del medico curante"],
+    suspects: { Annamaria: "Annamaria Franzoni", Ada: "Dr.ssa Ada Satragni", Ulisse: "Ulisse Lorenzi" },
     prompts: {
       Annamaria: "Sei Annamaria Franzoni. Ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio allo scuolabus e di essere tornata alle 8:24 trovando il bambino ferito. Piangi e nega qualsiasi coinvolgimento. Rispondi in italiano. Massimo 2 frasi.",
       Ada: "Sei la dottoressa Ada Satragni, medico curante arrivata per prima. Pensavi a un aneurisma cerebrale, hai lavato il viso al bambino per aiutarlo. Rispondi con tono medico ma difensivo in italiano. Massimo 2 frasi.",
@@ -276,12 +276,12 @@ const CASES = {
       Ulisse: ["Hai notato qualcuno strano avvicinarsi alla casa sulla neve?", "Quando hai incontrato Annamaria?"]
     },
     tests: {
-      bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce a proiettile sul soffitto indicano che i colpi sono stati inferti da chi si trovava sopra il letto.' },
-      timing: { name: '⏱️ Finestra Temporale (8 min)', desc: 'Intervallo tra 8:16 e 8:24 troppo breve per la penetrazione di un estraneo senza lasciare tracce.' },
-      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici da impatto posizionano il pigiama sulla scena al momento dell\'aggressione.' }
+      bpa: { name: "🩸 Perizia BPA", desc: "Le micro-gocce a proiettile sul soffitto indicano che i colpi sono stati inferti da chi si trovava sopra il letto." },
+      timing: { name: "⏱️ Finestra Temporale (8 min)", desc: "Intervallo tra 8:16 e 8:24 troppo breve per la penetrazione di un estraneo senza lasciare tracce." },
+      pijama: { name: "👕 Perizia Pigiama", desc: "Tracce di schizzi ematici da impatto posizionano il pigiama sulla scena al momento dell'aggressione." }
     },
-    correctCulprit: 'Annamaria',
-    requiredEvidences: ['bpa', 'timing', 'pijama'],
+    correctCulprit: "Annamaria",
+    requiredEvidences: ["bpa", "timing", "pijama"],
     solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie scientifiche BPA hanno stabilito che l'aggressore indossava il pigiama e si trovava sul letto al momento dei colpi.</p>"
   },
   farrow: {
@@ -289,8 +289,8 @@ const CASES = {
     desc: "<b>Vittime:</b> Thomas e Ann Farrow.<br>Londra, Deptford. Primo caso giudiziario risolto grazie alle impronte digitali.",
     place: "Bottega Farrow, Deptford (Londra)",
     sceneNotice: "Criminologia d'inizio '900: confronto di impronte su cassaforte e metodo antropometrico Bertillon.",
-    objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
-    suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
+    objects: ["🔐 Cassaforte svuotata", "📜 Maschera di calza di seta", "🔍 Scatola di metallo con impronta"],
+    suspects: { Alfred: "Alfred Stratton", Albert: "Albert Stratton" },
     prompts: {
       Alfred: "Sei Alfred Stratton. Sei il COLPEVOLE assieme a tuo fratello Albert. Sostieni che l'impronta di pollice trovata sulla scatola metallica non sia la tua e che eri a dormire. Sei arrogante ed evasivo. Rispondi in italiano. Massimo 2 frasi.",
       Albert: "Sei Albert Stratton, fratello e complice di Alfred. Cerchi di scaricare la colpa o accampare alibi confusi sulla notte della rapina. Rispondi in italiano. Massimo 2 frasi."
@@ -300,11 +300,11 @@ const CASES = {
       Albert: ["Tuo fratello Alfred era con te la notte del delitto?", "Chi vi ha visti correre all'alba?"]
     },
     tests: {
-      fingerprint: { name: '🔍 Perizia Dattiloscopica', desc: 'L\'impronta di pollice sulla scatola della cassaforte corrisponde esattamente al pollice destro di Alfred Stratton.' },
-      witness: { name: '👁️ Testimonianza del Lattaio', desc: 'Un lattaio ha visto due uomini uscire di corsa dalla bottega Farrow all\'alba del delitto.' }
+      fingerprint: { name: "🔍 Perizia Dattiloscopica", desc: "L'impronta di pollice sulla scatola della cassaforte corrisponde esattamente al pollice destro di Alfred Stratton." },
+      witness: { name: "👁️ Testimonianza del Lattaio", desc: "Un lattaio ha visto due uomini uscire di corsa dalla bottega Farrow all'alba del delitto." }
     },
-    correctCulprit: 'Alfred',
-    requiredEvidences: ['fingerprint', 'witness'],
+    correctCulprit: "Alfred",
+    requiredEvidences: ["fingerprint", "witness"],
     solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Fu il primo caso in Gran Bretagna in cui le impronte digitali costituirono la prova decisiva.</p>"
   },
   jack: {
@@ -312,8 +312,8 @@ const CASES = {
     desc: "<b>Sito indagine:</b> Whitechapel, Londra.<br>Analisi storica delle testimonianze sui sospetti dell'autunno del 1888.",
     place: "Quartiere di Whitechapel",
     sceneNotice: "Tecnica investigativa vittoriana: verbali di ronda, autopsie d'epoca e perizie grafologiche.",
-    objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
-    suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
+    objects: ["✉️ Lettera Dear Boss", "🔪 Bisturi da chirurgo", "🧥 Grembiule di cuoio"],
+    suspects: { Druitt: "Montague Druitt", Kosminski: "Aaron Kosminski", Ostrog: "Michael Ostrog" },
     prompts: {
       Druitt: "Sei Montague Druitt, avvocato e insegnante. Neghi qualsiasi coinvolgimento e rispondi con linguaggio formale ed elegante dell'epoca in italiano. Massimo 2 frasi.",
       Kosminski: "Sei Aaron Kosminski, un barbiere polacco. Sostieni di essere stato scambiato per qualcun altro. Rispondi con tono molto confuso e agitato in italiano. Massimo 2 frasi.",
@@ -325,11 +325,11 @@ const CASES = {
       Ostrog: ["Come spieghi i ferri chirurgici trovati tra le tue cose?", "Dove eri registrato durante la ronda?"]
     },
     tests: {
-      medical: { name: '🩺 Perizia Anatomica Dr. Phillips', desc: 'L\'aggressore possiede nozioni di anatomia o chirurgia per la precisione delle mutilazioni.' },
-      grembiule: { name: '🧥 Traccia di Grembiule in Goulston St', desc: 'Pezzo di indumento insanguinato di Catherine Eddowes ritrovato lungo la via di fuga verso Whitechapel.' }
+      medical: { name: "🩺 Perizia Anatomica Dr. Phillips", desc: "L'aggressore possiede nozioni di anatomia o chirurgia per la precisione delle mutilazioni." },
+      grembiule: { name: "🧥 Traccia di Grembiule in Goulston St", desc: "Pezzo di indumento insanguinato di Catherine Eddowes ritrovato lungo la via di fuga verso Whitechapel." }
     },
-    correctCulprit: 'Kosminski',
-    requiredEvidences: ['medical', 'grembiule'],
+    correctCulprit: "Kosminski",
+    requiredEvidences: ["medical", "grembiule"],
     solutionText: "<h3>Sospettato Principale: Aaron Kosminski</h3><p>Indicato nei verbali di Scotland Yard (Memorandum Macnaghten) come il principale indiziato dall'ispettore Swanson e dal capo della CID Melville Macnaghten.</p>"
   }
 };
@@ -394,7 +394,6 @@ function inter(s) {
   show('inter');
   document.getElementById('who').textContent = currentCase.suspects[s];
 
-  // Mostra domande guidate solo se la difficoltà scelta per questo caso è FACILE
   const guidedBox = document.getElementById('guided-questions');
   const guidedBtns = document.getElementById('guided-buttons');
   
@@ -402,7 +401,8 @@ function inter(s) {
     guidedBox.style.display = 'block';
     guidedBtns.innerHTML = '';
     currentCase.guidedQuestions[s].forEach(q => {
-      guidedBtns.innerHTML += `<button class="suggest" onclick="askGuided('${q.replace(/'/g, "\\'")}')">💬 ${q}</button>`;
+      let qEscaped = q.replace(/'/g, "\\'");
+      guidedBtns.innerHTML += `<button class="suggest" onclick="askGuided('${qEscaped}')">💬 ${q}</button>`;
     });
   } else {
     guidedBox.style.display = 'none';
