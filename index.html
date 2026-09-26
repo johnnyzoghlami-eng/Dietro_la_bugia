@@ -14,7 +14,7 @@
   button:disabled { background:#4a3f82; cursor:not-allowed; }
   button.sec { background:#29303c; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
-  .chat { height:320px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
+  .chat { height:260px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
   .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; }
   .me { margin-left:auto; background:#513bb0; }
   .them { background:#29303c; }
@@ -27,6 +27,9 @@
   .item { background:#222936; padding:11px; border-radius:99px; margin:7px 0; display:flex; justify-content:space-between; align-items:center; }
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
+  .suggestions { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .sugg-btn { background:#2b3548; font-size:12px; padding:8px 12px; border-radius:8px; border:1px solid #434f67; cursor:pointer; color:#ddd; }
+  .sugg-btn:hover { background:#3b4760; }
 </style>
 </head>
 <body>
@@ -39,30 +42,48 @@
     <div class="card">
       <h2>🤖 AI-001 — L'ultima notte</h2>
       <p>Caso d'inventiva moderno. Un giallo d'atmosfera con un delitto in una villa isolata.</p>
-      <button onclick="selectCase('ai001')">▶️ Gioca Questo Caso</button>
+      <button onclick="askDifficulty('ai001')">▶️ Gioca Questo Caso</button>
     </div>
     <div class="card">
       <h2>📰 Delitto di Cogne — 2002</h2>
       <p>Caso reale moderno. Analizza la complessa cronologia dei minuti e le perizie.</p>
-      <button onclick="selectCase('cogne')">▶️ Gioca Questo Caso</button>
+      <button onclick="askDifficulty('cogne')">▶️ Gioca Questo Caso</button>
     </div>
     <div class="card">
       <h2>🏛️ Delitto Farrow (Deptford) — 1905</h2>
       <p>Caso storico reale. Un duplice omicidio a Londra risolto con le prime impronte.</p>
-      <button onclick="selectCase('farrow')">▶️ Gioca Questo Caso</button>
+      <button onclick="askDifficulty('farrow')">▶️ Gioca Questo Caso</button>
     </div>
     <div class="card">
       <h2>🔍 Jack lo Squartatore — 1888</h2>
       <p>Caso storico. Londra, Whitechapel. Interrogatori basati su verbali d'epoca.</p>
-      <button onclick="selectCase('jack')">▶️ Gioca Questo Caso</button>
+      <button onclick="askDifficulty('jack')">▶️ Gioca Questo Caso</button>
     </div>
+  </section>
+
+  <!-- Schermata Scelta Difficoltà -->
+  <section id="difficulty" class="center">
+    <h2>⚙️ Scegli la Difficoltà di Gioco</h2>
+    <p class="small">Seleziona come desideri affrontare l'indagine:</p>
+    <div class="card" style="max-width:500px; margin:20px auto;">
+      <h3>🟢 Facile</h3>
+      <p class="small">Durante gli interrogatori avrai dei suggerimenti di domande pronte da cliccare.</p>
+      <button onclick="selectCaseWithDiff('facile')">Gioca a Facile</button>
+    </div>
+    <div class="card" style="max-width:500px; margin:20px auto;">
+      <h3>🔵 Normale</h3>
+      <p class="small">Nessun aiuto. Dovrai formulare tu tutte le domande logiche ai sospettati.</p>
+      <button class="sec" onclick="selectCaseWithDiff('normale')">Gioca a Normale</button>
+    </div>
+    <br>
+    <button class="sec" onclick="show('home')">← Torna al Menu</button>
   </section>
 
   <section id="investigation">
     <h2>🔎 Dashboard Indagine</h2>
     <div class="card">
       <b id="case-title"></b><br>
-      <span id="case-place"></span> — caso aperto<br>
+      <span id="case-place"></span> — caso aperto (<span id="diff-badge" style="color:#a494ff; font-weight:bold;"></span>)<br>
       <span class="small">Prove scientifiche/reperti raccolti: <span id="ec">0</span></span>
     </div>
     <h3>Sospetti da Interrogare</h3>
@@ -85,6 +106,10 @@
       <p class="small">Interroga il sospetto in tempo reale.</p>
     </div>
     <div id="chat" class="chat"></div>
+    
+    <!-- Area suggerimenti per modalità Facile -->
+    <div id="suggestions-box" class="suggestions" style="display:none;"></div>
+
     <div class="row" style="margin-top:10px;">
       <input id="q" placeholder="Fai una domanda al sospetto..." onkeydown="if(event.key==='Enter')send()">
       <button id="send-btn" onclick="send()">Invia</button>
@@ -153,7 +178,6 @@
 </div>
 
 <script>
-// Chiave API opzionale per Groq (se vuota, userà il sistema intelligente di riserva integrato)
 const GROQ_API_KEY = ""; 
 
 const CASES = {
@@ -164,6 +188,12 @@ const CASES = {
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
+    suggestions: {
+      Marco: ["Dove ti trovavi tra le 23:00 e le 23:30?", "C'erano problemi economici in azienda?"],
+      Elena: ["Perché hai mandato quell'SMS alle 23:05?", "Cosa hai fatto dopo la discussione nello studio?"],
+      Davide: ["Hai sentito rumori o urla provenire dallo studio?", "Chi è entrato o uscito dalla villa a quell'ora?"],
+      Sofia: ["Hai notato qualcuno nei corridoi uscendo alle 23:20?", "Di cosa parlavi con Andrea prima di andare via?"]
+    },
     fallbacks: {
       Marco: "Ero in archivio a cercare documenti tra le 23:00 e le 23:30. È vero che l'azienda perdeva soldi, ma non c'entro nulla con la sua morte.",
       Elena: "A quell'ora stavo riposando in camera mia, non so nulla di quello che è successo nello studio. Smettetela di fare insinuazioni su di me!",
@@ -187,6 +217,11 @@ const CASES = {
     sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
     suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
+    suggestions: {
+      Annamaria: ["A che ora esatta è uscita per accompagnare lo scuolabus?", "Ha visto qualcuno aggirarsi in casa prima di trovare il bambino?"],
+      Ada: ["Quali condizioni ha riscontrato sul piccolo all'arrivo?", "Perché ha pensato a un malore iniziale?"],
+      Ulisse: ["Ha notato impronte sulla neve intorno alla villetta quella mattina?", "Ha sentito rumori insoliti provenire dalla casa dei vicini?"]
+    },
     fallbacks: {
       Annamaria: "Vi prego credetemi, ero uscita solo per accompagnare il bambino allo scuolabus! Quando sono rientrata l'ho trovato ferito nel lettino.",
       Ada: "Sono arrivata per prima sul posto chiamata d'urgenza. Ho cercato solo di prestare soccorso medico immediato al piccolo.",
@@ -208,6 +243,10 @@ const CASES = {
     sceneNotice: "Criminologia d'inizio '900: impronte digitali e metodo Bertillon.",
     objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
     suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
+    suggestions: {
+      Alfred: ["Dov'eri la notte del duplice omicidio?", "Come spiega la sua impronta di pollice sulla scatola della cassaforte?"],
+      Albert: ["Ha un alibi verificabile per le ore della rapina?", "Conferma la versione dei fatti di suo fratello Alfred?"]
+    },
     fallbacks: {
       Alfred: "Io stavo dormendo tranquillamente quella notte! Quella storia dell'impronta sulla scatola è un'invenzione della polizia.",
       Albert: "Mio fratello Alfred era con me a casa. Non c'entriamo assolutamente nulla con la rapina alla bottega."
@@ -227,6 +266,11 @@ const CASES = {
     sceneNotice: "Verbali di ronda e autopsie d'epoca.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
+    suggestions: {
+      Druitt: ["Quali erano i suoi spostamenti durante le notti degli omicidi a Whitechapel?", "Perché i suoi colleghi riferiscono di suoi comportamenti anomali?"],
+      Kosminski: ["Perché è stato visto nei pressi delle scene dei delitti?", "Cosa faceva durante le ore notturne nei vicoli?"],
+      Ostrog: ["Quali sono i suoi precedenti penali in Russia e a Londra?", "Possiede attrezzi chirurgici o bisturi tra i suoi effetti personali?"]
+    },
     fallbacks: {
       Druitt: "La mia vita è dedicata all'insegnamento e al diritto. Respingo con sdegno queste assurde accuse nei miei confronti.",
       Kosminski: "Io non capisco cosa volete da me, mi state confondendo con qualcun altro! Lasciatemi in pace.",
@@ -244,12 +288,18 @@ const CASES = {
 
 let currentCaseKey = 'ai001';
 let currentCase = CASES.ai001;
+let currentDifficulty = 'normale';
 let cur = '', ev = [], notes = [], times = [], done = {};
 let chatHistory = {};
 
-function selectCase(key) {
+function askDifficulty(key) {
   currentCaseKey = key;
   currentCase = CASES[key];
+  show('difficulty');
+}
+
+function selectCaseWithDiff(diff) {
+  currentDifficulty = diff;
   chatHistory = {}; 
   ev = []; notes = []; times = []; done = {};
   document.getElementById('ec').textContent = '0';
@@ -257,6 +307,7 @@ function selectCase(key) {
   
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-place').textContent = currentCase.place;
+  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (con suggerimenti)' : 'Normale');
   document.getElementById('scene-notice').textContent = currentCase.sceneNotice;
   
   let sGrid = document.getElementById('suspects-grid');
@@ -305,6 +356,22 @@ function inter(s) {
   chatHistory[s].forEach(m => {
     renderMsg(m.role === 'user' ? 'me' : 'them', m.content);
   });
+
+  // Gestione pulsanti di suggerimento in modalità Facile
+  let suggBox = document.getElementById('suggestions-box');
+  if (currentDifficulty === 'facile' && currentCase.suggestions && currentCase.suggestions[s]) {
+    suggBox.style.display = 'flex';
+    suggBox.innerHTML = '<span class="small" style="width:100%; color:#a494ff;">💡 Domande suggerite:</span>' + 
+      currentCase.suggestions[s].map(q => `<button class="sugg-btn" onclick="useSuggestion('${q.replace(/'/g, "\\'")}')">${q}</button>`).join('');
+  } else {
+    suggBox.style.display = 'none';
+    suggBox.innerHTML = '';
+  }
+}
+
+function useSuggestion(qText) {
+  document.getElementById('q').value = qText;
+  send();
 }
 
 function renderMsg(c, t) {
@@ -334,7 +401,6 @@ async function send() {
 
   try {
     if (GROQ_API_KEY && GROQ_API_KEY.length > 5) {
-      // Tentativo tramite Groq API gratuita e veloce
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -356,13 +422,11 @@ async function send() {
         throw new Error("Risposta vuota da Groq");
       }
     } else {
-      // Sistema di riserva intelligente integrato (funziona sempre al 100% senza chiavi)
-      await new Promise(r => setTimeout(r, 600)); // Breve attesa realistica
+      await new Promise(r => setTimeout(r, 600));
       let base = currentCase.fallbacks[cur] || "Non ho altro da aggiungere su questa faccenda.";
       replyText = base + " (Risposta basata sul profilo del sospetto)";
     }
   } catch (err) {
-    // Fallback automatico in caso di errore di rete o API
     replyText = currentCase.fallbacks[cur] || "Preferisco non rispondere a questa domanda al momento.";
   }
 
