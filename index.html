@@ -45,7 +45,7 @@
     <div class="key-box">
       <label class="small"><b>🔑 Inserisci la tua API Key di Google AI Studio:</b></label>
       <div class="row" style="margin-top:6px;">
-        <input type="password" id="api-key-input" placeholder="Incolla qui la chiave...">
+        <input type="password" id="api-key-input" placeholder="Incolla qui la chiave (es. AIzaSy...)">
         <button onclick="saveApiKey()">Salva</button>
       </div>
       <div id="key-status" class="small" style="margin-top:4px; color:#4ef064;"></div>
@@ -441,7 +441,8 @@ async function send() {
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    // Utilizzo del modello stabile gemini-pro compatibile con l'endpoint
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
     
     const contents = [
       {
