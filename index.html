@@ -27,51 +27,59 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home ottimizzata e centrata */
+  /* Schermata Home a schermo intero senza bordi e con tasto sovrapposto */
   #home.active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    min-height: 100vh;
-    box-sizing: border-box;
+    justify-content: flex-end;
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 0 20px 45px 20px;
+    background: #000;
+    z-index: 100;
+  }
+
+  .home-poster-box {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    padding: 24px 16px 36px 16px;
-    background: #05070b;
-  }
-
-  .home-poster-box {
-    flex: 1;
-    max-width: 380px;
-    width: 100%;
-    max-height: calc(100vh - 130px);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.9);
-    border: 1px solid var(--border-color);
+    z-index: 1;
     background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: auto;
   }
 
   .home-poster-box img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Mostra l'intera immagine senza tagliarla */
+    object-fit: cover; /* Riempie tutto lo schermo senza bande nere */
     display: block;
   }
 
-  #home.active > div:not(.home-poster-box) {
+  /* Sfumatura scura in basso per fare risaltare il pulsante */
+  #home.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    max-width: 380px;
+    height: 45%;
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #home.active > div:not(.home-poster-box) {
+    position: relative;
     z-index: 3;
+    width: 100%;
+    max-width: 400px;
   }
 
   .hero-container {
