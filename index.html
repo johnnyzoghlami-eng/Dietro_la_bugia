@@ -29,9 +29,9 @@
   .item { background:#222936; padding:11px; border-radius:99px; margin:7px 0; display:flex; justify-content:space-between; align-items:center; }
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
-  .diff-box { text-align:center; margin:15px 0; background:#191e28; padding:15px; border-radius:12px; border:1px solid #303746; }
-  .diff-btn { padding:10px 20px; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; cursor:pointer; }
-  .diff-btn.selected { border-color:#7057e8; background:#382d73; }
+  .diff-box { margin:15px 0; background:#191e28; padding:15px; border-radius:12px; border:1px solid #303746; text-align:center; }
+  .diff-btn { width: 100%; padding: 12px; margin: 6px 0; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; font-weight:bold; cursor:pointer; text-align:left; }
+  .diff-btn:hover { border-color:#7057e8; background:#382d73; }
 </style>
 </head>
 <body>
@@ -40,13 +40,6 @@
   <section id="home" class="active">
     <h1 class="center">🕵️ Dietro la Bugia</h1>
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
-
-    <!-- SELEZIONE DIFFICOLTÀ -->
-    <div class="diff-box">
-      <h3>🎯 Seleziona Difficoltà di Gioco</h3>
-      <button id="btn-easy" class="diff-btn selected" onclick="setDifficulty('easy')">🟢 Facile (Domande Guidate)</button>
-      <button id="btn-normal" class="diff-btn" onclick="setDifficulty('normal')">🔴 Normale (Esperienza Libera)</button>
-    </div>
 
     <!-- CASO TUTORIAL -->
     <div class="card" style="border: 2px solid #7057e8;">
@@ -77,17 +70,33 @@
     </div>
   </section>
 
+  <!-- SCHERMATA INTRODUTTIVA E SCELTA DIFFICOLTÀ PER OGNI CASO -->
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
-    <div class="notice">I dialoghi degli interrogatori sono gestiti in tempo reale dall'IA Gemini e ricorderanno le tue domande precedenti.</div>
-    <br>
-    <button onclick="show('investigation')">🔎 Inizia l'Indagine</button>
+    
+    <div class="diff-box">
+      <h3>🎯 Scegli la difficoltà per questo caso:</h3>
+      <button class="diff-btn" onclick="startCaseWithDifficulty('easy')">
+        🟢 Modalità Facile (Domande Guidate)
+        <div class="small" style="font-weight:normal; margin-top:4px;">In ogni interrogatorio avrai dei suggerimenti con domande pronte da inviare con un click.</div>
+      </button>
+      <button class="diff-btn" onclick="startCaseWithDifficulty('normal')">
+        🔴 Modalità Normale (Esperienza Libera)
+        <div class="small" style="font-weight:normal; margin-top:4px;">Nessun aiuto: dovrai formulare liberamente tutte le domande da rivolgere ai sospetti.</div>
+      </button>
+    </div>
+    
+    <button class="sec" onclick="show('home')">← Torna alla Scelta dei Casi</button>
   </section>
 
   <section id="investigation">
     <h2>🔎 Dashboard Indagine</h2>
-    <div class="card"><span id="case-place"></span> — caso aperto<br><span class="small">Prove scientifiche/reperti raccolti: <span id="ec">0</span></span></div>
+    <div class="card">
+      <b id="case-mode-label"></b><br>
+      <span id="case-place"></span> — caso aperto<br>
+      <span class="small">Prove scientifiche/reperti raccolti: <span id="ec">0</span></span>
+    </div>
     <h3>Sospetti da Interrogare</h3>
     <div class="grid" id="suspects-grid"></div>
     <h3>Strumenti Analitici</h3>
@@ -186,18 +195,12 @@
 // SOSTITUISCI QUESTA STRINGA CON LA TUA API KEY DI GOOGLE AI STUDIO
 const API_KEY = "INSERISCI_QUI_LA_TUA_API_KEY";
 
-let difficulty = 'easy'; // Default: Facile
-
-function setDifficulty(diff) {
-  difficulty = diff;
-  document.getElementById('btn-easy').classList.toggle('selected', diff === 'easy');
-  document.getElementById('btn-normal').classList.toggle('selected', diff === 'normal');
-}
+let difficulty = 'easy'; 
 
 const CASES = {
   tutorial: {
     title: "🎓 Tutorial — Il Furto della Reliquia",
-    desc: "<b>Caso scuola per nuovi detective:</b> Una statuetta d'oro è scomparsa dal museo civico. Due sospetti presenti durante la chiusura.<br><br>💡 <i>Obiettivo Tutorial: Vai su 'Scena / Perizie' per trovare le impronte, interroga i sospetti e incrimina il vero colpevole!</i>",
+    desc: "<b>Caso scuola per nuovi detective:</b> Una statuetta d'oro è scomparsa dal museo civico. Due sospetti presenti durante la chiusura.<br><br>💡 <i>Obiettivo Tutorial: Raccogli perizie nella sezione 'Scena', interroga i sospetti e incrimina il vero colpevole in tribunale!</i>",
     place: "Museo Civico d'Arte",
     sceneNotice: "In questo caso di prova impara ad analizzare le teche e le telecamere per raccogliere prove valide in tribunale.",
     objects: ['🏛️ Teca in vetro forzata', '🧹 Straccio per le pulizie intriso d'olio'],
@@ -371,6 +374,12 @@ function selectCase(key) {
   show('intro');
 }
 
+function startCaseWithDifficulty(diff) {
+  difficulty = diff;
+  document.getElementById('case-mode-label').textContent = diff === 'easy' ? '🟢 Modalità: Facile (Domande Guidate)' : '🔴 Modalità: Normale (Testo Libero)';
+  show('investigation');
+}
+
 function show(id) {
   document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -385,7 +394,7 @@ function inter(s) {
   show('inter');
   document.getElementById('who').textContent = currentCase.suspects[s];
 
-  // Gestione Domande Guidate per modalità FACILE
+  // Mostra domande guidate solo se la difficoltà scelta per questo caso è FACILE
   const guidedBox = document.getElementById('guided-questions');
   const guidedBtns = document.getElementById('guided-buttons');
   
