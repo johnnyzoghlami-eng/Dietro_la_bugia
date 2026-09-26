@@ -27,7 +27,7 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home a schermo intero con immagine intera e pulsante più in alto dentro il box */
+  /* Schermata Home a schermo intero */
   #home.active {
     display: flex;
     flex-direction: column;
@@ -91,6 +91,14 @@
     backdrop-filter: blur(5px);
   }
 
+  .hero-subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
   .card { 
     background: var(--bg-card); 
     border: 1px solid var(--border-color); 
@@ -102,14 +110,14 @@
   }
   
   .section-title { 
-    font-size: 15px; 
+    font-size: 14px; 
     color: var(--accent-red); 
     text-transform: uppercase; 
-    letter-spacing: 1px; 
-    margin: 28px 0 10px 4px; 
+    letter-spacing: 1.5px; 
+    margin: 32px 0 10px 4px; 
     font-weight: bold; 
     border-left: 3px solid var(--accent-red); 
-    padding-left: 8px; 
+    padding-left: 10px; 
   }
 
   button { 
@@ -172,47 +180,48 @@
     </div>
   </section>
 
-  <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
+  <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI (STILE COERENTE NOIR) -->
   <section id="case-selection">
-    <div class="hero-container" style="padding: 15px;">
-      <h2 style="margin:0; font-size:20px; letter-spacing:1px;">📂 SELEZIONE CASI</h2>
+    <div class="hero-container">
+      <h2 style="margin:0; font-size:22px; letter-spacing:1.5px; color:#fff;">📂 SELEZIONE CASI</h2>
       <p class="hero-subtitle">Scegli l'archivio da investigare</p>
     </div>
 
     <!-- Sezione 1: Casi inventati dall'IA -->
     <div class="section-title">1. Casi inventati dall'IA</div>
     <div class="card">
-      <h3 style="margin:0 0 6px 0; color:white;">🤖 AI-001 — L'ultima notte</h3>
+      <h3 style="margin:0 0 6px 0; color:white; font-size:16px;">🤖 AI-001 — L'ultima notte</h3>
       <p class="small">Villa Rinaldi. Un giallo d'atmosfera con un delitto in una villa isolata e quattro sospettati.</p>
-      <button onclick="askDifficulty('ai001')" style="margin-top:10px;">📂 Apri Fascicolo</button>
+      <button onclick="askDifficulty('ai001')" style="margin-top:12px; padding:10px 20px; font-size:14px;">📂 Apri Fascicolo</button>
     </div>
 
     <!-- Sezione 2: Casi moderni -->
     <div class="section-title">2. Casi moderni</div>
     <div class="card">
-      <h3 style="margin:0 0 6px 0; color:white;">📰 Delitto di Cogne (2002)</h3>
+      <h3 style="margin:0 0 6px 0; color:white; font-size:16px;">📰 Delitto di Cogne (2002)</h3>
       <p class="small">Villetta di Montroz. Analizza la complessa cronologia dei minuti, i verbali del 118 e le perizie.</p>
-      <button onclick="askDifficulty('cogne')" style="margin-top:10px;">📂 Apri Fascicolo</button>
+      <button onclick="askDifficulty('cogne')" style="margin-top:12px; padding:10px 20px; font-size:14px;">📂 Apri Fascicolo</button>
     </div>
 
     <!-- Sezione 3: Casi storici -->
     <div class="section-title">3. Casi storici</div>
     <div class="card">
-      <h3 style="margin:0 0 6px 0; color:white;">🏛️ Delitto Farrow (Deptford, 1905)</h3>
+      <h3 style="margin:0 0 6px 0; color:white; font-size:16px;">🏛️ Delitto Farrow (Deptford, 1905)</h3>
       <p class="small">Londra. Un duplice omicidio che ha cambiato per sempre la storia della criminologia con le impronte digitali.</p>
-      <button onclick="askDifficulty('farrow')" style="margin-top:10px;">📂 Apri Fascicolo</button>
+      <button onclick="askDifficulty('farrow')" style="margin-top:12px; padding:10px 20px; font-size:14px;">📂 Apri Fascicolo</button>
     </div>
 
     <!-- Sezione 4: Casi premium -->
     <div class="section-title">4. Casi premium</div>
     <div class="card" style="border-color: #8c6922; background: rgba(38, 31, 21, 0.9);">
-      <h3 style="margin:0 0 6px 0; color:#f6c453;">⭐ Jack lo Squartatore (Whitechapel, 1888)</h3>
+      <h3 style="margin:0 0 6px 0; color:#f6c453; font-size:16px;">⭐ Jack lo Squartatore (Whitechapel, 1888)</h3>
       <p class="small">Londra. L'indagine più oscura di fine ottocento tra ronda notturna, autopsie d'epoca e Scotland Yard.</p>
-      <button onclick="askDifficulty('jack')" style="margin-top:10px; background:#b8860b;">🔒 Apri Caso Premium</button>
+      <button onclick="askDifficulty('jack')" style="margin-top:12px; padding:10px 20px; font-size:14px; background:#b8860b; box-shadow:0 4px 20px rgba(184,134,11,0.5);">🔒 Apri Caso Premium</button>
     </div>
 
     <br>
     <button class="sec" onclick="show('home')">← Torna alla Home</button>
+    <br><br>
   </section>
 
   <!-- SCHERMATA SCELTA DIFFICOLTÀ -->
