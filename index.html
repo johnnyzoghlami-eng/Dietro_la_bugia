@@ -284,7 +284,6 @@
 
     <div id="chat" class="chat"></div>
     
-    <!-- Suggerimenti dinamici: 3 iniziali non usate + sbloccati da indizi -->
     <div id="suggestions-box" class="suggestions"></div>
 
     <div>
@@ -410,7 +409,12 @@ const CASES = {
     desc: "Vittima: Andrea Rinaldi, 42 anni. Trovato senza vita nello studio di Villa Rinaldi con un ematoma e una ferita alla testa.",
     place: "Villa Rinaldi",
     sceneNotice: "La Scientifica rileva sul corpo un evidente ematoma frontale e lesioni contusive. Spetta a te decidere quali esami di laboratorio richiedere.",
-    objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
+    objects: [
+      { name: '🔩 Fermacarte metallico pesante', analysis: 'Analisi Arma: Tracce ematiche della vittima e impronte parziali compatibili con Elena.' },
+      { name: '🥃 Bicchiere con tracce', analysis: 'Analisi Bicchiere: Rilevate tracce di sedativo non mortale sul bordo.' },
+      { name: '📱 Telefono cellulare', analysis: 'Analisi Cellulare: Sms inviato da Elena alle 23:05 ("Dobbiamo parlare subito"). Conversazione successiva cancellata.' },
+      { name: '🧵 Cardigan strappato', analysis: 'Analisi Rilievo Tessile: Bottone rinvenuto sotto il corpo del Rinaldi, identico al vestito di Elena.' }
+    ],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
     motives: {
       eredita: "Biechi interessi economici legati all'eredità e alle quote societarie",
@@ -419,7 +423,7 @@ const CASES = {
     },
     correctCulprit: 'Elena',
     correctMotive: 'gelosia',
-    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Devi SEMPRE rispondere raccontando la tua versione dei fatti per intero senza interrompere o lasciare frasi a metà. Spiega i tuoi movimenti e difenditi. Ricorda che spetta al giocatore decidere se menti o dici la verità. Rispondi sempre in italiano.",
+    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Rispondi in modo ampio, narrativo e attinente alla storia, senza interrompere le frasi a metà. Spiega i tuoi movimenti e difenditi dalle accuse. Rispondi sempre in italiano.",
     baseSuggestions: {
       Marco: [
         "Dove si trovava esattamente tra le 23:00 e le 23:30?",
@@ -456,10 +460,26 @@ const CASES = {
       ]
     },
     fallbacks: {
-      Marco: "Ero in archivio a cercare documenti contabili tra le 23:00 e le 23:30. Vi assicuro che stavo lavorando sodo per l'azienda.",
-      Elena: "A quell'ora mi trovavo nella mia stanza a riposare, vi ho già raccontato tutto quello che so sui nostri discorsi.",
-      Davide: "Io faccio solo il custode e controllo i perimetri. Ho sentito una voce alta provenire dallo studio e ho proseguito il mio giro.",
-      Sofia: "Ho chiuso la mia consulenza finanziaria e me ne sono andata via per le 23:20. Ho visto la signora Elena nel corridoio."
+      Marco: [
+        "Ero nel settore archivistico di Villa Rinaldi a controllare la contabilità tra le 23:00 e le 23:30. Vi assicuro che non mi sono mosso da lì perché c'erano scadenze fiscali urgenti da sistemare per l'azienda.",
+        "Comprendo i vostri dubbi investigativi, ma vi ripeto la mia posizione esatta senza nascondere alcun dettaglio: il mio rapporto con Andrea era esclusivamente professionale e non avevo motivi di attrito con lui.",
+        "Se c'erano tensioni nella gestione societaria, vi giuro che io cercavo sempre di mediare. Ero concentrato unicamente sui bilanci e sui conti della villa."
+      ],
+      Elena: [
+        "A quell'ora mi ero già ritirata nelle mie stanze per riprendermi da una giornata particolarmente pesante. Ero molto provata emotivamente e cercavo soltanto un po' di tranquillità lontano da tutti.",
+        "Il messaggio che ho inviato alle 23:05 serviva soltanto a chiarire una questione personale rimasta in sospeso, senza alcuna intenzione aggressiva o malevola nei confronti di Andrea.",
+        "Perché continuate a fare queste insinuazioni sul mio conto? Vi ho già spiegato che non so nulla di ciò che è accaduto nello studio dopo che ci siamo salutati."
+      ],
+      Davide: [
+        "Il mio compito come custode notturno prevede il controllo costante dei varchi di accesso e dei corridoi principali. Intorno alle 23:00 ho percepito una voce concitata provenire dallo studio, ma ho pensato a una normale discussione privata.",
+        "La villa è grande, piena di correnti d'aria e scricchiolii antichi. Non ho notato volti estranei aggirarsi all'esterno o nei corridoi durante il mio turno di sorveglianza.",
+        "Vi assicuro che ho fatto il mio dovere perlustrando ogni angolo della proprietà. Se qualcuno fosse entrato o uscito furtivamente, me ne sarei certamente accorto."
+      ],
+      Sofia: [
+        "La mia consulenza finanziaria nello studio si è conclusa regolarmente poco dopo le 23:15. Subito dopo ho preso la mia borsa, ho salutato e ho lasciato la villa senza incontrare nessuno nei corridoi.",
+        "I miei incontri con Andrea Rinaldi riguardavano esclusivamente la ristrutturazione dei fondi di investimento. Appena terminato il lavoro, non avevo alcun motivo per trattenermi oltre.",
+        "Non so davvero cosa sia successo nei minuti immediatamente successivi alla mia partenza. Vi ho fornito un resoconto fedele e puntuale di tutta la mia permanenza nella residenza."
+      ]
     },
     tests: {
       autopsy: { name: '🩺 Richiedi Autopsia Medico-Legale', desc: 'Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto contundente.' },
@@ -475,7 +495,11 @@ const CASES = {
     desc: "Vittima: Samuele Lorenzi (3 anni). Avvenuto la mattina del 30 gennaio 2002.",
     place: "Villetta di Montroz, Cogne",
     sceneNotice: "La Scientifica rileva lesioni contusive sul corpo. Scegli tu quali accertamenti e perizie richiedere.",
-    objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
+    objects: [
+      { name: '🛏️ Letto matrimoniale con macchie', analysis: 'Analisi Letto: Le micro-gocce di sangue indicano che i colpi sono stati inferti da chi si trovava esattamente sopra.' },
+      { name: '👟 Clogs/Ciabatte da neve', analysis: 'Analisi Ciabatte: Nessuna traccia ematica rilevata sulle suole.' },
+      { name: '🩺 Borsa del medico curante', analysis: 'Analisi Borsa: Strumentazione di primo soccorso pulita.' }
+    ],
     suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
     motives: {
       raptus: "Momento di forte tensione emotiva e temporaneo alteramento psichico (raptus)",
@@ -483,7 +507,7 @@ const CASES = {
     },
     correctCulprit: 'Annamaria',
     correctMotive: 'raptus',
-    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Devi SEMPRE raccontare la tua versione dei fatti per intero senza lasciare frasi in sospeso, difendendoti e spiegando i tuoi spostamenti. Spetta al giudice e al giocatore valutare le prove. Rispondi sempre in italiano.",
+    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Rispondi in modo ampio e dettagliato, difendendo la tua versione dei fatti sulla tragedia di Cogne. Rispondi sempre in italiano.",
     baseSuggestions: {
       Annamaria: [
         "Può raccontarci minuto per minuto la sua uscita per lo scuolabus?",
@@ -510,9 +534,21 @@ const CASES = {
       ]
     },
     fallbacks: {
-      Annamaria: "Vi prego credetemi, ero uscita solo per accompagnare il bambino allo scuolabus! Quando sono rientrata l'ho trovato ferito nel lettino.",
-      Ada: "Sono arrivata per prima sul posto chiamata d'urgenza. Ho cercato solo di prestare soccorso medico immediato al piccolo.",
-      Ulisse: "Abito qui vicino e conosco bene la zona. Di mattina presto non ho visto nessuno aggirarsi in modo sospetto sulla neve."
+      Annamaria: [
+        "Vi prego di credermi, quella mattina ero uscita di casa soltanto per accompagnare il bambino più grande allo scuolabus sulla strada principale. Quando sono rientrata pochi minuti dopo ho fatto quella terribile scoperta nella camera.",
+        "Non farei mai del male alle creature che ho messo al mondo! Ero fuori per pochissimi attimi e la porta d'ingresso era semplicemente socchiusa per il rientro.",
+        "Vi giuro che la nostra vita a Montroz era serena e dedita alla famiglia. Non riesco a capacitarmi di come sia potuto accadere un simile orrore all'interno della nostra casa."
+      ],
+      Ada: [
+        "Sono stata allertata d'urgenza e sono accorsa immediatamente nella villetta di Montroz. La mia unica priorità assoluta in quel momento drammatico era prestare soccorso medico d'emergenza al piccolo.",
+        "La situazione all'interno della stanza era estremamente concitata e confusa. Ho cercato di valutare le condizioni cliniche senza soffermarmi su dettagli estranei alla cura medica.",
+        "Ho fatto tutto ciò che era nelle mie facoltà di medico di turno per gestire i primi istanti dell'emergenza prima dell'arrivo dell'ambulanza del 118."
+      ],
+      Ulisse: [
+        "Vivo a Cogne da sempre e conosco ogni abitante della zona. Quella mattina presto mi sono diretto al lavoro lungo i percorsi consueti e non ho notato alcuna presenza sospetta sulla neve.",
+        "Ero totalmente concentrato sugli impegni professionali della giornata e sui cantieri edili. Mai avrei immaginato che una simile tragedia potesse colpire la mia famiglia.",
+        "La nostra comunità montana è sempre stata tranquilla e sicura. Questa vicenda ha distrutto la nostra serenità quotidiana."
+      ]
     },
     tests: {
       bpa: { name: '🩸 Richiedi Perizia BPA (Macchie)', desc: 'Le micro-gocce indicano che i colpi sono stati inferti da chi si trovava esattamente sopra il letto.' },
@@ -527,7 +563,11 @@ const CASES = {
     desc: "Vittime: Thomas e Ann Farrow. Londra, Deptford.",
     place: "Bottega Farrow, Deptford",
     sceneNotice: "Rilievi dattiloscopici sulla bottega. Scegli quali esami attivare.",
-    objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
+    objects: [
+      { name: '🔐 Cassaforte svuotata', analysis: 'Analisi Cassaforte: Forzata con arnesi da scasso, impronte parziali repertate.' },
+      { name: '📜 Maschera di calza di seta', analysis: 'Analisi Maschera: Tracce di sudore e fibre tessili compatibili con gli indumenti degli indagati.' },
+      { name: '🔍 Scatola di metallo con impronta', analysis: 'Analisi Scatola: Impronta di pollice corrispondente al pollice destro di Alfred Stratton.' }
+    ],
     suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
     motives: {
       rapina: "Rapina finita in tragedia a scopo di lucro per estorcere denaro",
@@ -535,7 +575,7 @@ const CASES = {
     },
     correctCulprit: 'Alfred',
     correctMotive: 'rapina',
-    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Fornisci sempre la tua versione dettagliata fino alla fine, senza troncare le frasi. Rispondi sempre in italiano.",
+    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Rispondi in modo ampio e contestualizzato all'epoca vittoriana. Rispondi sempre in italiano.",
     baseSuggestions: {
       Alfred: [
         "Dove si trovava esattamente la notte del duplice omicidio?",
@@ -554,8 +594,16 @@ const CASES = {
       ]
     },
     fallbacks: {
-      Alfred: "Io stavo dormendo tranquillamente quella notte! Vi racconto tutto della mia serata, non ho nulla da nascondere.",
-      Albert: "Mio fratello Alfred era con me a casa. Vi spiego nei dettagli cosa abbiamo fatto quella sera."
+      Alfred: [
+        "Vi assicuro che durante la notte del delitto mi trovavo nel mio alloggio a dormire profondamente. Posso ricostruire ogni momento della mia serata senza alcuna esitazione.",
+        "Non metto piede in quella bottega di Deptford da diverse settimane. Le vostre accuse si basano su supposizioni errate e scambiano una persona per un'altra.",
+        "I miei abiti e le mie cose non hanno nulla a che spartire con i criminali che hanno compiuto questo efferato crimine. Protesto con forza la mia innocenza."
+      ],
+      Albert: [
+        "Mio fratello Alfred e il sottoscritto eravamo a letto nel nostro alloggio già dalle prime ore della notte. Non abbiamo udito alcun rumore sospetto provenire dalla strada.",
+        "A quell'ora fonda la nebbia di Londra avvolgeva ogni cosa e noi non ci siamo mossi da casa nostra fino al mattino seguente.",
+        "Guadagniamo il nostro pane onestamente con piccoli lavoretti saltuari, non avremmo mai motivo di macchiarci di un simile reato."
+      ]
     },
     tests: {
       fingerprint: { name: '🔍 Richiedi Perizia Dattiloscopica', desc: 'L\'impronta di pollice sulla scatola corrisponde esattamente al pollice destro di Alfred Stratton.' },
@@ -569,7 +617,11 @@ const CASES = {
     desc: "Sito indagine: Whitechapel, Londra. Analisi storica dei sospetti dell'autunno 1888.",
     place: "Quartiere di Whitechapel",
     sceneNotice: "Verbali di ronda e reperti medico-legali. Scegli quali approfondimenti scientifici richiedere.",
-    objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
+    objects: [
+      { name: '✉️ Lettera Dear Boss', analysis: 'Analisi Letto/Scritto: Inchiostro comune e calligrafia simulata, ritenuta opera di mitomani.' },
+      { name: '🔪 Bisturi da chirurgo', analysis: 'Analisi Lame: Tracce biologiche compatibili con interventi anatomici di precisione.' },
+      { name: '🧥 Grembiule di cuoio', analysis: 'Analisi Grembiule: Macchie ematiche di tipo umano compatibili con i reperti di strada.' }
+    ],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
     motives: {
       follia: "Grave disturbo mentale associato ad istinti omicidi seriali",
@@ -577,7 +629,7 @@ const CASES = {
     },
     correctCulprit: 'Kosminski',
     correctMotive: 'follia',
-    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Racconta sempre la tua versione con precisione fino alla conclusione, senza troncare le risposte. Rispondi sempre in italiano.",
+    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Fornisci risposte ampie, coerenti con il contesto storico dell'epoca e prive di tagli. Rispondi sempre in italiano.",
     baseSuggestions: {
       Druitt: [
         "Quali erano i suoi spostamenti durante le notti degli omicidi?",
@@ -586,7 +638,7 @@ const CASES = {
       ],
       Kosminski: [
         "Perché è stato visto nei pressi delle scene dei delitti?",
-        "Come spiega la sua costante presenza a Whitechapel?",
+        "Cómo spiega la sua costante presenza a Whitechapel?",
         "Ha conoscenze di anatomia o chirurgia?"
       ],
       Ostrog: [
@@ -601,9 +653,21 @@ const CASES = {
       ]
     },
     fallbacks: {
-      Druitt: "La mia vita è dedicata all'insegnamento e al diritto. Vi spiego dettagliatamente dove mi trovavo in quelle date.",
-      Kosminski: "Vi racconto la mia giornata a Whitechapel, non ho problemi a spiegarvi ogni mio movimento.",
-      Ostrog: "Vi spiego il mio passato e le mie attività senza problemi."
+      Druitt: [
+        "La mia esistenza è dedita all'insegnamento privato e alla pratica forense nei circoli di Londra. Posso darvi conto dettagliato di ogni mia attività e dei luoghi frequentati in quelle date.",
+        "Nutro un profondo rispetto per le istituzioni e aborro qualsiasi forma di violenza o brutalità umana.",
+        "Le dicerie circolanti sul mio conto all'interno dei circoli accademici sono del tutto prive di riscontri veritieri."
+      ],
+      Kosminski: [
+        "Conosco molto bene le strade buie e nebbiose di Whitechapel perché le percorro spesso a piedi durante le mie lunghe passeggiate notturne dovute all'insonnia cronica.",
+        "Non faccio del male a nessuno e conduco un'esistenza appartata. Non comprendo per quale motivo le autorità continuino a rivolgere i propri sospetti verso la mia persona.",
+        "Posso spiegarvi i miei spostamenti nei vicoli del quartiere senza timore, poiché non ho nulla da nascondere riguardo alla mia condotta."
+      ],
+      Ostrog: [
+        "Ho viaggiato a lungo in diverse nazioni europee nel corso della mia vita, ma la mia condotta attuale nei quartieri di Londra è del tutto regolare e pacifica.",
+        "Non custodisco alcun tipo di lama affilata o strumento chirurgico tra i miei effetti personali, svolgendo mestieri del tutto differenti.",
+        "Le insinuazioni sul mio conto derivano unicamente da pregiudizi legati al mio passato itinerante e non da prove concrete."
+      ]
     },
     tests: {
       medical: { name: '🩺 Richiedi Perizia Anatomica', desc: 'L\'aggressore possiede nozioni di chirurgia per la precisione dei tagli.' },
@@ -792,21 +856,21 @@ async function send() {
       let historyLen = chatHistory[cur].filter(m => m.role === 'user').length;
       let qLower = qText.toLowerCase();
       
+      let fallbackPool = currentCase.fallbacks[cur] || [
+        "Vi spiego nei minimi dettagli la mia versione dei fatti per chiarire ogni equivoco."
+      ];
+      
       if (qLower.includes('discrepanza') || qLower.includes('incongruenze') || qLower.includes('smentiscono') || qLower.includes('prova')) {
-        replyText = "Comprendo la vostra osservazione sui miei spostamenti, ma vi assicuro che la mia versione dei fatti è del tutto coerente e trasparente. Non ho commesso alcun crimine e vi ho già spiegato tutto quello che sapevo.";
+        replyText = "Comprendo perfettamente le vostre perplessità investigative e le obiezioni sui miei spostamenti, ma vi assicuro che la mia ricostruzione dei fatti è del tutto trasparente e coerente con quanto affermato fin dal primo momento.";
       } else if (qLower.includes('orario') || qLower.includes('spostamenti') || qLower.includes('dove')) {
-        replyText = "Vi confermo con assoluta certezza la mia posizione in quella fascia oraria. Stavo svolgendo le mie consuete attività e non ho motivo di mentire su questo punto.";
+        replyText = "Vi confermo con assoluta precisione la mia esatta ubicazione in quella fascia oraria. Ero impegnato nelle mie consuete attività e non ho alcuna ragione per alterare la verità su questo aspetto.";
       } else {
-        const collaborativeReplies = [
-          "Vi racconto volentieri la mia versione dei fatti: in quel momento mi trovavo esattamente dove vi ho detto e stavo badando alle mie faccende personali.",
-          "Capisco i vostri dubbi investigativi, perciò vi ripeto la mia posizione esatta senza nascondere alcun dettaglio.",
-          currentCase.fallbacks[cur] || "Vi spiego nei minimi dettagli la mia versione dei fatti per chiarire ogni equivoco."
-        ];
-        replyText = collaborativeReplies[(historyLen - 1) % collaborativeReplies.length];
+        replyText = fallbackPool[(historyLen - 1) % fallbackPool.length];
       }
     }
   } catch (err) {
-    replyText = currentCase.fallbacks[cur] || "Vi spiego subito la mia versione dei fatti in modo completo.";
+    let fallbackPool = currentCase.fallbacks[cur] || ["Vi spiego subito la mia versione dei fatti in modo completo."];
+    replyText = fallbackPool[0];
   }
 
   chatHistory[cur].push({ role: 'assistant', content: replyText });
@@ -821,7 +885,22 @@ async function send() {
 
 function scene() {
   document.getElementById('objects').innerHTML = currentCase.objects
-    .map(x => '<div class="item"><span>' + x + '</span></div>').join('');
+    .map((obj, index) => `
+      <div class="item">
+        <span>${obj.name}</span>
+        <button class="sec" style="padding:6px 12px; width:auto; font-size:12px;" onclick="analyzeObject(${index})">🔍 Analizza Tracce</button>
+      </div>
+    `).join('');
+}
+
+function analyzeObject(index) {
+  let obj = currentCase.objects[index];
+  let resDiv = document.getElementById('results');
+  if (!resDiv.innerHTML.includes(obj.analysis)) {
+    resDiv.innerHTML += `<div class="card" style="border-color:#3b82f6;"><b>🔬 [Reperto Analizzato] ${obj.name}:</b><br>${obj.analysis}</div>`;
+  } else {
+    alert("Hai già analizzato le tracce di questo oggetto.");
+  }
 }
 
 function test(k) {
