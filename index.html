@@ -6,7 +6,7 @@
 <title>Dietro la Bugia - Noir Edition</title>
 <style>
   :root {
-    --bg-main: #05070b;
+    --bg-main: #0c0f17;
     --bg-card: rgba(18, 22, 32, 0.92);
     --border-color: #2b3752;
     --accent-red: #c22525;
@@ -27,44 +27,25 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con l'immagine di sfondo esatta e pulsante Inizia sotto */
+  /* Schermata Home con sfondo Noir e pulsante Inizia in basso centrato */
   #home.active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     min-height: 100vh;
     text-align: center;
-    /* Sfondo preso direttamente dalla tua immagine di copertina */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(5, 7, 11, 0.95)), url('https://i.ibb.co/680pT9L0/16919.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    padding-bottom: 12vh;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(12,15,23,0.2) 40%, rgba(12,15,23,0.95) 90%), 
+                radial-gradient(circle at center, #1a233a 0%, #080a0f 100%);
   }
 
-  .home-content {
-    position: absolute;
-    bottom: 12%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .home-logo-box {
+    margin-bottom: auto;
+    margin-top: 25vh;
   }
 
-  .hero-container {
-    text-align: center;
-    padding: 30px 10px 20px 10px;
-    background: linear-gradient(180deg, rgba(194,37,37,0.25) 0%, rgba(5,7,11,0) 100%);
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 20px;
-    border-radius: 0 0 20px 20px;
-    backdrop-filter: blur(5px);
-  }
   .hero-logo {
     font-size: 38px;
     font-weight: 900;
@@ -75,6 +56,16 @@
   }
   .hero-logo span { color: var(--accent-red); text-shadow: 0 0 20px rgba(194,37,37,0.8); }
   .hero-subtitle { color: var(--text-muted); font-size: 13px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
+
+  .hero-container {
+    text-align: center;
+    padding: 30px 10px 20px 10px;
+    background: linear-gradient(180deg, rgba(194,37,37,0.25) 0%, rgba(5,7,11,0) 100%);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    border-radius: 0 0 20px 20px;
+    backdrop-filter: blur(5px);
+  }
 
   .card { 
     background: var(--bg-card); 
@@ -102,7 +93,7 @@
     color: white; 
     border: 0; 
     border-radius: 8px; 
-    padding: 14px 28px; 
+    padding: 14px 32px; 
     font-weight: bold; 
     font-size: 15px; 
     cursor: pointer; 
@@ -148,9 +139,11 @@
 
   <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
-    <div class="home-content">
-      <button onclick="show('case-selection')">▶️ INIZIA</button>
+    <div class="home-logo-box">
+      <h1 class="hero-logo">Dietro la <span>Bugia</span></h1>
+      <p class="hero-subtitle">Ogni storia nasconde una verità.</p>
     </div>
+    <button onclick="show('case-selection')">▶️ Inizia</button>
   </section>
 
   <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
@@ -412,7 +405,7 @@ const CASES = {
     tests: {
       bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce indicano che i colpi sono stati inferti da chi si trovava esattamente sopra il letto.' },
       timing: { name: '⏱️ Finestra Temporale (8 min)', desc: 'Intervallo tra le 8:16 e le 8:24 troppo breve per la penetrazione di estranei.' },
-      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici posizionano il pigiama sulla scena al momento dell'aggressione.' }
+      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici posizionano il pigiama sulla scena al momento dell\'aggressione.' }
     },
     correctCulprit: 'Annamaria',
     requiredEvidences: ['bpa', 'timing', 'pijama'],
@@ -456,7 +449,7 @@ const CASES = {
     fallbacks: {
       Druitt: "La mia vita è dedicata all'insegnamento e al diritto. Respingo con sdegno queste assurde accuse nei miei confronti.",
       Kosminski: "Io non capisco cosa volete da me, mi state confondendo con qualcun altro! Lasciatemi in pace.",
-      Ostrog: "Ho passato una vita difficile ma non mi permetterei mai di compiere atti simili a quelli di Whitechapel."
+      Ostrog: "Agì in passato ma non c'entro con Whitechapel."
     },
     tests: {
       medical: { name: '🩺 Perizia Anatomica Dr. Phillips', desc: 'L\'aggressore possiede nozioni di chirurgia per la precisione dei tagli.' },
