@@ -27,7 +27,7 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con l'immagine esatta del detective e la lente d'ingrandimento */
+  /* Schermata Home con il detective e la lente d'ingrandimento integrata in modo sicuro */
   #home.active {
     display: flex;
     flex-direction: column;
@@ -37,10 +37,8 @@
     text-align: center;
     padding-bottom: 8vh;
     box-sizing: border-box;
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(12,15,23,0.85)), url('https://i.ibb.co/680pT9L0/16919.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 20%, rgba(12,15,23,0.92) 85%), 
+                radial-gradient(circle at center, #1b263b 0%, #080a0f 100%);
     position: fixed;
     top: 0;
     left: 0;
@@ -48,13 +46,13 @@
     height: 100%;
   }
 
-  .home-logo-box {
+  .home-content-box {
     margin-bottom: auto;
-    margin-top: 15vh;
+    margin-top: 20vh;
   }
 
   .hero-logo {
-    font-size: 38px;
+    font-size: 36px;
     font-weight: 900;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -147,7 +145,11 @@
 
   <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
-    <button onclick="show('case-selection')">▶️ INIZIA</button>
+    <div class="home-content-box">
+      <h1 class="hero-logo">Dietro la <span>Bugia</span></h1>
+      <p class="hero-subtitle">Ogni storia nasconde una verità.</p>
+    </div>
+    <button onclick="show('case-selection')">▶️ Inizia</button>
   </section>
 
   <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
