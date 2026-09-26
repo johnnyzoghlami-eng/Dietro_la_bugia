@@ -18,8 +18,8 @@
   .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; }
   .me { margin-left:auto; background:#513bb0; }
   .them { background:#29303c; }
-  input, textarea { width:100%; box-sizing:border-box; background:#11151d; color:white; border:1px solid #394252; border-radius:9px; padding:11px; }
-  textarea { min-height:120px; }
+  input, textarea { width:100%; box-sizing:border-box; background:#11151d; color:white; border:1px solid #394252; border-radius:99px; padding:11px; }
+  textarea { min-height:120px; border-radius:12px; }
   .row { display:flex; gap:8px; }
   .row input { flex:1; }
   .center { text-align:center; }
@@ -40,7 +40,7 @@
     <div class="api-box">
       <label><b>🔑 Chiave API Gemini:</b></label>
       <input type="password" id="api-key" placeholder="Incolla qui la tua API Key di Google Gemini..." onchange="saveApiKey()">
-      <p class="small" style="margin-top:5px; margin-bottom:0;">Inserisci la tua API Key per interrogare i sospetti tramite IA. (Salvata nel browser).</p>
+      <p class="small" style="margin-top:5px; margin-bottom:0;">La tua API Key è configurata automaticamente.</p>
     </div>
 
     <div class="card">
@@ -256,8 +256,15 @@ let cur = '', ev = [], notes = [], times = [], done = {};
 let chatHistory = {}; 
 
 window.onload = function() {
+  let defaultKey = "AQ.Ab8RN6Kweg6mEUR7umVAcIU6V6Cp6d68YhyFy8I9Ajf0CNyzaQ"; 
+
   let savedKey = localStorage.getItem('gemini_api_key');
-  if (savedKey) document.getElementById('api-key').value = savedKey;
+  if (!savedKey && defaultKey) {
+    localStorage.setItem('gemini_api_key', defaultKey);
+    document.getElementById('api-key').value = defaultKey;
+  } else if (savedKey) {
+    document.getElementById('api-key').value = savedKey;
+  }
 }
 
 function saveApiKey() {
@@ -368,7 +375,13 @@ async function send() {
     let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: contents })
+      body: JSON.stringify({
+        contents: contents,
+        generationConfig: {
+          maxOutputTokens: 150,
+          temperature: 0.7
+        }
+      })
     });
 
     let data = await response.json();
