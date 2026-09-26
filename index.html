@@ -143,16 +143,18 @@
 
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
   
-  .chat { height: 220px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 10px; }
-  .msg { padding: 10px 14px; border-radius: 10px; margin: 8px 0; max-width: 82%; white-space: pre-wrap; font-size: 14px; line-height: 1.4; }
+  .chat { height: 210px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 8px; }
+  .msg { padding: 10px 14px; border-radius: 10px; margin: 8px 0; max-width: 85%; white-space: pre-wrap; font-size: 14px; line-height: 1.4; position: relative; }
   .me { margin-left: auto; background: var(--purple-btn); color: white; border-bottom-right-radius: 2px; }
   .them { background: #1f2838; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
+  .them.clickable-msg { cursor: pointer; border-color: #4ade80; }
+  .them.clickable-msg:hover { background: #26334a; }
 
   input, textarea { width: 100%; box-sizing: border-box; background: rgba(15, 19, 29, 0.95); color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 14px; }
   input:focus, textarea:focus { outline: none; border-color: var(--accent-red); }
   
   .chat-input-area {
-    min-height: 85px;
+    min-height: 75px;
     resize: vertical;
     font-family: inherit;
     margin-bottom: 8px;
@@ -166,7 +168,7 @@
   .option { display: block; background: rgba(23, 31, 47, 0.85); padding: 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border-color); cursor: pointer; }
   .option:hover { border-color: var(--accent-red); }
 
-  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; max-height: 130px; overflow-y: auto; }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; max-height: 110px; overflow-y: auto; }
   .sugg-btn { background: #1d273a; font-size: 12px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; color: #cbd5e1; text-transform: none; font-weight: normal; box-shadow: none; width: auto; text-align: left; }
   .sugg-btn:hover { background: #28344d; color: white; }
 </style>
@@ -174,7 +176,7 @@
 <body>
 <div class="wrap">
 
-  <!-- SCHERMATA HOME PRINCIPALE -->
+  <!-- SCHERMATA HOME -->
   <section id="home" class="active">
     <div class="home-poster-box">
       <img src="copertina.jpg" alt="Dietro la Bugia">
@@ -184,7 +186,7 @@
     </div>
   </section>
 
-  <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
+  <!-- SELEZIONE CASI -->
   <section id="case-selection">
     <div class="hero-container">
       <h2 style="margin:0; font-size:22px; letter-spacing:1.5px; color:#fff;">📂 SELEZIONE CASI</h2>
@@ -224,7 +226,7 @@
     <br><br>
   </section>
 
-  <!-- SCHERMATA SCELTA DIFFICOLTÀ -->
+  <!-- SCELTA DIFFICOLTÀ -->
   <section id="difficulty" class="center">
     <div class="hero-container" style="padding: 15px;">
       <h2 style="margin:0; font-size:20px;">⚙️ PROTOCOLLO DI INDAGINE</h2>
@@ -233,20 +235,20 @@
 
     <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
       <h3 style="color:#4ade80; margin-top:0;">🟢 Livello Facile</h3>
-      <p class="small">Suggerimenti dinamici guidati ed esaurienti senza ripetizioni.</p>
+      <p class="small">Bacheca interattiva automatica: clicca direttamente sui messaggi in chat per salvarli tra i dettagli investigativi.</p>
       <button onclick="selectCaseWithDiff('facile')" style="width:100%; background:#1e3a29; border:1px solid #4ade80; color:#4ade80;">Seleziona Facile</button>
     </div>
 
     <div class="card" style="max-width:500px; margin:20px auto; text-align:left;">
       <h3 style="color:#60a5fa; margin-top:0;">🔵 Livello Normale</h3>
-      <p class="small">Interrogatorio aperto con suggerimenti intelligenti anti-ripetizione e piena libertà.</p>
+      <p class="small">Bacheca manuale: dovrai digitare e annotare tu stesso i dettagli emersi durante gli interrogatori.</p>
       <button class="sec" onclick="selectCaseWithDiff('normale')">Seleziona Normale</button>
     </div>
     <br>
     <button class="sec" onclick="show('case-selection')">← Torna ai Casi</button>
   </section>
 
-  <!-- DASHBOARD INDAGINE -->
+  <!-- DASHBOARD -->
   <section id="investigation">
     <div class="hero-container" style="padding: 15px;">
       <h2 style="margin:0; font-size:18px;">🔎 CENTRALE OPERATIVA</h2>
@@ -255,8 +257,8 @@
 
     <div class="card">
       <b>Ubicazione Rilievi:</b> <span id="case-place"></span><br>
-      <b>Profilo Difficoltà:</b> <span id="diff-badge" style="color:var(--accent-red); font-weight:bold;"></span><br>
-      <span class="small">Prove scientifiche acquisite: <span id="ec" style="color:white; font-weight:bold;">0</span></span>
+      <b>Modalità Gioco:</b> <span id="diff-badge" style="color:var(--accent-red); font-weight:bold;"></span><br>
+      <span class="small">Esami e reperti scelti e acquisiti: <span id="ec" style="color:white; font-weight:bold;">0</span></span>
     </div>
 
     <h3 style="font-size:14px; text-transform:uppercase; color:var(--text-muted);">Sospetti Registrati</h3>
@@ -273,7 +275,7 @@
     <button class="sec" onclick="show('case-selection')">📂 Cambia Caso</button>
   </section>
 
-  <!-- STANZA INTERROGATORI -->
+  <!-- SALA INTERROGATORI -->
   <section id="inter">
     <div class="hero-container" style="padding: 15px;">
       <h2 style="margin:0; font-size:18px;">🗣️ SALA INTERROGATORI</h2>
@@ -282,7 +284,7 @@
 
     <div id="chat" class="chat"></div>
     
-    <!-- Suggerimenti dinamici non ripetitivi -->
+    <!-- Suggerimenti dinamici: 3 iniziali non usate + sbloccati da indizi -->
     <div id="suggestions-box" class="suggestions"></div>
 
     <div>
@@ -296,14 +298,16 @@
   <!-- SCENA E REPERTI -->
   <section id="scene">
     <div class="hero-container" style="padding: 15px;">
-      <h2 style="margin:0; font-size:18px;">🧪 RILIEVI DELLA SCIENTIFICA</h2>
-      <p class="hero-subtitle">Analisi forense della scena</p>
+      <h2 style="margin:0; font-size:18px;">🧪 RILIEVI E SCELTA ESAMI SCIENTIFICI</h2>
+      <p class="hero-subtitle">Seleziona liberamente quali test effettuare</p>
     </div>
 
     <div class="notice" id="scene-notice"></div>
+    <div class="small" style="margin-bottom:10px; color:#f6c453;">💡 Nota: La Scientifica ti fornisce i dati di base del corpo (es. lesioni/ematomi). Sta a te scegliere quali esami avanzati e reperti analizzare per sbloccare nuove piste investigative!</div>
+    
     <div id="objects"></div>
 
-    <h3 style="font-size:14px; text-transform:uppercase; color:var(--text-muted); margin-top:20px;">Esami di Laboratorio</h3>
+    <h3 style="font-size:14px; text-transform:uppercase; color:var(--text-muted); margin-top:20px;">Esami di Laboratorio a Scelta</h3>
     <div class="grid" id="tests-grid"></div>
     <div id="results" style="margin-top:10px;"></div>
     <br>
@@ -314,11 +318,14 @@
   <section id="board">
     <div class="hero-container" style="padding: 15px;">
       <h2 style="margin:0; font-size:18px;">📌 BACHECA INVESTIGATIVA</h2>
-      <p class="hero-subtitle">Note e deduzioni personali</p>
+      <p class="hero-subtitle" id="board-subtitle">Note e deduzioni personali</p>
     </div>
 
-    <textarea id="note" placeholder="Scrivi una nota di deduzione o un indizio chiave..."></textarea>
-    <button onclick="addNote()" style="margin-top:8px;">➕ Registra Nota</button>
+    <div id="manual-note-box">
+      <textarea id="note" placeholder="Scrivi una nota di deduzione o un indizio chiave..."></textarea>
+      <button onclick="addNote()" style="margin-top:8px;">➕ Registra Nota</button>
+    </div>
+    
     <div id="notes" style="margin-top:15px;"></div>
     <br>
     <button class="sec" onclick="show('investigation')">← Torna alla Dashboard</button>
@@ -342,7 +349,7 @@
   <section id="acc">
     <div class="hero-container" style="padding: 15px;">
       <h2 style="margin:0; font-size:18px;">⚖️ MANDATO DI CATTURA</h2>
-      <p class="hero-subtitle">Formula l'accusa finale davanti ai giudici</p>
+      <p class="hero-subtitle">Formula l'accusa completa davanti ai giudici</p>
     </div>
 
     <div class="card">
@@ -351,8 +358,13 @@
     </div>
     
     <div class="card">
-      <h3 style="margin-top:0; font-size:15px; color:var(--accent-red);">2. Seleziona le Prove Schiaccianti</h3>
+      <h3 style="margin-top:0; font-size:15px; color:var(--accent-red);">2. Scegli l'Arma del Delitto e le Prove</h3>
       <div id="ae"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0; font-size:15px; color:var(--accent-red);">3. Seleziona il Movente</h3>
+      <div id="motive-options"></div>
     </div>
 
     <button onclick="accuse()" style="width:100%; padding:15px; font-size:16px; margin-top:10px;">🔨 Emetti Ordinanza di Custodia</button>
@@ -395,100 +407,198 @@ const GROQ_API_KEY = ""; // Inserisci qui la tua chiave API di Groq se desideri 
 const CASES = {
   ai001: {
     title: "🤖 AI-001 — L'ultima notte",
-    desc: "Vittima: Andrea Rinaldi, 42 anni. Trovato senza vita nello studio di Villa Rinaldi con una ferita alla testa.",
+    desc: "Vittima: Andrea Rinaldi, 42 anni. Trovato senza vita nello studio di Villa Rinaldi con un ematoma e una ferita alla testa.",
     place: "Villa Rinaldi",
-    sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
+    sceneNotice: "La Scientifica rileva sul corpo un evidente ematoma frontale e lesioni contusive. Spetta a te decidere quali esami di laboratorio richiedere.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
-    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Devi SEMPRE rispondere raccontando la tua versione dei fatti, spiegando i tuoi movimenti, giustificandoti o difendendoti, senza omettere risposte. Se l'investigatore trova incongruenze o mostra prove, vacilla e fornisci dettagli aggiuntivi sulla tua versione. Non rifiutarti mai di parlare. Rispondi sempre in italiano.",
-    baseSuggestions: [
-      "Dove si trovava esattamente tra le 23:00 e le 23:30?",
-      "Ci conferma se c'erano tensioni o discussioni in corso?",
-      "Ha notato qualcuno aggirarsi nei corridoi della villa?",
-      "Può spiegarci la natura dei suoi rapporti con la vittima?"
-    ],
+    motives: {
+      eredita: "Biechi interessi economici legati all'eredità e alle quote societarie",
+      gelosia: "Passionale / Gelosia e rancore per il fallimento della relazione sentimentale",
+      debiti: "Coprire debiti finanziari accumulati in segreto"
+    },
+    correctCulprit: 'Elena',
+    correctMotive: 'gelosia',
+    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Devi SEMPRE rispondere raccontando la tua versione dei fatti per intero senza interrompere o lasciare frasi a metà. Spiega i tuoi movimenti e difenditi. Ricorda che spetta al giocatore decidere se menti o dici la verità. Rispondi sempre in italiano.",
+    baseSuggestions: {
+      Marco: [
+        "Dove si trovava esattamente tra le 23:00 e le 23:30?",
+        "Ci conferma se c'erano tensioni o discussioni in corso?",
+        "Può spiegarci la natura dei suoi rapporti con la vittima?"
+      ],
+      Elena: [
+        "Ci racconta dove si trovava quando è avvenuto il fatto?",
+        "Perché ha inviato quel messaggio alla vittima?",
+        "Ha notato qualcuno aggirarsi nei corridoi della villa?"
+      ],
+      Davide: [
+        "Qual era il suo turno di controllo come custode?",
+        "Ha sentito rumori sospetti provenire dallo studio?",
+        "Chi ha visto entrare o uscire dalla villa?"
+      ],
+      Sofia: [
+        "A che ora ha terminato la sua consulenza?",
+        "Ha incontrato qualcuno mentre lasciava l'edificio?",
+        "Può confermare gli orari della serata?"
+      ]
+    },
+    unlockedSuggestions: {
+      autopsy: [
+        "L'autopsia conferma l'ora del decesso alle 23:15: come replica?",
+        "I segni sul corpo indicano una colluttazione ravvicinata, cosa dice in merito?"
+      ],
+      phone: [
+        "Abbiamo i tabulati del telefono: perché ha cancellato quei messaggi?",
+        "Quel messaggio delle 23:05 smentisce i suoi orari, come lo spiega?"
+      ],
+      paperweight: [
+        "Sul fermacarte metallico ci sono tracce biologiche e impronte, intende ammettere le sue responsabilità?"
+      ]
+    },
     fallbacks: {
-      Marco: "Ero in archivio a cercare documenti tra le 23:00 e le 23:30. È vero che l'azienda perdeva soldi, ma vi assicuro che stavo lavorando.",
+      Marco: "Ero in archivio a cercare documenti contabili tra le 23:00 e le 23:30. Vi assicuro che stavo lavorando sodo per l'azienda.",
       Elena: "A quell'ora mi trovavo nella mia stanza a riposare, vi ho già raccontato tutto quello che so sui nostri discorsi.",
       Davide: "Io faccio solo il custode e controllo i perimetri. Ho sentito una voce alta provenire dallo studio e ho proseguito il mio giro.",
       Sofia: "Ho chiuso la mia consulenza finanziaria e me ne sono andata via per le 23:20. Ho visto la signora Elena nel corridoio."
     },
     tests: {
-      autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
-      phone: { name: '📱 Tabulati Telefono', desc: 'Sms inviato da Elena alle 23:05 ("Dobbiamo parlare subito"). Conversazione successiva cancellata.' },
-      paperweight: { name: '🔩 Rilievi sul Fermacarte', desc: 'Tracce ematiche della vittima e impronte parziali compatibili con Elena.' },
-      button: { name: '🧵 Rilievo Tessile', desc: 'Bottone rinvenuto sotto il corpo del Rinaldi, identico al vestito di Elena.' }
+      autopsy: { name: '🩺 Richiedi Autopsia Medico-Legale', desc: 'Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto contundente.' },
+      phone: { name: '📱 Richiedi Analisi Tabulati Telefono', desc: 'Sms inviato da Elena alle 23:05 ("Dobbiamo parlare subito"). Conversazione successiva cancellata.' },
+      paperweight: { name: '🔩 Analizza Arma (Fermacarte)', desc: 'Tracce ematiche della vittima e impronte parziali compatibili con Elena sul fermacarte.' },
+      button: { name: '🧵 Analisi Rilievo Tessile', desc: 'Bottone rinvenuto sotto il corpo del Rinaldi, identico al vestito di Elena.' }
     },
-    correctCulprit: 'Elena',
     requiredEvidences: ['autopsy', 'phone', 'paperweight'],
-    solutionText: "<h3>Incolpata: Elena Rinaldi</h3><p>Alle 23:05 invia un SMS per pretendere un chiarimento. Raggiunge lo studio alle 23:12, scoppia un violento diverbio e lo colpisce con il fermacarte, perdendo un bottone.</p>"
+    solutionText: "<h3>Incolpata: Elena Rinaldi</h3><p><b>Movente:</b> Passionale / Gelosia.<br><b>Dinamica:</b> Alle 23:05 invia un SMS per pretendere un chiarimento. Raggiunge lo studio alle 23:12, scoppia un violento diverbio e lo colpisce con il fermacarte, perdendo un bottone.</p>"
   },
   cogne: {
     title: "📰 Delitto di Cogne (2002)",
     desc: "Vittima: Samuele Lorenzi (3 anni). Avvenuto la mattina del 30 gennaio 2002.",
     place: "Villetta di Montroz, Cogne",
-    sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
+    sceneNotice: "La Scientifica rileva lesioni contusive sul corpo. Scegli tu quali accertamenti e perizie richiedere.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
     suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
-    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Devi SEMPRE raccontare la tua versione dei fatti con dovizia di particolari, difendendoti e spiegando i tuoi spostamenti senza mai rifiutarti di rispondere. Se emergono incongruenze con le perizie scientifiche, giustificati e dai spiegazioni alternative. Rispondi sempre in italiano.",
-    baseSuggestions: [
-      "Può raccontarci minuto per minuto la sua uscita per lo scuolabus?",
-      "Ha visto persone estranee o tracce anomale intorno a casa?",
-      "Quali sono state le sue esatte azioni al rientro nella villetta?",
-      "Conferma la posizione degli oggetti all'interno della camera?"
-    ],
+    motives: {
+      raptus: "Momento di forte tensione emotiva e temporaneo alteramento psichico (raptus)",
+      dissapori: "Contrasti familiari legati alla gestione domestica"
+    },
+    correctCulprit: 'Annamaria',
+    correctMotive: 'raptus',
+    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Devi SEMPRE raccontare la tua versione dei fatti per intero senza lasciare frasi in sospeso, difendendoti e spiegando i tuoi spostamenti. Spetta al giudice e al giocatore valutare le prove. Rispondi sempre in italiano.",
+    baseSuggestions: {
+      Annamaria: [
+        "Può raccontarci minuto per minuto la sua uscita per lo scuolabus?",
+        "Ha visto persone estranee o tracce anomale intorno a casa?",
+        "Quali sono state le sue esatte azioni al rientro nella villetta?"
+      ],
+      Ada: [
+        "Quali sono stati i suoi primi gesti arrivando sul posto?",
+        "Ha notato particolari ferite o anomalie sul corpicino?",
+        "Ha parlato con i soccorritori del 118?"
+      ],
+      Ulisse: [
+        "A che ora è uscito di casa quella mattina?",
+        "Ha notato movimenti anomali lungo la strada di Montroz?",
+        "Conferma gli orari dei suoi spostamenti lavorativi?"
+      ]
+    },
+    unlockedSuggestions: {
+      bpa: [
+        "La perizia BPA sul sangue smentisce la versione dell'estraneo, come risponde?"
+      ],
+      timing: [
+        "La finestra temporale di 8 minuti rende impossibile l'intrusione di terzi, come spiega questo dato?"
+      ]
+    },
     fallbacks: {
       Annamaria: "Vi prego credetemi, ero uscita solo per accompagnare il bambino allo scuolabus! Quando sono rientrata l'ho trovato ferito nel lettino.",
       Ada: "Sono arrivata per prima sul posto chiamata d'urgenza. Ho cercato solo di prestare soccorso medico immediato al piccolo.",
       Ulisse: "Abito qui vicino e conosco bene la zona. Di mattina presto non ho visto nessuno aggirarsi in modo sospetto sulla neve."
     },
     tests: {
-      bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce indicano che i colpi sono stati inferti da chi si trovava esattamente sopra il letto.' },
-      timing: { name: '⏱️ Finestra Temporale (8 min)', desc: 'Intervallo tra le 8:16 e le 8:24 troppo breve per la penetrazione di estranei.' },
-      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici posizionano il pigiama sulla scena al momento dell\'aggressione.' }
+      bpa: { name: '🩸 Richiedi Perizia BPA (Macchie)', desc: 'Le micro-gocce indicano che i colpi sono stati inferti da chi si trovava esattamente sopra il letto.' },
+      timing: { name: '⏱️ Verifica Finestra Temporale (8 min)', desc: 'Intervallo tra le 8:16 e le 8:24 troppo breve per la penetrazione di estranei.' },
+      pijama: { name: '👕 Analisi Tessuto Pigiama', desc: 'Tracce di schizzi ematici posizionano il pigiama sulla scena al momento dell\'aggressione.' }
     },
-    correctCulprit: 'Annamaria',
     requiredEvidences: ['bpa', 'timing', 'pijama'],
-    solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p>Condannata in via definitiva. Le perizie scientifiche BPA hanno stabilito che l'aggressore indossava il pigiama e si trovava sul letto.</p>"
+    solutionText: "<h3>Esito Processuale: Annamaria Franzoni</h3><p><b>Movente:</b> Raptus emotivo.<br><b>Dinamica:</b> Condannata in via definitiva. Le perizie scientifiche BPA hanno stabilito che l'aggressore indossava il pigiama e si trovava sul letto.</p>"
   },
   farrow: {
     title: "🏛️ Delitto Farrow (1905)",
     desc: "Vittime: Thomas e Ann Farrow. Londra, Deptford.",
     place: "Bottega Farrow, Deptford",
-    sceneNotice: "Criminologia d'inizio '900: impronte digitali e metodo Bertillon.",
+    sceneNotice: "Rilievi dattiloscopici sulla bottega. Scegli quali esami attivare.",
     objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
     suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
-    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Fornisci sempre la tua versione dettagliata e collabora raccontando i tuoi spostamenti, senza rifiutarti. Se ti vengono mostrate prove scientifiche, prova a giustificarle. Rispondi sempre in italiano.",
-    baseSuggestions: [
-      "Dove si trovava esattamente la notte del duplice omicidio?",
-      "Può fornirci un elenco dettagliato dei suoi spostamenti a Deptford?",
-      "Chi può confermare il suo alibi per quell'orario?",
-      "Ha mai maneggiato la scatola o la cassaforte della bottega?"
-    ],
+    motives: {
+      rapina: "Rapina finita in tragedia a scopo di lucro per estorcere denaro",
+      vendetta: "Ritorsione nei confronti del principale"
+    },
+    correctCulprit: 'Alfred',
+    correctMotive: 'rapina',
+    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Fornisci sempre la tua versione dettagliata fino alla fine, senza troncare le frasi. Rispondi sempre in italiano.",
+    baseSuggestions: {
+      Alfred: [
+        "Dove si trovava esattamente la notte del duplice omicidio?",
+        "Può fornirci un elenco dettagliato dei suoi spostamenti a Deptford?",
+        "Chi può confermare il suo alibi per quell'orario?"
+      ],
+      Albert: [
+        "Mio fratello e lei dove dormivano quella notte?",
+        "Ha mai posseduto maschere o indumenti simili a quelli ritrovati?",
+        "Perché i testimoni vi collocano vicino alla bottega?"
+      ]
+    },
+    unlockedSuggestions: {
+      fingerprint: [
+        "L'impronta sulla scatola metallica corrisponde al suo pollice, come giustifica questa prova?"
+      ]
+    },
     fallbacks: {
       Alfred: "Io stavo dormendo tranquillamente quella notte! Vi racconto tutto della mia serata, non ho nulla da nascondere.",
       Albert: "Mio fratello Alfred era con me a casa. Vi spiego nei dettagli cosa abbiamo fatto quella sera."
     },
     tests: {
-      fingerprint: { name: '🔍 Perizia Dattiloscopica', desc: 'L\'impronta di pollice sulla scatola corrisponde esattamente al pollice destro di Alfred Stratton.' },
-      witness: { name: '👁️ Testimonianza del Lattaio', desc: 'Visti due uomini uscire di corsa dalla bottega all\'alba del delitto.' }
+      fingerprint: { name: '🔍 Richiedi Perizia Dattiloscopica', desc: 'L\'impronta di pollice sulla scatola corrisponde esattamente al pollice destro di Alfred Stratton.' },
+      witness: { name: '👁️ Interroga Testimone (Lattaio)', desc: 'Visti due uomini uscire di corsa dalla bottega all\'alba del delitto.' }
     },
-    correctCulprit: 'Alfred',
     requiredEvidences: ['fingerprint', 'witness'],
-    solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Primo caso in Gran Bretagna risolto con le impronte digitali.</p>"
+    solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p><b>Movente:</b> Rapina a scopo di lucro.<br><b>Dinamica:</b> Condannati a morte nel 1905. Primo caso in Gran Bretagna risolto con le impronte digitali.</p>"
   },
   jack: {
     title: "⭐ Jack lo Squartatore (1888)",
     desc: "Sito indagine: Whitechapel, Londra. Analisi storica dei sospetti dell'autunno 1888.",
     place: "Quartiere di Whitechapel",
-    sceneNotice: "Verbali di ronda, autopsie d'epoca e perizie di Scotland Yard.",
+    sceneNotice: "Verbali di ronda e reperti medico-legali. Scegli quali approfondimenti scientifici richiedere.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
-    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Racconta sempre la tua versione con calma e precisione, spiegando i tuoi interessi e le tue attività nel quartiere senza rifiutare il dialogo. Rispondi sempre in italiano.",
-    suggestions: {
-      Druitt: ["Quali erano i suoi spostamenti durante le notti degli omicidi a Whitechapel?", "Perché i suoi colleghi riferiscono di comportamenti anomali in quei giorni?"],
-      Kosminski: ["Perché è stato visto nei pressi delle scene dei delitti a quell'ora?", "Le perizie mediche parlano di conoscenze chirurgiche: come spiega la sua presenza costante nel quartiere e i reperti?"],
-      Ostrog: ["Quali sono i suoi precedenti penali in Russia e a Londra?", "Possiede attrezzi chirurgici o bisturi tra i suoi effetti personali?"]
+    motives: {
+      follia: "Grave disturbo mentale associato ad istinti omicidi seriali",
+      misoginia: "Rabbia cieca e misoginia patologica nei confronti delle categorie marginali"
+    },
+    correctCulprit: 'Kosminski',
+    correctMotive: 'follia',
+    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Racconta sempre la tua versione con precisione fino alla conclusione, senza troncare le risposte. Rispondi sempre in italiano.",
+    baseSuggestions: {
+      Druitt: [
+        "Quali erano i suoi spostamenti durante le notti degli omicidi?",
+        "Perché i suoi colleghi riferiscono di comportamenti anomali?",
+        "Qual è il suo alibi per le date dei delitti?"
+      ],
+      Kosminski: [
+        "Perché è stato visto nei pressi delle scene dei delitti?",
+        "Come spiega la sua costante presenza a Whitechapel?",
+        "Ha conoscenze di anatomia o chirurgia?"
+      ],
+      Ostrog: [
+        "Quali sono i suoi precedenti penali in Europa?",
+        "Possiede attrezzi chirurgici o lame tra i suoi effetti?",
+        "Dove si trovava nelle notti degli omicidi?"
+      ]
+    },
+    unlockedSuggestions: {
+      medical: [
+        "Le perizie anatomiche indicano conoscenze chirurgiche, lei possiede attrezzi simili?"
+      ]
     },
     fallbacks: {
       Druitt: "La mia vita è dedicata all'insegnamento e al diritto. Vi spiego dettagliatamente dove mi trovavo in quelle date.",
@@ -496,12 +606,11 @@ const CASES = {
       Ostrog: "Vi spiego il mio passato e le mie attività senza problemi."
     },
     tests: {
-      medical: { name: '🩺 Perizia Anatomica Dr. Phillips', desc: 'L\'aggressore possiede nozioni di chirurgia per la precisione dei tagli.' },
-      grembiule: { name: '🧥 Traccia di Grembiule', desc: 'Pezzo di indumento insanguinato ritrovato lungo la via di fuga.' }
+      medical: { name: '🩺 Richiedi Perizia Anatomica', desc: 'L\'aggressore possiede nozioni di chirurgia per la precisione dei tagli.' },
+      grembiule: { name: '🧥 Analisi Reperto Grembiule', desc: 'Pezzo di indumento insanguinato ritrovato lungo la via di fuga.' }
     },
-    correctCulprit: 'Kosminski',
     requiredEvidences: ['medical', 'grembiule'],
-    solutionText: "<h3>Sospettato Principale: Aaron Kosminski</h3><p>Indicato nei verbali di Scotland Yard come il principale indiziato dall'ispettore Swanson.</p>"
+    solutionText: "<h3>Sospettato Principale: Aaron Kosminski</h3><p><b>Movente:</b> Follia e squilibrio mentale.<br><b>Dinamica:</b> Indicato nei verbali di Scotland Yard come il principale indiziato dall'ispettore Swanson.</p>"
   }
 };
 
@@ -510,7 +619,7 @@ let currentCase = CASES.ai001;
 let currentDifficulty = 'normale';
 let cur = '', ev = [], notes = [], times = [], done = {};
 let chatHistory = {};
-let usedSuggestions = {}; // Tiene traccia delle domande già usate per ciascun sospettato per evitare ripetizioni
+let availableSuggestions = {};
 
 function askDifficulty(key) {
   currentCaseKey = key;
@@ -521,14 +630,23 @@ function askDifficulty(key) {
 function selectCaseWithDiff(diff) {
   currentDifficulty = diff;
   chatHistory = {}; 
-  usedSuggestions = {};
+  availableSuggestions = {};
   ev = []; notes = []; times = []; done = {};
   document.getElementById('ec').textContent = '0';
   document.getElementById('results').innerHTML = '';
   
+  for (let sId in currentCase.suspects) {
+    let baseList = currentCase.baseSuggestions[sId] || [
+      "Può approfondire questo dettaglio della sua deposizione?",
+      "Ci sono elementi che smentiscono la sua versione: come replica?",
+      "Chi può confermare i suoi spostamenti a quell'ora?"
+    ];
+    availableSuggestions[sId] = [...baseList];
+  }
+  
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-place').textContent = currentCase.place;
-  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (con suggerimenti avanzati)' : 'Normale (con suggerimenti adattivi anti-ripetizione)');
+  document.getElementById('diff-badge').textContent = (diff === 'facile' ? 'Facile (Bacheca interattiva automatica da chat)' : 'Normale (Bacheca manuale)');
   document.getElementById('scene-notice').textContent = currentCase.sceneNotice;
   
   let sGrid = document.getElementById('suspects-grid');
@@ -549,6 +667,12 @@ function selectCaseWithDiff(diff) {
     cOpt.innerHTML += `<label class="option"><input type="radio" name="cul" value="${id}"> ${currentCase.suspects[id]}</label>`;
   }
 
+  let mOpt = document.getElementById('motive-options');
+  mOpt.innerHTML = '';
+  for (let mid in currentCase.motives) {
+    mOpt.innerHTML += `<label class="option"><input type="radio" name="mot" value="${mid}"> ${currentCase.motives[mid]}</label>`;
+  }
+
   document.getElementById('sol-text').innerHTML = currentCase.solutionText;
   show('investigation');
 }
@@ -557,7 +681,7 @@ function show(id) {
   document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (id === 'scene') scene();
-  if (id === 'board') renderNotes();
+  if (id === 'board') setupBoardMode();
   if (id === 'time') renderTimes();
   if (id === 'acc') renderAE();
 }
@@ -578,81 +702,48 @@ function inter(s) {
     renderMsg(m.role === 'user' ? 'me' : 'them', m.content);
   });
 
-  updateDynamicSuggestions(s, "");
+  renderSuggestionsBox(s);
 }
 
-// Genera suggerimenti basati sulle incongruenze, escludendo rigorosamente quelli già proposti in precedenza
-function updateDynamicSuggestions(s, lastReply) {
+function renderSuggestionsBox(s) {
   let suggBox = document.getElementById('suggestions-box');
   suggBox.style.display = 'flex';
   
-  if (!usedSuggestions[s]) {
-    usedSuggestions[s] = [];
+  let list = availableSuggestions[s] || [];
+  
+  if (list.length === 0) {
+    suggBox.innerHTML = '<span class="small" style="width:100%; color:#9aa4b2;">Nessun suggerimento disponibile. Analizza altri reperti scientifici o digita liberamente le tue domande.</span>';
+    return;
   }
 
-  let replyLower = (lastReply || "").toLowerCase();
-  let pool = [];
-
-  // Se l'IA mostra incongruenze o tentenna nella sua versione
-  if (replyLower.includes('forse') || replyLower.includes('d\'accordo') || replyLower.includes('omesso') || replyLower.includes('ricordo')) {
-    pool.push("Ci spieghi nel dettaglio questa discrepanza rispetto alla versione precedente.");
-    pool.push("Chi altro era presente quando sono accaduti questi fatti?");
-  } 
-  // Se l'IA si difende parlando dei suoi orari o del suo alibi
-  else if (replyLower.includes('orario') || replyLower.includes('archivio') || replyLower.includes('stanza') || replyLower.includes('lavorando') || replyLower.includes('casa')) {
-    pool.push("I testimoni smentiscono la sua collocazione a quell'ora precisa.");
-    pool.push("Per quale motivo i suoi spostamenti non coincidono con i riscontri?");
-  } 
-  // Se l'indagine avanza con nuove prove scientifiche
-  ev.forEach(testId => {
-    if (testId === 'phone' || testId === 'timing') {
-      pool.push("I tabulati telefonici e la finestra temporale smentiscono il suo racconto.");
-    }
-    if (testId === 'paperweight' || testId === 'fingerprint' || testId === 'bpa' || testId === 'medical') {
-      pool.push("I rilievi scientifici inchiodano la sua versione dei fatti: come lo spiega?");
-    }
-  });
-
-  // Aggiunge anche il set di base del sospettato se il pool è scarso
-  let basePool = currentCase.baseSuggestions || currentCase.suggestions?.[s] || [
-    "Può approfondire questo dettaglio della sua deposizione?",
-    "Ci sono elementi che smentiscono la sua versione: come replica?"
-  ];
-  pool = pool.concat(basePool);
-
-  // Filtra rigorosamente rimuovendo tutte le domande già suggerite in passato per questo sospettato
-  let availableList = pool.filter(q => !usedSuggestions[s].includes(q));
-
-  // Se per caso le abbiamo esaurite tutte, ne genera di fresche di riserva
-  if (availableList.length === 0) {
-    availableList = [
-      "Vogliamo un chiarimento definitivo su questa parte della sua deposizione.",
-      "Ci sono ulteriori dettagli che ha omesso nel suo racconto iniziale?"
-    ];
-    // Rimuove comunque quelle di riserva se già usate
-    availableList = availableList.filter(q => !usedSuggestions[s].includes(q));
-  }
-
-  // Registra le nuove domande proposte nello storico delle utilizzate per bloccarne la ripetizione futura
-  availableList.forEach(q => {
-    if (!usedSuggestions[s].includes(q)) {
-      usedSuggestions[s].push(q);
-    }
-  });
-
-  suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453; margin-bottom:2px;">💡 Domande suggerite (basate sulle incongruenze, senza ripeterle):</span>' + 
-    availableList.map(q => `<button class="sugg-btn" onclick="useSuggestion('${q.replace(/'/g, "\\'")}')">${q}</button>`).join('');
+  suggBox.innerHTML = '<span class="small" style="width:100%; color:#f6c453; margin-bottom:2px;">💡 Domande suggerite (selezionandone una, scompare):</span>' + 
+    list.map((q, idx) => `<button class="sugg-btn" onclick="useSuggestion(${idx}, '${q.replace(/'/g, "\\'")}')">${q}</button>`).join('');
 }
 
-function useSuggestion(qText) {
+function useSuggestion(index, qText) {
+  availableSuggestions[cur].splice(index, 1);
   document.getElementById('q').value = qText;
-  send(); // Invia direttamente il suggerimento scelto
+  send();
 }
 
 function renderMsg(c, t) {
   let d = document.createElement('div');
   d.className = 'msg ' + (c === 'me' ? 'me' : 'them');
   d.textContent = t;
+  
+  if (c === 'them' && currentDifficulty === 'facile') {
+    d.classList.add('clickable-msg');
+    d.title = "Clicca per salvare questo dettaglio nella Bacheca";
+    d.onclick = function() {
+      if (!notes.includes(t)) {
+        notes.push(`[${currentCase.suspects[cur]}]: ${t}`);
+        alert("Dettaglio salvato con successo nella Bacheca investigativa!");
+      } else {
+        alert("Questo dettaglio è già presente nella Bacheca.");
+      }
+    };
+  }
+  
   const chatDiv = document.getElementById('chat');
   chatDiv.appendChild(d);
   chatDiv.scrollTop = chatDiv.scrollHeight;
@@ -685,7 +776,7 @@ async function send() {
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
           messages: [
-            { role: "system", content: `${currentCase.systemPrompt} Stai interpretando il personaggio di ${currentCase.suspects[cur]}. Dettagli del caso: ${currentCase.desc} Prove attualmente scoperte dall'investigatore: ${ev.join(', ')}.` },
+            { role: "system", content: `${currentCase.systemPrompt} Stai interpretando il personaggio di ${currentCase.suspects[cur]}. Dettagli del caso: ${currentCase.desc} Assicurati di concludere sempre la frase e completare il concetto senza troncare mai il testo.` },
             ...chatHistory[cur].map(m => ({ role: m.role === 'me' ? 'user' : 'assistant', content: m.content }))
           ]
         })
@@ -701,29 +792,27 @@ async function send() {
       let historyLen = chatHistory[cur].filter(m => m.role === 'user').length;
       let qLower = qText.toLowerCase();
       
-      // Il sospettato racconta sempre la sua versione o si corregge in base alle incongruenze trovate
       if (qLower.includes('discrepanza') || qLower.includes('incongruenze') || qLower.includes('smentiscono') || qLower.includes('prova')) {
-        replyText = "D'accordo, vi spiego meglio: è vero che c'è stata una discussione e che i miei orari possono sembrare strani, ma vi assicuro che la mia intenzione non era quella di fare del male a nessuno. Vi racconto come sono andate esattamente le cose...";
+        replyText = "Comprendo la vostra osservazione sui miei spostamenti, ma vi assicuro che la mia versione dei fatti è del tutto coerente e trasparente. Non ho commesso alcun crimine e vi ho già spiegato tutto quello che sapevo.";
       } else if (qLower.includes('orario') || qLower.includes('spostamenti') || qLower.includes('dove')) {
-        replyText = "Vi confermo la mia versione: io mi trovavo nel punto che vi ho indicato e stavo sbrigando le mie faccende. Ecco i dettagli completi del mio percorso...";
+        replyText = "Vi confermo con assoluta certezza la mia posizione in quella fascia oraria. Stavo svolgendo le mie consuete attività e non ho motivo di mentire su questo punto.";
       } else {
         const collaborativeReplies = [
-          "Vi racconto volentieri la mia versione dei fatti: ecco cosa ricordo di quella sequenza temporale...",
-          "Capisco i vostri dubbi, perciò vi ripeto esattamente la mia posizione e quello che ho fatto in quelle ore...",
-          currentCase.fallbacks[cur] || "Vi spiego nei minimi dettagli la mia versione per fugare ogni dubbio."
+          "Vi racconto volentieri la mia versione dei fatti: in quel momento mi trovavo esattamente dove vi ho detto e stavo badando alle mie faccende personali.",
+          "Capisco i vostri dubbi investigativi, perciò vi ripeto la mia posizione esatta senza nascondere alcun dettaglio.",
+          currentCase.fallbacks[cur] || "Vi spiego nei minimi dettagli la mia versione dei fatti per chiarire ogni equivoco."
         ];
         replyText = collaborativeReplies[(historyLen - 1) % collaborativeReplies.length];
       }
     }
   } catch (err) {
-    replyText = currentCase.fallbacks[cur] || "Vi spiego subito la mia versione dei fatti.";
+    replyText = currentCase.fallbacks[cur] || "Vi spiego subito la mia versione dei fatti in modo completo.";
   }
 
   chatHistory[cur].push({ role: 'assistant', content: replyText });
   renderMsg('them', replyText);
 
-  // Aggiorna i suggerimenti dinamici escludendo quelli già proposti in precedenza
-  updateDynamicSuggestions(cur, replyText);
+  renderSuggestionsBox(cur);
 
   qInput.disabled = false;
   sendBtn.disabled = false;
@@ -741,6 +830,31 @@ function test(k) {
   ev.push(k);
   document.getElementById('results').innerHTML += '<div class="card" style="border-color:var(--accent-red);"><b>' + currentCase.tests[k].desc + '</b></div>';
   document.getElementById('ec').textContent = ev.length;
+
+  if (currentCase.unlockedSuggestions && currentCase.unlockedSuggestions[k]) {
+    for (let sId in currentCase.suspects) {
+      if (!availableSuggestions[sId]) availableSuggestions[sId] = [];
+      currentCase.unlockedSuggestions[k].forEach(q => {
+        if (!availableSuggestions[sId].includes(q)) {
+          availableSuggestions[sId].push(q);
+        }
+      });
+    }
+  }
+}
+
+function setupBoardMode() {
+  let manualBox = document.getElementById('manual-note-box');
+  let subtitle = document.getElementById('board-subtitle');
+  
+  if (currentDifficulty === 'facile') {
+    manualBox.style.display = 'none';
+    subtitle.textContent = "Modalità Facile: clicca direttamente sui messaggi in chat durante gli interrogatori per salvarli qui.";
+  } else {
+    manualBox.style.display = 'block';
+    subtitle.textContent = "Modalità Normale: inserisci manualmente le tue note e deduzioni personali.";
+  }
+  renderNotes();
 }
 
 function addNote() {
@@ -751,8 +865,8 @@ function addNote() {
 
 function renderNotes() {
   document.getElementById('notes').innerHTML = notes.map((x, i) =>
-    '<div class="item"><span>📝 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px; width:auto;" onclick="notes.splice(' + i + ',1);renderNotes()">✕</button></div>'
-  ).join('');
+    '<div class="item"><span>📌 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px; width:auto;" onclick="notes.splice(' + i + ',1);renderNotes()">✕</button></div>'
+  ).join('') || '<span class="small">Nessun dettaglio registrato nella bacheca.</span>';
 }
 
 function addTime() {
@@ -764,27 +878,28 @@ function addTime() {
 function renderTimes() {
   document.getElementById('times').innerHTML = times.map((x, i) =>
     '<div class="item"><span>🕒 ' + esc(x) + '</span><button class="sec" style="padding:4px 10px; width:auto;" onclick="times.splice(' + i + ',1);renderTimes()">✕</button></div>'
-  ).join('');
+  ).join('') || '<span class="small">Nessun evento registrato nella timeline.</span>';
 }
 
 function renderAE() {
   document.getElementById('ae').innerHTML = ev.map(k =>
     '<label class="option"><input type="checkbox" value="' + k + '"> ' + currentCase.tests[k].name + '</label>'
-  ).join('') || '<span class="small">Nessun reperto scientifico analizzato. Visita la sezione "Scena / Reperti".</span>';
+  ).join('') || '<span class="small">Nessun esame di laboratorio scelto. Vai alla sezione "Scena / Reperti" per avviare i test.</span>';
 }
 
 function accuse() {
   let c = document.querySelector('input[name="cul"]:checked')?.value;
+  let m = document.querySelector('input[name="mot"]:checked')?.value;
   let a = [...document.querySelectorAll('#ae input:checked')].map(x => x.value);
-  let ok = (c === currentCase.correctCulprit);
   
+  let ok = (c === currentCase.correctCulprit && m === currentCase.correctMotive);
   currentCase.requiredEvidences.forEach(req => { if (!a.includes(req)) ok = false; });
 
   show('result');
   document.getElementById('rt').textContent = ok ? '🎉 CASO RISOLTO CON SUCCESSO' : '💥 ACCUSA RESPINTA / ERRORE GIUDIZIARIO';
   document.getElementById('rx').innerHTML = ok 
-    ? '<p>I tuoi riscontri e l\'individuazione del colpevole sono inattaccabili. La giustizia ha fatto il suo corso.</p>' 
-    : '<p>Il giudice ha respinto l\'ordinanza: mancano prove fondamentali o il sospettato incriminato non è quello giusto.</p>';
+    ? '<p>I tuoi riscontri, il movente e l\'individuazione del colpevole sono inattaccabili. La giustizia ha fatto il suo corso.</p>' 
+    : '<p>Il giudice ha respinto l\'ordinanza: mancano prove fondamentali, il movente errato oppure il sospettato incriminato non è quello giusto.</p>';
 }
 
 function esc(s) {
