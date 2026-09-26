@@ -32,6 +32,7 @@
   .diff-box { margin:15px 0; background:#191e28; padding:15px; border-radius:12px; border:1px solid #303746; text-align:center; }
   .diff-btn { width: 100%; padding: 12px; margin: 6px 0; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; font-weight:bold; cursor:pointer; text-align:left; box-sizing:border-box; }
   .diff-btn:hover { border-color:#7057e8; background:#382d73; }
+  .api-key-banner { background: #231b42; border: 1px solid #7057e8; padding: 12px; border-radius: 10px; margin-bottom: 15px; }
 </style>
 </head>
 <body>
@@ -40,6 +41,16 @@
   <section id="home" class="active">
     <h1 class="center">🕵️ Dietro la Bugia</h1>
     <p class="center small">Ogni verità lascia una traccia. Interroga i sospetti guidati dall'Intelligenza Artificiale.</p>
+
+    <!-- BANNER GESTIONE API KEY -->
+    <div class="api-key-banner">
+      <b>🔑 Configurazione API Key Gemini:</b>
+      <div class="row" style="margin-top:8px;">
+        <input type="password" id="api-key-input" placeholder="Incolla qui la tua Gemini API Key...">
+        <button onclick="saveApiKey()">Salva Key</button>
+      </div>
+      <p class="small" style="margin:6px 0 0 0;">Ottienila gratis su <a href="https://aistudio.google.com/" target="_blank" style="color:#a896ff;">Google AI Studio</a>. La chiave verrà salvata solo nel tuo browser.</p>
+    </div>
 
     <!-- CASO TUTORIAL -->
     <div class="card" style="border: 2px solid #7057e8;">
@@ -111,14 +122,14 @@
   </section>
 
   <section id="inter">
-    <h2>🗣️ Stanza Interrogatori (IA)</h2>
+    <h2>🗣️ Stanza Interrogatori</h2>
     <div class="card center">
       <b id="who"></b>
-      <p id="mood" class="small">Risposte generate in tempo reale dall'IA.</p>
+      <p id="mood" class="small">Risposte in tempo reale dall'IA.</p>
     </div>
     <div id="chat" class="chat"></div>
 
-    <!-- BOX DOMANDE GUIDATE (VISIBILE SOLO IN MODALITÀ FACILE) -->
+    <!-- BOX DOMANDE GUIDATE -->
     <div id="guided-questions" style="margin-top:10px; display:none;">
       <span class="small">💡 <b>Domande Suggerite (Modalità Facile):</b></span>
       <div id="guided-buttons"></div>
@@ -192,8 +203,25 @@
 </div>
 
 <script>
-// SOSTITUISCI QUESTA STRINGA CON LA TUA API KEY DI GOOGLE AI STUDIO
-const API_KEY = "INSERISCI_QUI_LA_TUA_API_KEY";
+// Carica la chiave API salvata se presente
+let API_KEY = localStorage.getItem('gemini_api_key') || '';
+if(API_KEY) {
+  document.addEventListener("DOMContentLoaded", () => {
+    let input = document.getElementById('api-key-input');
+    if(input) input.value = API_KEY;
+  });
+}
+
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if(val) {
+    API_KEY = val;
+    localStorage.setItem('gemini_api_key', val);
+    alert(" API Key salvata con successo!");
+  } else {
+    alert("Inserisci una chiave valida.");
+  }
+}
 
 let difficulty = 'easy'; 
 
@@ -208,6 +236,10 @@ const CASES = {
     prompts: {
       Matteo: "Sei Matteo, il custode del museo. Sei INNOCENTE. Eri all'ingresso principale fino alle 20:00 e non sei mai entrato nella sala oro. Rispondi con tono tranquillo in massimo 2 frasi.",
       Paolo: "Sei Paolo, il restauratore. Sei COLPEVOLE. Hai usato un piede di porco per forzare la teca e rubare la statuetta alle 19:45 lasciando le tue impronte sul vetro. Cerchi di dire che eri già andato via alle 19:30. Rispondi in massimo 2 frasi."
+    },
+    fallbackReplies: {
+      Matteo: "Ero alla garitta dell'ingresso principale tutto il tempo, non sono mai andato nella sala della reliquia.",
+      Paolo: "Io sono uscito dal laboratorio verso le 19:30, non so nulla della teca spezzata."
     },
     guidedQuestions: {
       Matteo: [
@@ -450,41 +482,70 @@ async function send() {
   if (!chatHistory[cur]) chatHistory[cur] = [];
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-    
-    const contents = [
-      {
-        role: 'user',
-        parts: [{ text: `[ISTRUZIONI SISTEMA: ${currentCase.prompts[cur]}]` }]
-      },
-      ...chatHistory[cur]
-    ];
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: contents })
-    });
-
-    const data = await res.json();
-
-    if (data.error) {
-      throw new Error(data.error.message || "Errore API");
+  // Se l'API KEY non è stata ancora inserita, la richiediamo con un prompt
+  if (!API_KEY) {
+    let keyPrompt = prompt("Per usare l'Intelligenza Artificiale, inserisci la tua API Key di Gemini (gratuita su Google AI Studio):");
+    if (keyPrompt) {
+      API_KEY = keyPrompt.trim();
+      localStorage.setItem('gemini_api_key', API_KEY);
+      let input = document.getElementById('api-key-input');
+      if(input) input.value = API_KEY;
     }
+  }
 
-    let replyText = data.candidates[0].content.parts[0].text;
-    chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
-    renderMsg('them', replyText);
+  // Se è presente la chiave API proviamo la chiamata remota
+  if (API_KEY) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+      
+      const contents = [
+        {
+          role: 'user',
+          parts: [{ text: `[ISTRUZIONI SISTEMA: ${currentCase.prompts[cur]}]` }]
+        },
+        ...chatHistory[cur]
+      ];
 
-  } catch (err) {
-    console.error(err);
-    renderMsg('them', "❌ Errore durante l'interrogatorio: " + err.message);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: contents })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        throw new Error(data.error.message || "Chiave API non valida o errore di connessione.");
+      }
+
+      let replyText = data.candidates[0].content.parts[0].text;
+      chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
+      renderMsg('them', replyText);
+
+    } catch (err) {
+      console.warn("Errore API, attivazione risposte fallback:", err);
+      useFallbackReply(err.message);
+    }
+  } else {
+    // Risposta offline se non c'è la chiave
+    useFallbackReply("Nessuna API Key inserita (Modalità Offline).");
   }
 
   qInput.disabled = false;
   sendBtn.disabled = false;
   qInput.focus();
+}
+
+function useFallbackReply(reason) {
+  let replyText = "";
+  if (currentCase.fallbackReplies && currentCase.fallbackReplies[cur]) {
+    replyText = currentCase.fallbackReplies[cur];
+  } else {
+    replyText = "Non ho molto da aggiungere a quello che ho già dichiarato agli agenti.";
+  }
+  
+  chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
+  renderMsg('them', replyText + `\n\n[Nota: ${reason}]`);
 }
 
 function scene() {
