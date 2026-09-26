@@ -13,10 +13,8 @@
   button { background:#7057e8; color:white; border:0; border-radius:99px; padding:11px 16px; font-weight:bold; margin:4px; cursor:pointer; }
   button:disabled { background:#4a3f82; cursor:not-allowed; }
   button.sec { background:#29303c; }
-  button.suggest { background:#2a2359; border:1px solid #7057e8; color:#d2c9ff; text-align:left; font-weight:normal; border-radius:8px; width:100%; margin:4px 0; }
-  button.suggest:hover { background:#3b317a; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
-  .chat { height:320px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
+  .chat { height:380px; overflow:auto; background:#0b0e13; padding:10px; border-radius:10px; }
   .msg { padding:10px; border-radius:12px; margin:8px; max-width:82%; white-space:pre-wrap; }
   .me { margin-left:auto; background:#513bb0; }
   .them { background:#29303c; }
@@ -29,9 +27,6 @@
   .item { background:#222936; padding:11px; border-radius:99px; margin:7px 0; display:flex; justify-content:space-between; align-items:center; }
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
-  .diff-box { margin:15px 0; background:#191e28; padding:15px; border-radius:12px; border:1px solid #303746; text-align:center; }
-  .diff-btn { width: 100%; padding: 12px; margin: 6px 0; border-radius:8px; background:#29303c; border:2px solid transparent; color:#fff; font-weight:bold; cursor:pointer; text-align:left; box-sizing:border-box; }
-  .diff-btn:hover { border-color:#7057e8; background:#382d73; }
 </style>
 </head>
 <body>
@@ -66,29 +61,14 @@
   <section id="intro">
     <h2 id="case-title"></h2>
     <div class="card" id="case-desc"></div>
-    
-    <div class="diff-box">
-      <h3>🎯 Scegli la difficoltà per questo caso:</h3>
-      <button class="diff-btn" onclick="startWithDifficulty('easy')">
-        🟢 Modalità Facile (Domande Guidate + IA)
-        <div class="small" style="font-weight:normal; margin-top:4px;">Avrai a disposizione suggerimenti con domande pronte da inviare con un click o scriverne di tue.</div>
-      </button>
-      <button class="diff-btn" onclick="startWithDifficulty('normal')">
-        🔴 Modalità Normale (Esperienza Libera con IA)
-        <div class="small" style="font-weight:normal; margin-top:4px;">Nessun aiuto: potrai scrivere liberamente qualsiasi domanda o contestazione al sospetto gestito dall'IA.</div>
-      </button>
-    </div>
-
-    <button class="sec" onclick="show('home')">← Torna alla Scelta dei Casi</button>
+    <div class="notice">I dialoghi degli interrogatori sono gestiti in tempo reale dall'IA Gemini e ricorderanno le tue domande precedenti.</div>
+    <br>
+    <button onclick="show('investigation')">🔎 Inizia l'Indagine</button>
   </section>
 
   <section id="investigation">
     <h2>🔎 Dashboard Indagine</h2>
-    <div class="card">
-      <b id="case-mode-label"></b><br>
-      <span id="case-place"></span> — caso aperto<br>
-      <span class="small">Prove scientifiche/reperti raccolti: <span id="ec">0</span></span>
-    </div>
+    <div class="card"><span id="case-place"></span> — caso aperto<br><span class="small">Prove scientifiche/reperti raccolti: <span id="ec">0</span></span></div>
     <h3>Sospetti da Interrogare</h3>
     <div class="grid" id="suspects-grid"></div>
     <h3>Strumenti Analitici</h3>
@@ -109,12 +89,6 @@
       <p id="mood" class="small">Risposte generate in tempo reale dall'IA.</p>
     </div>
     <div id="chat" class="chat"></div>
-
-    <div id="guided-questions" style="margin-top:10px; display:none;">
-      <span class="small">💡 <b>Domande Guidate (Modalità Facile):</b></span>
-      <div id="guided-buttons"></div>
-    </div>
-
     <div class="row" style="margin-top:10px;">
       <input id="q" placeholder="Fai qualsiasi domanda al sospetto..." onkeydown="if(event.key==='Enter')send()">
       <button id="send-btn" onclick="send()">Invia</button>
@@ -185,7 +159,6 @@
 <script>
 // SOSTITUISCI QUESTA STRINGA CON LA TUA API KEY DI GOOGLE AI STUDIO
 const API_KEY = "INSERISCI_QUI_LA_TUA_API_KEY";
-let difficulty = 'easy';
 
 const CASES = {
   ai001: {
@@ -200,12 +173,6 @@ const CASES = {
       Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio, avete litigato per il divorzio e l'hai colpito alle 23:16 con il fermacarte metallico lasciando un bottone del tuo cardigan. Mentirai dicendo che dormivi. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
       Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Eri nella dependance ma alle 23:09 hai sentito una voce di donna urlare nello studio. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
       Sofia: "Sei Sofia Bianchi, la consulente finanziaria. Sei INNOCENTE. Sei uscita dalla villa alle 23:20 e hai incrociato Elena nel corridoio che si sistemava i capelli in fretta. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi."
-    },
-    guidedQuestions: {
-      Marco: ["Dove ti trovavi durante il delitto tra le 23:00 e le 23:30?", "Qual era la situazione finanziaria dell'azienda?"],
-      Elena: ["Perché si trova un tuo bottone sotto il corpo di tuo marito?", "Dov'eri esattamente alle 23:15?"],
-      Davide: ["Hai sentito o visto qualcosa di sospetto nella villa?", "A che ora sei andato in dependance?"],
-      Sofia: ["Hai incontrato qualcuno lasciando la villa alle 23:20?", "Come sembrava lo stato d'animo di Elena?"]
     },
     tests: {
       autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Autopsia: Decesso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
@@ -229,11 +196,6 @@ const CASES = {
       Ada: "Sei la dottoressa Ada Satragni, medico curante arrivata per prima. Pensavi a un aneurisma cerebrale, hai lavato il viso al bambino per aiutarlo. Rispondi con tono medico ma difensivo in italiano. Massimo 2 frasi.",
       Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Sostieni che sulla neve non c'erano impronte di estranei verso la villetta. Rispondi in italiano con tono calmo. Massimo 2 frasi."
     },
-    guidedQuestions: {
-      Annamaria: ["Qual è la ricostruzione esatta dei tuoi minuti tra le 8:15 e le 8:25?", "Come ti spieghi le tracce sul pigiama?"],
-      Ada: ["Perché hai spostato e lavato il bambino prima dell'arrivo del 118?", "Cosa hai pensato appena sei arrivata?"],
-      Ulisse: ["Hai notato qualcuno strano avvicinarsi alla casa sulla neve?", "Quando hai incontrato Annamaria?"]
-    },
     tests: {
       bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce a proiettile sul soffitto indicano che i colpi sono stati inferti da chi si trovava sopra il letto.' },
       timing: { name: '⏱️ Finestra Temporale (8 min)', desc: 'Intervallo tra 8:16 e 8:24 troppo breve per la penetrazione di un estraneo senza lasciare tracce.' },
@@ -254,10 +216,6 @@ const CASES = {
       Alfred: "Sei Alfred Stratton. Sei il COLPEVOLE assieme a tuo fratello Albert. Sostieni che l'impronta di pollice trovata sulla scatola metallica non sia la tua e che eri a dormire. Sei arrogante ed evasivo. Rispondi in italiano. Massimo 2 frasi.",
       Albert: "Sei Albert Stratton, fratello e complice di Alfred. Cerchi di scaricare la colpa o accampare alibi confusi sulla notte della rapina. Rispondi in italiano. Massimo 2 frasi."
     },
-    guidedQuestions: {
-      Alfred: ["Di chi è l'impronta lasciata sulla scatola della cassaforte?", "Dove eri la notte dell'aggressione ai Farrow?"],
-      Albert: ["Tuo fratello Alfred era con te la notte del delitto?", "Chi vi ha visti correre all'alba?"]
-    },
     tests: {
       fingerprint: { name: '🔍 Perizia Dattiloscopica', desc: 'L\'impronta di pollice sulla scatola della cassaforte corrisponde esattamente al pollice destro di Alfred Stratton.' },
       witness: { name: '👁️ Testimonianza del Lattaio', desc: 'Un lattaio ha visto due uomini uscire di corsa dalla bottega Farrow all\'alba del delitto.' }
@@ -277,11 +235,6 @@ const CASES = {
       Druitt: "Sei Montague Druitt, avvocato e insegnante. Neghi qualsiasi coinvolgimento e rispondi con linguaggio formale ed elegante dell'epoca in italiano. Massimo 2 frasi.",
       Kosminski: "Sei Aaron Kosminski, un barbiere polacco. Sostieni di essere stato scambiato per qualcun altro. Rispondi con tono molto confuso e agitato in italiano. Massimo 2 frasi.",
       Ostrog: "Sei Michael Ostrog, un truffatore e medico russo. Hai precedenti per porto d'armi ma neghi recisamente gli omicidi. Rispondi in italiano. Massimo 2 frasi."
-    },
-    guidedQuestions: {
-      Druitt: ["Dove ti trovavi durante la notte dell'ultimo duplice omicidio?", "Hai conoscenze in ambito anatomico?"],
-      Kosminski: ["Perché ti aggiravi vicino a Goulston Street?", "Conoscevi qualcuna delle vittime?"],
-      Ostrog: ["Come spieghi i ferri chirurgici trovati tra le tue cose?", "Dove eri registrato durante la ronda?"]
     },
     tests: {
       medical: { name: '🩺 Perizia Anatomica Dr. Phillips', desc: 'L\'aggressore possiede nozioni di anatomia o chirurgia per la precisione delle mutilazioni.' },
@@ -333,12 +286,6 @@ function selectCase(key) {
   show('intro');
 }
 
-function startWithDifficulty(diff) {
-  difficulty = diff;
-  document.getElementById('case-mode-label').textContent = diff === 'easy' ? '🟢 Modalità: Facile (Domande Guidate + IA)' : '🔴 Modalità: Normale (Esperienza Libera con IA)';
-  show('investigation');
-}
-
 function show(id) {
   document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -352,20 +299,6 @@ function inter(s) {
   cur = s;
   show('inter');
   document.getElementById('who').textContent = currentCase.suspects[s];
-
-  const guidedBox = document.getElementById('guided-questions');
-  const guidedBtns = document.getElementById('guided-buttons');
-  
-  if (difficulty === 'easy' && currentCase.guidedQuestions && currentCase.guidedQuestions[s]) {
-    guidedBox.style.display = 'block';
-    guidedBtns.innerHTML = '';
-    currentCase.guidedQuestions[s].forEach(q => {
-      let qEscaped = q.replace(/'/g, "\\'");
-      guidedBtns.innerHTML += `<button class="suggest" onclick="askGuided('${qEscaped}')">💬 ${q}</button>`;
-    });
-  } else {
-    guidedBox.style.display = 'none';
-  }
   
   const chatDiv = document.getElementById('chat');
   chatDiv.innerHTML = '';
@@ -378,11 +311,6 @@ function inter(s) {
     const text = m.parts ? m.parts[0].text : m.content;
     renderMsg(m.role === 'user' ? 'me' : 'them', text);
   });
-}
-
-function askGuided(text) {
-  document.getElementById('q').value = text;
-  send();
 }
 
 function renderMsg(c, t) {
@@ -410,6 +338,7 @@ async function send() {
   chatHistory[cur].push({ role: 'user', parts: [{ text: qText }] });
 
   try {
+    // Chiamata REST diretta ai modelli correnti Gemini con endpoint standard
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
     
     const contents = [
