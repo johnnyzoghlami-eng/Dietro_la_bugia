@@ -24,7 +24,7 @@
   .row input { flex:1; }
   .center { text-align:center; }
   .small { color:#aaa; font-size:13px; }
-  .item { background:#222936; padding:11px; border-radius:9px; margin:7px 0; }
+  .item { background:#222936; padding:11px; border-radius:99px; margin:7px 0; display:flex; justify-content:space-between; align-items:center; }
   .notice { background:#252b38; border-left:4px solid #7057e8; padding:12px; border-radius:8px; }
   .option { display:block; background:#222936; padding:10px; border-radius:8px; margin:6px 0; }
   .api-box { background:#1f2633; border:1px solid #7057e8; padding:12px; border-radius:8px; margin-bottom:15px; }
@@ -173,10 +173,10 @@ const CASES = {
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
     prompts: {
-      Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Sai che l'azienda perdeva soldi e che Elena e Andrea litigavano spesso. Rispondi alle domande rimanendo nel personaggio. Massimo 2-3 frasi.",
-      Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio, avete litigato per il divorzio e l'hai colpito alle 23:16 con il fermacarte metallico lasciando un bottone del tuo cardigan. Mentirai dicendo che dormivi. Massimo 2-3 frasi.",
-      Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Eri nella dependance ma alle 23:09 hai sentito una voce di donna urlare nello studio. Massimo 2-3 frasi.",
-      Sofia: "Sei Sofia Bianchi, la consulente finanziaria. Sei INNOCENTE. Sei uscita dalla villa alle 23:20 e hai incrociato Elena nel corridoio che si sistemava i capelli in fretta. Massimo 2-3 frasi."
+      Marco: "Sei Marco Ferri, socio in affari di Andrea Rinaldi. Sei INNOCENTE. Tra le 23:00 e le 23:30 eri in archivio a cercare documenti. Sai che l'azienda perdeva soldi e che Elena e Andrea litigavano spesso. Rispondi in italiano rimanendo perfettamente nel personaggio. Massimo 2 frasi.",
+      Elena: "Sei Elena Rinaldi, la moglie della vittima. Sei COLPEVOLE. Alle 23:12 sei andata nello studio, avete litigato per il divorzio e l'hai colpito alle 23:16 con il fermacarte metallico lasciando un bottone del tuo cardigan. Mentirai dicendo che dormivi. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
+      Davide: "Sei Davide Moretti, il custode della villa. Sei INNOCENTE. Eri nella dependance ma alle 23:09 hai sentito una voce di donna urlare nello studio. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi.",
+      Sofia: "Sei Sofia Bianchi, la consulente finanziaria. Sei INNOCENTE. Sei uscita dalla villa alle 23:20 e hai incrociato Elena nel corridoio che si sistemava i capelli in fretta. Rispondi in italiano rimanendo nel personaggio. Massimo 2 frasi."
     },
     tests: {
       autopsy: { name: '🩺 Autopsia Medico-Legale', desc: 'Autopsia: Deceso per trauma cranico commotivo alle 23:15 circa. Compatibile con oggetto metallico.' },
@@ -196,9 +196,9 @@ const CASES = {
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
     suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
     prompts: {
-      Annamaria: "Sei Annamaria Franzoni. Ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio allo scuolabus e di essere tornata alle 8:24 trovando il bambino ferito. Piangi e nega qualsiasi coinvolgimento. Massimo 2-3 frasi.",
-      Ada: "Sei la dottoressa Ada Satragni, medico curante arrivata per prima. Pensavi a un aneurisma cerebrale, hai lavato il viso al bambino per aiutarlo. Rispondi con tono medico ma difensivo. Massimo 2-3 frasi.",
-      Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Sostieni che sulla neve non c'erano impronte di estranei verso la villetta. Rispondi con tono calmo e dispiaciuto. Massimo 2-3 frasi."
+      Annamaria: "Sei Annamaria Franzoni. Ti dichiari disperatamente INNOCENTE. Sostieni di essere uscita alle 8:16 per accompagnare tuo figlio allo scuolabus e di essere tornata alle 8:24 trovando il bambino ferito. Piangi e nega qualsiasi coinvolgimento. Rispondi in italiano. Massimo 2 frasi.",
+      Ada: "Sei la dottoressa Ada Satragni, medico curante arrivata per prima. Pensavi a un aneurisma cerebrale, hai lavato il viso al bambino per aiutarlo. Rispondi con tono medico ma difensivo in italiano. Massimo 2 frasi.",
+      Ulisse: "Sei Ulisse Lorenzi, vicino di casa. Sostieni che sulla neve non c'erano impronte di estranei verso la villetta. Rispondi in italiano con tono calmo. Massimo 2 frasi."
     },
     tests: {
       bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce a proiettile sul soffitto indicano che i colpi sono stati inferti da chi si trovava sopra il letto.' },
@@ -217,8 +217,8 @@ const CASES = {
     objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
     suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
     prompts: {
-      Alfred: "Sei Alfred Stratton. Sei il COLPEVOLE assieme a tuo fratello Albert. Sostieni che l'impronta di pollice trovata sulla scatola metallica non sia la tua e che eri a dormire. Sei arrogante ed evasivo. Massimo 2-3 frasi.",
-      Albert: "Sei Albert Stratton, fratello e complice di Alfred. Cerchi di scaricare la colpa o accampare alibi confusi sulla notte della rapina. Massimo 2-3 frasi."
+      Alfred: "Sei Alfred Stratton. Sei il COLPEVOLE assieme a tuo fratello Albert. Sostieni che l'impronta di pollice trovata sulla scatola metallica non sia la tua e che eri a dormire. Sei arrogante ed evasivo. Rispondi in italiano. Massimo 2 frasi.",
+      Albert: "Sei Albert Stratton, fratello e complice di Alfred. Cerchi di scaricare la colpa o accampare alibi confusi sulla notte della rapina. Rispondi in italiano. Massimo 2 frasi."
     },
     tests: {
       fingerprint: { name: '🔍 Perizia Dattiloscopica', desc: 'L\'impronta di pollice sulla scatola della cassaforte corrisponde esattamente al pollice destro di Alfred Stratton.' },
@@ -226,7 +226,7 @@ const CASES = {
     },
     correctCulprit: 'Alfred',
     requiredEvidences: ['fingerprint', 'witness'],
-    solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Fu il primo caso in Gran Bretagna in cui le impronte digitali costituirono la prova decisiva.</p>"
+    solutionText: "<h3>Esito Storico: Fratelli Stratton</h3><p>Condannati a morte nel 1905. Fu il primo caso in Gran Britagna in cui le impronte digitali costituirono la prova decisiva.</p>"
   },
   jack: {
     title: "🔍 Jack lo Squartatore (1888)",
@@ -236,9 +236,9 @@ const CASES = {
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
     prompts: {
-      Druitt: "Sei Montague Druitt, avvocato e insegnante. Neghi qualsiasi coinvolgimento e rispondi con linguaggio formale ed elegante dell'epoca vittoriana. Massimo 2-3 frasi.",
-      Kosminski: "Sei Aaron Kosminski, un barbiere polacco. Sostieni di essere stato scambiato per qualcun altro. Rispondi con tono molto confuso e agitato. Massimo 2-3 frasi.",
-      Ostrog: "Sei Michael Ostrog, un truffatore e medico russo. Hai precedenti per porto d'armi ma neghi recisamente gli omicidi. Massimo 2-3 frasi."
+      Druitt: "Sei Montague Druitt, avvocato e insegnante. Neghi qualsiasi coinvolgimento e rispondi con linguaggio formale ed elegante dell'epoca in italiano. Massimo 2 frasi.",
+      Kosminski: "Sei Aaron Kosminski, un barbiere polacco. Sostieni di essere stato scambiato per qualcun altro. Rispondi con tono molto confuso e agitato in italiano. Massimo 2 frasi.",
+      Ostrog: "Sei Michael Ostrog, un truffatore e medico russo. Hai precedenti per porto d'armi ma neghi recisamente gli omicidi. Rispondi in italiano. Massimo 2 frasi."
     },
     tests: {
       medical: { name: '🩺 Perizia Anatomica Dr. Phillips', desc: 'L\'aggressore possiede nozioni di anatomia o chirurgia per la precisione delle mutilazioni.' },
@@ -365,33 +365,39 @@ async function send() {
 
   let systemPrompt = currentCase.prompts[cur];
   
-  let contents = [
-    { role: 'user', parts: [{ text: "ISTRUZIONI DI RUOLO: " + systemPrompt }] },
-    { role: 'model', parts: [{ text: "Ho capito. Sono pronto a rispondere all'interrogatorio restando nel personaggio." }] },
-    ...chatHistory[cur]
-  ];
+  // Endpoint per il modello Gemini 1.5 Flash
+  let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+  let bodyData = {
+    system_instruction: {
+      parts: [{ text: systemPrompt }]
+    },
+    contents: chatHistory[cur]
+  };
 
   try {
-    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    let response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: contents,
-        generationConfig: {
-          maxOutputTokens: 150,
-          temperature: 0.7
-        }
-      })
+      body: JSON.stringify(bodyData)
     });
 
     let data = await response.json();
-    let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Non ho risposte da dare.";
 
-    chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
-    renderMsg('them', replyText);
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      let replyText = data.candidates[0].content.parts[0].text;
+      chatHistory[cur].push({ role: 'model', parts: [{ text: replyText }] });
+      renderMsg('them', replyText);
+    } else if (data.error) {
+      console.error("Errore API:", data.error);
+      renderMsg('them', "⚠️ Errore API: " + (data.error.message || "Risposta non valida dall'IA."));
+    } else {
+      renderMsg('them', "⚠️ Impossibile ottenere una risposta dall'IA al momento.");
+    }
 
   } catch (err) {
-    renderMsg('them', "⚠️ Errore di connessione con l'IA. Verificare la chiave API.");
+    console.error("Errore Fetch:", err);
+    renderMsg('them', "⚠️ Errore di connessione con la chiave API.");
   }
 
   qInput.disabled = false;
@@ -420,7 +426,7 @@ function addNote() {
 
 function renderNotes() {
   document.getElementById('notes').innerHTML = notes.map((x, i) =>
-    '<div class="item">📝 ' + esc(x) + ' <button onclick="notes.splice(' + i + ',1);renderNotes()">×</button></div>'
+    '<div class="item"><span>📝 ' + esc(x) + '</span><button onclick="notes.splice(' + i + ',1);renderNotes()">×</button></div>'
   ).join('');
 }
 
@@ -432,7 +438,7 @@ function addTime() {
 
 function renderTimes() {
   document.getElementById('times').innerHTML = times.map((x, i) =>
-    '<div class="item">🕒 ' + esc(x) + ' <button onclick="times.splice(' + i + ',1);renderTimes()">×</button></div>'
+    '<div class="item"><span>🕒 ' + esc(x) + '</span><button onclick="times.splice(' + i + ',1);renderTimes()">×</button></div>'
   ).join('');
 }
 
