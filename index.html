@@ -180,7 +180,7 @@
     </div>
   </section>
 
-  <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI (STILE COERENTE NOIR) -->
+  <!-- SELEZIONE CASI SUDDIVISA IN 4 SEZIONI -->
   <section id="case-selection">
     <div class="hero-container">
       <h2 style="margin:0; font-size:22px; letter-spacing:1.5px; color:#fff;">📂 SELEZIONE CASI</h2>
@@ -388,6 +388,7 @@
 </div>
 
 <script>
+// Inserisci qui la tua chiave API di Groq per attivare l'intelligenza artificiale negli interrogatori
 const GROQ_API_KEY = ""; 
 
 const CASES = {
@@ -398,6 +399,7 @@ const CASES = {
     sceneNotice: "Elementi di indagine moderna: perizie balistiche, analisi del telefono e impronte.",
     objects: ['🔩 Fermacarte metallico pesante', '🥃 Bicchiere con tracce', '📱 Telefono cellulare', '🧵 Cardigan strappato'],
     suspects: { Marco: 'Marco Ferri', Elena: 'Elena Rinaldi', Davide: 'Davide Moretti', Sofia: 'Sofia Bianchi' },
+    systemPrompt: "Sei un sospettato in un interrogatorio di polizia per un omicidio. Rispondi in italiano in modo teso, difensivo o evasivo, rimanendo nel tuo personaggio, senza confessare subito se sei colpevole.",
     suggestions: {
       Marco: ["Dove ti trovavi tra le 23:00 e le 23:30?", "C'erano problemi economici in azienda?"],
       Elena: ["Perché hai mandato quell'SMS alle 23:05?", "Cosa hai fatto dopo la discussione nello studio?"],
@@ -427,6 +429,7 @@ const CASES = {
     sceneNotice: "Analisi scientifica avanzata: test BPA e orari dei soccorsi.",
     objects: ['🛏️ Letto matrimoniale con macchie', '👟 Clogs/Ciabatte da neve', '🩺 Borsa del medico curante'],
     suspects: { Annamaria: 'Annamaria Franzoni', Ada: 'Dr.ssa Ada Satragni', Ulisse: 'Ulisse Lorenzi' },
+    systemPrompt: "Sei Annamaria Franzoni in un interrogatorio giudiziario. Rispondi in modo emotivo, protettivo e scosso se ti accusano, difendendo la tua versione dei fatti sulla mattina del delitto.",
     suggestions: {
       Annamaria: ["A che ora esatta è uscita per accompagnare lo scuolabus?", "Ha visto qualcuno aggirarsi in casa prima di trovare il bambino?"],
       Ada: ["Quali condizioni ha riscontrato sul piccolo all'arrivo?", "Perché ha pensato a un malore iniziale?"],
@@ -453,6 +456,7 @@ const CASES = {
     sceneNotice: "Criminologia d'inizio '900: impronte digitali e metodo Bertillon.",
     objects: ['🔐 Cassaforte svuotata', '📜 Maschera di calza di seta', '🔍 Scatola di metallo con impronta'],
     suspects: { Alfred: 'Alfred Stratton', Albert: 'Albert Stratton' },
+    systemPrompt: "Sei un sospettato della Londra del 1905 interrogato per un omicidio a scopo di rapina. Rispondi in modo dialettale o formale d'epoca, negando ogni coinvolgimento.",
     suggestions: {
       Alfred: ["Dov'eri la notte del duplice omicidio?", "Come spiega la sua impronta di pollice sulla scatola della cassaforte?"],
       Albert: ["Ha un alibi verificabile per le ore della rapina?", "Conferma la versione dei fatti di suo fratello Alfred?"]
@@ -476,6 +480,7 @@ const CASES = {
     sceneNotice: "Verbali di ronda, autopsie d'epoca e perizie di Scotland Yard.",
     objects: ['✉️ Lettera Dear Boss', '🔪 Bisturi da chirurgo', '🧥 Grembiule di cuoio'],
     suspects: { Druitt: 'Montague Druitt', Kosminski: 'Aaron Kosminski', Ostrog: 'Michael Ostrog' },
+    systemPrompt: "Sei un sospettato nella Londra vittoriana del 1888 per i crimini di Whitechapel. Rispondi in modo cupo, freddo o alterato, difendendo la tua reputazione.",
     suggestions: {
       Druitt: ["Quali erano i suoi spostamenti durante le notti degli omicidi a Whitechapel?", "Perché i suoi colleghi riferiscono di suoi comportamenti anomali?"],
       Kosminski: ["Perché è stato visto nei pressi delle scene dei delitti?", "Cosa faceva durante le ore notturne nei vicoli?"],
@@ -619,6 +624,7 @@ async function send() {
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
           messages: [
+            { role: "system", content: `${currentCase.systemPrompt} Stai interpretando il personaggio di ${currentCase.suspects[cur]}. Dettagli del caso: ${currentCase.desc}` },
             ...chatHistory[cur].map(m => ({ role: m.role === 'me' ? 'user' : 'assistant', content: m.content }))
           ]
         })
@@ -630,9 +636,25 @@ async function send() {
         throw new Error("Risposta vuota");
       }
     } else {
-      await new Promise(r => setTimeout(r, 500));
-      let base = currentCase.fallbacks[cur] || "Non ho altro da dichiarare.";
-      replyText = base + " (Risposta verbale registrata)";
+      await new Promise(r => setTimeout(r, 600));
+      let historyLen = chatHistory[cur].filter(m => m.role === 'user').length;
+      let qLower = qText.toLowerCase();
+      
+      if (qLower.includes('dove') || qLower.includes('orario') || qLower.includes('ora') || qLower.includes('tempo')) {
+        replyText = "Ero altrove a quell'ora, e ci sono persone che possono confermarlo se cercate bene nei registri.";
+      } else if (qLower.includes('perché') || qLower.includes('motivo') || qLower.includes('sms') || qLower.includes('messaggio')) {
+        replyText = "Si fraintende sempre tutto quello che dico o faccio. Non c'ẹnessun secondo fine nascosto.";
+      } else if (qLower.includes('arma') || qLower.includes('sangue') || qLower.includes('oggetti') || qLower.includes('impronte')) {
+        replyText = "Non so di cosa stiate parlando, non ho mai toccato quell'oggetto in vita mia!";
+      } else {
+        const genericReplies = [
+          "Vi ho già detto tutto quello che so. Non insistete su questo punto.",
+          "Questa storia sta diventando assurda. Voglio che venga chiamato un legale.",
+          "Controllate pure i miei movimenti, non ho nulla da nascondere a riguardo.",
+          currentCase.fallbacks[cur] || "Non ho altro da dichiarare."
+        ];
+        replyText = genericReplies[(historyLen - 1) % genericReplies.length];
+      }
     }
   } catch (err) {
     replyText = currentCase.fallbacks[cur] || "Preferisco non rispondere al momento.";
