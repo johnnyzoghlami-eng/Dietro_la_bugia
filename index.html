@@ -6,8 +6,8 @@
 <title>Dietro la Bugia - Noir Edition</title>
 <style>
   :root {
-    --bg-main: #080a0f;
-    --bg-card: rgba(21, 26, 38, 0.85);
+    --bg-main: #05070b;
+    --bg-card: rgba(18, 22, 32, 0.92);
     --border-color: #2b3752;
     --accent-red: #c22525;
     --accent-red-hover: #e02e2e;
@@ -20,10 +20,6 @@
     margin: 0; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     background-color: var(--bg-main); 
-    background-image: linear-gradient(rgba(8, 10, 15, 0.85), rgba(8, 10, 15, 0.95)), url('https://images.unsplash.com/photo-1453945619913-79ec89ba65bb?q=80&w=1000&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
     color: var(--text-main); 
   }
 
@@ -31,18 +27,46 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Grafica Stile Screenshot (Home & Titoli) */
+  /* Schermata Home con l'immagine di sfondo esatta e pulsante Inizia sotto */
+  #home.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    /* Sfondo preso direttamente dalla tua immagine di copertina */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(5, 7, 11, 0.95)), url('https://i.ibb.co/680pT9L0/16919.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-content {
+    position: absolute;
+    bottom: 12%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .hero-container {
     text-align: center;
-    padding: 35px 10px 25px 10px;
-    background: linear-gradient(180deg, rgba(197,37,37,0.25) 0%, rgba(8,10,15,0) 100%);
+    padding: 30px 10px 20px 10px;
+    background: linear-gradient(180deg, rgba(194,37,37,0.25) 0%, rgba(5,7,11,0) 100%);
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 20px;
     border-radius: 0 0 20px 20px;
     backdrop-filter: blur(5px);
   }
   .hero-logo {
-    font-size: 34px;
+    font-size: 38px;
     font-weight: 900;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -58,11 +82,10 @@
     border-radius: 12px; 
     padding: 16px; 
     margin: 12px 0; 
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6); 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7); 
     backdrop-filter: blur(8px);
   }
   
-  /* Sezioni Casistiche */
   .section-title { 
     font-size: 15px; 
     color: var(--accent-red); 
@@ -74,20 +97,19 @@
     padding-left: 8px; 
   }
 
-  /* Pulsanti stile dossier */
   button { 
     background: var(--accent-red); 
     color: white; 
     border: 0; 
     border-radius: 8px; 
-    padding: 12px 20px; 
+    padding: 14px 28px; 
     font-weight: bold; 
-    font-size: 14px; 
+    font-size: 15px; 
     cursor: pointer; 
     transition: background 0.2s, transform 0.1s; 
     text-transform: uppercase; 
-    letter-spacing: 0.5px; 
-    box-shadow: 0 4px 12px rgba(194,37,37,0.3);
+    letter-spacing: 1px; 
+    box-shadow: 0 4px 15px rgba(194,37,37,0.5);
   }
   button:hover { background: var(--accent-red-hover); }
   button:active { transform: scale(0.98); }
@@ -97,13 +119,12 @@
 
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
   
-  /* Chat e Interrogatori */
-  .chat { height: 280px; overflow-y: auto; background: rgba(8, 10, 15, 0.9); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+  .chat { height: 280px; overflow-y: auto; background: rgba(8, 10, 15, 0.95); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
   .msg { padding: 10px 14px; border-radius: 10px; margin: 8px 0; max-width: 82%; white-space: pre-wrap; font-size: 14px; line-height: 1.4; }
   .me { margin-left: auto; background: var(--purple-btn); color: white; border-bottom-right-radius: 2px; }
   .them { background: #1f2838; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
 
-  input, textarea { width: 100%; box-sizing: border-box; background: rgba(15, 19, 29, 0.9); color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 14px; }
+  input, textarea { width: 100%; box-sizing: border-box; background: rgba(15, 19, 29, 0.95); color: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 14px; }
   input:focus, textarea:focus { outline: none; border-color: var(--accent-red); }
   textarea { min-height: 120px; }
 
@@ -112,9 +133,9 @@
   .center { text-align: center; }
   .small { color: var(--text-muted); font-size: 12px; }
   
-  .item { background: rgba(27, 35, 51, 0.8); padding: 12px; border-radius: 8px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+  .item { background: rgba(27, 35, 51, 0.85); padding: 12px; border-radius: 8px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
   .notice { background: rgba(22, 30, 46, 0.9); border-left: 4px solid var(--accent-red); padding: 14px; border-radius: 6px; font-size: 13px; line-height: 1.4; margin-bottom: 12px; }
-  .option { display: block; background: rgba(23, 31, 47, 0.8); padding: 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border-color); cursor: pointer; }
+  .option { display: block; background: rgba(23, 31, 47, 0.85); padding: 12px; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border-color); cursor: pointer; }
   .option:hover { border-color: var(--accent-red); }
 
   .suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -127,13 +148,8 @@
 
   <!-- SCHERMATA HOME PRINCIPALE -->
   <section id="home" class="active">
-    <div class="hero-container" style="margin-top: 40px; border-radius: 20px;">
-      <h1 class="hero-logo">Dietro la <span>Bugia</span></h1>
-      <p class="hero-subtitle">Ogni storia nasconde una verità.</p>
-    </div>
-
-    <div class="center" style="margin: 40px 0;">
-      <button onclick="show('case-selection')" style="font-size: 18px; padding: 16px 45px; box-shadow: 0 0 25px rgba(194,37,37,0.6);">▶️ INIZIA</button>
+    <div class="home-content">
+      <button onclick="show('case-selection')">▶️ INIZIA</button>
     </div>
   </section>
 
@@ -170,7 +186,7 @@
 
     <!-- Sezione 4: Casi premium -->
     <div class="section-title">4. Casi premium</div>
-    <div class="card" style="border-color: #8c6922; background: rgba(38, 31, 21, 0.85);">
+    <div class="card" style="border-color: #8c6922; background: rgba(38, 31, 21, 0.9);">
       <h3 style="margin:0 0 6px 0; color:#f6c453;">⭐ Jack lo Squartatore (Whitechapel, 1888)</h3>
       <p class="small">Londra. L'indagine più oscura di fine ottocento tra ronda notturna, autopsie d'epoca e Scotland Yard.</p>
       <button onclick="askDifficulty('jack')" style="margin-top:10px; background:#b8860b;">🔒 Apri Caso Premium</button>
@@ -396,7 +412,7 @@ const CASES = {
     tests: {
       bpa: { name: '🩸 Perizia BPA', desc: 'Le micro-gocce indicano che i colpi sono stati inferti da chi si trovava esattamente sopra il letto.' },
       timing: { name: '⏱️ Finestra Temporale (8 min)', desc: 'Intervallo tra le 8:16 e le 8:24 troppo breve per la penetrazione di estranei.' },
-      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici posizionano il pigiama sulla scena al momento dell\'aggressione.' }
+      pijama: { name: '👕 Perizia Pigiama', desc: 'Tracce di schizzi ematici posizionano il pigiama sulla scena al momento dell'aggressione.' }
     },
     correctCulprit: 'Annamaria',
     requiredEvidences: ['bpa', 'timing', 'pijama'],
