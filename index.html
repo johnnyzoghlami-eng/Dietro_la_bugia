@@ -27,42 +27,57 @@
   section { display: none; }
   section.active { display: block; }
 
-  /* Schermata Home con l'immagine di copertina e pulsante */
+  /* Schermata Home a Schermo Pieno */
   #home.active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     min-height: 100vh;
-    text-align: center;
-    padding: 20px;
     box-sizing: border-box;
-    background: linear-gradient(180deg, rgba(0,0,0,0.15) 30%, rgba(12,15,23,0.95) 85%), 
-                radial-gradient(circle at center, #1b263b 0%, #080a0f 100%);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
+    padding: 0 0 40px 0;
+    background: #000;
   }
 
   .home-poster-box {
-    max-width: 320px;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    border: 1px solid var(--border-color);
-    background: #000;
-    margin-bottom: 20px;
+    height: 100%;
+    z-index: 1;
   }
 
   .home-poster-box img {
     width: 100%;
-    height: auto;
-    display: block;
+    height: 100%;
     object-fit: cover;
+    display: block;
+    filter: brightness(0.85);
+  }
+
+  /* Sfumatura in basso per far risaltare il tasto Inizia sopra l'immagine */
+  #home.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #home.active > div:not(.home-poster-box) {
+    position: relative;
+    z-index: 3;
   }
 
   .hero-container {
@@ -145,7 +160,7 @@
 <body>
 <div class="wrap">
 
-  <!-- SCHERMATA HOME PRINCIPALE -->
+  <!-- SCHERMATA HOME PRINCIPALE A SCHERMO PIENO -->
   <section id="home" class="active">
     <div class="home-poster-box">
       <img src="copertina.jpg" alt="Dietro la Bugia">
